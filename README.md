@@ -1,2 +1,1 @@
-# oct-site
-offline chat tournament site
+offline chat tournament website pog
