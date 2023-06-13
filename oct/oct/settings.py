@@ -14,6 +14,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv()
 import os
+from osu import AuthHandler, Scope
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = bool(int(os.getenv("DJANGO_DEBUG")))
 
 ALLOWED_HOSTS = [
     "localhost",
@@ -143,3 +144,10 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+OSU_CLIENT_ID = int(os.getenv("OSU_CLIENT_ID"))
+OSU_CLIENT_SECRET = os.getenv("OSU_CLIENT_SECRET")
+OSU_CLIENT_REDIRECT = os.getenv("OSU_CLIENT_REDIRECT")
+OSU_AUTH = AuthHandler(OSU_CLIENT_ID, OSU_CLIENT_SECRET, OSU_CLIENT_REDIRECT, Scope.identify())
+OSU_AUTH_URL = OSU_AUTH.get_auth_url()
