@@ -30,7 +30,9 @@ DEBUG = False
 
 ALLOWED_HOSTS = [
     "localhost",
-    "oct.sheppsu.me"
+    "127.0.0.1",
+    "oct.sheppsu.me",
+    "parched-flowers-production.up.railway.app"
 ]
 
 
