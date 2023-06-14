@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+:root {
+    --bg-color1: #438efd;
+    --bg-color2: #e866a0;
+}
+
+p {
+    font-family: 'Inter', sans-serif;
+}
+
+.header {
+    background-color: var(--bg-color1);
+    width: 100%;
+    height: 80px;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.header-block {
+    width: 20%;
+    height: 100%;
+
+    padding: 0;
+    margin: 0;
+}
+
+.header-text {
+    text-align: center;
+    color: white;
+    font-size: 29px;
+    font-style: italic;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    margin-top: 30px;
+}
+
+.header-title {
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 65px;
+    color: white;
+    margin: 0;
+    margin-left: 30px;
+
+}
+
+.empty-header-block {
+    width: 20%;
+    height: 100%;
+}
+
+.header-link-container {
+    width: 100%;
+    height: 100%;
+    padding: 10px 0;
+}
+
+.header-link {
+    text-decoration: none;
+}
+
+.login-box {
+    width: 130px;
+    height: 60px;
+    background-color: var(--bg-color2);
+    border-radius: 15px;
+    
+    padding: 0;
+    margin: 0;
+
+
+}
+
+.osu-logo {
+    width: 41px;
+    height: 41px;
+    margin: 8px;
+    margin-top: 7px;
+}
+
+.shadow {
+    -moz-box-shadow: 0 0 30px 5px var(--bg-color2);
+    -webkit-box-shadow: 0 0 30px 5px var(--bg-color2);
+}
