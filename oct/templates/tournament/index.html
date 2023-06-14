@@ -2,9 +2,22 @@
 {% load static %}
 {% block title %}Home{% endblock title %}
 {% block body %}
-<div style="margin-top: 80px;">
+<div style="margin-top: 170px; margin-left: 75px; margin-right: 75px">
+    <table class="banner">
+        <tr>
+            <td class="banner-image">
+                <img class="drill-image" src="{% static 'assets/images/drill.webp' %}" alt="">
+            </td>
+            <td class="banner-title">
+                <img class="oct-image" src="{% static 'assets/images/oct4.png' %}" alt="">
+            </td>
+            <td class="banner-stage-block">
+                <p class="banner-text">Current Stage:</p>
+            </td>
 
-    <img src="https://hrfarmer.live/static/images/drill.webp" alt="">
+        </tr>
+    </table>
+
 </div>
 {% endblock body %}
 {% block headerid %}home{% endblock headerid %}

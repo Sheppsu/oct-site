@@ -85,3 +85,44 @@ p {
     -moz-box-shadow: 0 0 30px 5px var(--bg-color2);
     -webkit-box-shadow: 0 0 30px 5px var(--bg-color2);
 }
+
+.banner {
+    height: 150px;
+    cell-spacing: 20px;
+}
+
+.banner-image {
+    width: 10%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.banner-title {
+    width: 60%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.banner-text {
+    font-size: 30px;
+    font-weight: 500;
+}
+
+.banner-stage-block {
+    width: 30%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.drill-image {
+    width: 180px;
+    height: 180px;
+    margin-right: 50px;
+}
+
+.oct-image {
+    width: 660px;
+}
