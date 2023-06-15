@@ -11,6 +11,14 @@ client_secret = os.getenv('OSU_CLIENT_SECRET')
 
 client = Client.from_client_credentials(
         client_id, client_secret, redirect_url)
+
+colors = {
+    "nm": "#52a1ff",
+    "hd": "#ffe599",
+    "hr": "#ea9999",
+    "dt": "#b4a7d6",
+    "tb": "#d5a6bd"
+}
     
 final_map_list = []
 
@@ -33,6 +41,12 @@ ro32_map_ids = {
 
 map_ids = [quals_map_ids, ro32_map_ids]
 
+def convert(num):
+    if "." in str(num):
+        return str(num).replace(".", "") + "%"
+    else:
+        return str(num) + "0%"
+
 for id_set in map_ids:
     map_list = []
 
@@ -40,6 +54,7 @@ for id_set in map_ids:
     next(iter_dict)
 
     for key in iter_dict:
+        color = colors[key]
         
         for index, map_id in enumerate(id_set[key], 1):
             map = client.get_beatmap(map_id)
@@ -50,12 +65,17 @@ for id_set in map_ids:
                     "difficulty": map.version,
                     "sr": map.difficulty_rating,
                     "cs": map.cs,
+                    "cs_percent": convert(map.cs),
                     "hp": map.drain,
+                    "hp_percent": convert(map.drain),
                     "od": map.accuracy,
+                    "od_percent": convert(map.accuracy),
                     "ar": map.ar,
+                    "ar_percent": convert(map.ar),
                     "background": map.beatmapset.covers.cover_2x,
                     "mod": f"{key.upper()}{index}",
                     "id": map.id,
+                    "color": color
                 }
             )
     round = id_set["round"]

@@ -11,7 +11,7 @@
                 <tr>
                     <td>
                         <a href="https://osu.ppy.sh/b/{{ map.id }}" target="_blank">
-                            <div class="flex-container beatmap-container prevent-select">
+                            <div class="flex-container beatmap-container prevent-select" style="background-image: linear-gradient(to right, {{ map.color }}, #6862DD);">
                                 <div class="beatmap-mod">
                                     <p class="beatmap-mod-text">{{ map.mod }}</p>
                                 </div>
@@ -32,13 +32,13 @@
                                             <tr>
                                                 <td style="width: 50%; height: 50%;">
                                                     <div id="cs" class="difficulty-bar-outside">
-                                                        <div class="difficulty-bar-inside" style="width: 50%"></div>
+                                                        <div class="difficulty-bar-inside" style="width: {{ map.cs_percent }}"></div>
                                                         <p class="bar-text">CS: {{ map.cs }}</p>
                                                     </div>
                                                 </td>
                                                 <td style="width: 50%; height: 50%;">
                                                     <div id="hp" class="difficulty-bar-outside">
-                                                        <div class="difficulty-bar-inside" style="width: 50%"></div>
+                                                        <div class="difficulty-bar-inside" style="width: {{ map.hp_percent }}"></div>
                                                         <p class="bar-text">HP: {{ map.hp }}</p>
                                                     </div>
                                                 </td>
@@ -46,13 +46,13 @@
                                             <tr>
                                                 <td style="width: 50%; height: 50%;">
                                                     <div id="od" class="difficulty-bar-outside">
-                                                        <div class="difficulty-bar-inside" style="width: 50%"></div>
+                                                        <div class="difficulty-bar-inside" style="width: {{ map.od_percent }}"></div>
                                                         <p class="bar-text">OD: {{ map.od }}</p>
                                                     </div>
                                                 </td>
                                                 <td style="width: 50%; height: 50%;">
                                                     <div id="ar" class="difficulty-bar-outside">
-                                                        <div class="difficulty-bar-inside" style="width: 50%"></div>
+                                                        <div class="difficulty-bar-inside" style="width: {{ map.ar_percent }}"></div>
                                                         <p class="bar-text">AR: {{ map.ar }}</p>
                                                     </div>
                                                 </td>
