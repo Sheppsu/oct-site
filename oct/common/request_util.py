@@ -9,5 +9,7 @@ def render(req, template, context=None, *args, **kwargs):
     context["is_logged_in"] = req.user.is_authenticated
     if req.user.is_authenticated:
         context["avatar_url"] = req.user.osu_avatar
-        context["username"] = req.user.osu_username
+        username = req.user.osu_username
+        context["username"] = username
+        context["short_username"] = username if len(username) < 9 else username[:7]+"..."
     return _render(req, template, context, *args, **kwargs)

@@ -10,60 +10,59 @@
             {% for map in round.maps %}
                 <tr>
                     <td>
-                        <div class="flex-container beatmap-container" style="margin-top: 10px;">
-                            <div class="beatmap-mod">
-                                <p class="beatmap-mod-text">{{ map.mod }}</p>
-                            </div>
-                            <div>
-                                <img class="beatmap-image" src="{{ map.background }}" alt="">
-                            </div>
-                            <div class="beatmap-info" style="display: flex;">
-                                <div style="width: 65%;">
-                                    <div class="beatmap-metadata">
-                                        <p>{{ map.artist }} - {{ map.title }}</p>
+                        <a href="https://osu.ppy.sh/b/{{ map.id }}" target="_blank">
+                            <div class="flex-container beatmap-container prevent-select">
+                                <div class="beatmap-mod">
+                                    <p class="beatmap-mod-text">{{ map.mod }}</p>
+                                </div>
+                                <div>
+                                    <img class="beatmap-image" src="{{ map.background }}" alt="">
+                                </div>
+                                <div class="beatmap-info" style="display: flex;">
+                                    <div style="width: 65%;">
+                                        <div class="beatmap-metadata">
+                                            <p>{{ map.artist }} - {{ map.title }}</p>
+                                        </div>
+                                        <div class="beatmap-difficulty">
+                                            <p>[{{ map.difficulty }}]</p>
+                                        </div>
                                     </div>
-                                    <div class="beatmap-difficulty">
-                                        <p>[{{ map.difficulty }}]</p>
+                                    <div style="width: 35%;">
+                                        <table style="width: 100%; height: 100%;">
+                                            <tr>
+                                                <td style="width: 50%; height: 50%;">
+                                                    <div id="cs" class="difficulty-bar-outside">
+                                                        <div class="difficulty-bar-inside" style="width: 50%"></div>
+                                                        <p class="bar-text">CS: {{ map.cs }}</p>
+                                                    </div>
+                                                </td>
+                                                <td style="width: 50%; height: 50%;">
+                                                    <div id="hp" class="difficulty-bar-outside">
+                                                        <div class="difficulty-bar-inside" style="width: 50%"></div>
+                                                        <p class="bar-text">HP: {{ map.hp }}</p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width: 50%; height: 50%;">
+                                                    <div id="od" class="difficulty-bar-outside">
+                                                        <div class="difficulty-bar-inside" style="width: 50%"></div>
+                                                        <p class="bar-text">OD: {{ map.od }}</p>
+                                                    </div>
+                                                </td>
+                                                <td style="width: 50%; height: 50%;">
+                                                    <div id="ar" class="difficulty-bar-outside">
+                                                        <div class="difficulty-bar-inside" style="width: 50%"></div>
+                                                        <p class="bar-text">AR: {{ map.ar }}</p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </div>
                                 </div>
-                                <div style="width: 35%; margin-top: 18px;">
-                                    <table style="width: 100%;">
-                                        <tr>
-                                            <td>
-                                                <div id="cs" class="difficulty-bar-outside">
-                                                    <div class="difficulty-bar-inside"></div>
-                                                    <p class="bar-text">CS: {{ map.cs }}</p>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div id="hp" class="difficulty-bar-outside">
-                                                    <div class="difficulty-bar-inside"></div>
-                                                    <p class="bar-text">HP: {{ map.hp }}</p>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div id="od" class="difficulty-bar-outside">
-                                                    <div class="difficulty-bar-inside"></div>
-                                                    <p class="bar-text">OD: {{ map.od }}</p>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div id="ar" class="difficulty-bar-outside">
-                                                    <div class="difficulty-bar-inside"></div>
-                                                    <p class="bar-text">AR: {{ map.ar }}</p>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </div>
-                                </div>
-                                <div class="star-rating" style="display: flex;">
-                                    <p class="star-rating-text">⭐{{ map.sr }}</p>
-                                </div>
+                                <p class="star-rating-text">⭐{{ map.sr }}</p>
                             </div>
-                        </div>
+                        </a>
                     </td>
                 </tr>
             {% endfor %}

@@ -13,6 +13,7 @@ p {
 
 a {
     text-decoration: none;
+    color: inherit;
 }
 
 h1 {
@@ -145,14 +146,16 @@ h1 {
 
 .mappools-beatmap-table {
     width: 80%;
+    max-width: 1000px;
+    min-width: 900px;
     height: 100%;
-    margin-left: auto;
-    margin-right: auto;
-
+    margin: auto;
+    border-spacing: 10px;
 }
+
 .beatmap-mod {
-    width: 150px;
-    height: 75px;
+    width: 12%;
+    height: 100%;
     border-radius: 18px;
 
 }
@@ -163,21 +166,18 @@ h1 {
     text-align: center;
     font-style: italic;
     color: white;
-    padding-bottom: 10px;
-    margin-top: 20px;
-    position: relative;
+    padding-top: 20px;
 }
 
 .beatmap-image {
     border-radius: 20px;
-    margin-left: 0px;
-    height: 75px;
+    height: 100%;
     z-index: 3;
     position: relative;
 }
 
 .beatmap-container {
-    background-color: var(--bg-color3);
+    background-image: linear-gradient(to right, var(--bg-color3), #6862DD);
     border-radius: 18px;
     height: 75px;
     z-index: 1;
@@ -186,11 +186,11 @@ h1 {
 
 .beatmap-info {
     background-color: var(--bg-color4);
-    height: 75px;
+    height: 100%;
     border-radius: 18px;
     margin-left: -30px;
     padding-left: 45px;
-    width: 50%;
+    width: 45%;
     z-index: 2;
     position: relative;
 }
@@ -198,31 +198,29 @@ h1 {
 .beatmap-metadata {
     font-weight: 500;
     font-size: 20px;
-    margin-top: -6px;
     height: 60%;
+    width: 100%;
 }
 
 .beatmap-difficulty {
     font-weight: 300;
     font-size: 15px;
     height: 40%;
-    margin-top: -28px;
+    width: 100%;
 }
 
 .difficulty-bar-outside {
     height: 10px;
-    width: 80px;
-    border-radius: 50px;
+    width: 100%;
+    border-radius: 10px;
     background-color: white;
     outline: 1.5px solid #c5c5c5;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    margin-bottom: 10px;
 }
 
 .difficulty-bar-inside {
     height: 10px;
-    width: 50%;
-    border-radius: 50px;
+    border-radius: 10px;
     background-color: #a7a7a7;
 }
 
@@ -234,22 +232,9 @@ h1 {
     text-align: left;
 }
 
-.star-rating {
-    background-color: #6862DD;
-    height: 75px;
-    border-radius: 18px;
-    width: 16%;
-    margin-left: -30px;
-    z-index: 1;
-}
-
 .star-rating-text {
     font-size: 30px;
     font-weight: 800;
-    text-align: center;
     color: white;
-    padding-bottom: 10px;
-    margin-top: 17px;
-    margin-left: 50px;
-    position: relative;
+    padding-top: 15px;
 }

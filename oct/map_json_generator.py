@@ -54,13 +54,12 @@ for id_set in map_ids:
                     "od": map.accuracy,
                     "ar": map.ar,
                     "background": map.beatmapset.covers.cover_2x,
-                    "mod": f"{key.upper()}{index}"
+                    "mod": f"{key.upper()}{index}",
+                    "id": map.id,
                 }
             )
     round = id_set["round"]
     final_map_list.append({"stage": round.capitalize(), "maps": map_list})
-
-
 
 
 with open('map_list.json', 'w') as f:
