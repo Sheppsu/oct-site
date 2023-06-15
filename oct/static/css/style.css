@@ -8,10 +8,21 @@
 
 p {
     font-family: 'Inter', sans-serif;
+    margin: 0;
+}
+
+a {
+    text-decoration: none;
 }
 
 .flex-container {
     display: flex;
+}
+
+.prevent-select {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
 }
 
 .header {
@@ -26,9 +37,6 @@ p {
 .header-block {
     width: 20%;
     height: 100%;
-
-    padding: 0;
-    margin: 0;
 }
 
 .header-text {
@@ -69,22 +77,17 @@ p {
 }
 
 .login-box {
-    width: 130px;
-    height: 60px;
+    width: 150px;
+    height: 50px;
     background-color: var(--bg-color2);
-    border-radius: 15px;
-    
-    padding: 0;
-    margin: 0;
-
-
+    border-radius: 50px;
 }
 
 .osu-logo {
-    width: 41px;
-    height: 41px;
-    margin: 8px;
-    margin-top: 7px;
+    height: 100%;
+    border-radius: 100%;
+    margin-top: -2px;
+    margin-left: -4px;
 }
 
 .shadow {

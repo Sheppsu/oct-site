@@ -117,6 +117,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTH_USER_MODEL = "tournament.User"
+AUTH_BACKEND = "django.contrib.auth.backends.ModelBackend"
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
@@ -149,5 +150,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 OSU_CLIENT_ID = int(os.getenv("OSU_CLIENT_ID"))
 OSU_CLIENT_SECRET = os.getenv("OSU_CLIENT_SECRET")
 OSU_CLIENT_REDIRECT = os.getenv("OSU_CLIENT_REDIRECT")
-OSU_AUTH = AuthHandler(OSU_CLIENT_ID, OSU_CLIENT_SECRET, OSU_CLIENT_REDIRECT, Scope.identify())
-OSU_AUTH_URL = OSU_AUTH.get_auth_url()
+OSU_AUTH_URL = AuthHandler(OSU_CLIENT_ID, OSU_CLIENT_SECRET, OSU_CLIENT_REDIRECT, Scope.identify()).get_auth_url()

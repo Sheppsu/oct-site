@@ -20,40 +20,50 @@
     <table class="header">
         <tr>
             <td>
-                <a class="header-link" href="{% url 'index' %}"><div class="header-link-container">
+                <a class="header-link prevent-select" href="{% url 'index' %}"><div class="header-link-container">
                     <h1 class="header-title">OCT</h1>
                 </div></a>
             </td>
             <td style="width: 5%;"></td>
-            <td id="teams" class="header-block">
+            <td id="teams" class="header-block prevent-select">
                 <a class="header-link" href="{% url 'teams' %}"><div class="header-link-container">
                     <p class="header-text">Teams</p>
                 </div></a>
             </td>
-            <td id="mappools" class="header-block">
+            <td id="mappools" class="header-block prevent-select">
                 <a class="header-link" href="{% url 'mappools' %}"><div class="header-link-container">
                     <p class="header-text">Mappools</p>
                 </div></a>
             </td>
-            <td id="bracket" class="header-block">
+            <td id="bracket" class="header-block prevent-select">
                 <a class="header-link" href="{% url 'bracket' %}"><div class="header-link-container">
                     <p class="header-text">Bracket</p>
                 </div></a>
             </td>
             <td class="empty-header-block"></td>
-            <td class="header-block">
-                <div class="login-box shadow">
-                    <table>
-                        <tr>
-                            <td>
-                                <img src="{% static 'assets/images/osu.png' %}" alt="osu logo" class="osu-logo">
-                            </td>
-                            <td style="margin-top: -1px;">
-                                <p style="color: white;">Log in</p>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
+            <td class="header-block prevent-select">
+                <a href="{% if not is_logged_in %}{{ login_url }}{% else %}{% url 'dashboard' %}{% endif %}">
+                    <div class="login-box shadow">
+                        <table style="width: 150px; height: 50px;">
+                            <tr>
+                                <td style="width: 50px; height: 50px;">
+                                    {% if is_logged_in %}
+                                    <img src="{{ avatar_url }}" alt="avatar" class="osu-logo">
+                                    {% else %}
+                                    <img src="{% static 'assets/images/osu.png' %}" alt="osu logo" class="osu-logo">
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div style="width: 100%; height: 100%; text-align: center;">
+                                        <p style="color: white; margin-left: -15px; margin-top: 25px;">
+                                            {% if is_logged_in %}EEEEEEEEEEEEEEE{% else %}Log in{% endif %}
+                                        </p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </a>
             </td>
         </tr>
     </table>
