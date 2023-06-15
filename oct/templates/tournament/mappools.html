@@ -1,7 +1,70 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Home{% endblock title %}
+{% block title %}Mappools{% endblock title %}
 {% block body %}
-
+<div style="margin-top: 100px;">
+    <table class="mappools-beatmap-table">
+        {% for map in map_list %}
+            <tr>
+                <td>
+                    <div class="flex-container beatmap-container" style="margin-top: 10px;">
+                        <div class="beatmap-mod">
+                            <p class="beatmap-mod-text">NM1</p>
+                        </div>
+                        <div>
+                            <img class="beatmap-image" src="{{ map.background }}" alt="">
+                        </div>
+                        <div class="beatmap-info" style="display: flex;">
+                            <div style="width: 65%;">
+                                <div class="beatmap-metadata">
+                                    <p>{{ map.artist }} - {{ map.title }}</p>
+                                </div>
+                                <div class="beatmap-difficulty">
+                                    <p>[{{ map.difficulty }}]</p>
+                                </div>
+                            </div>
+                            <div style="width: 35%; margin-top: 18px;">
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <td>
+                                            <div id="cs" class="difficulty-bar-outside">
+                                                <div class="difficulty-bar-inside"></div>
+                                                <p class="bar-text">CS: {{ map.cs }}</p>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div id="hp" class="difficulty-bar-outside">
+                                                <div class="difficulty-bar-inside"></div>
+                                                <p class="bar-text">HP: {{ map.hp }}</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div id="od" class="difficulty-bar-outside">
+                                                <div class="difficulty-bar-inside"></div>
+                                                <p class="bar-text">OD: {{ map.od }}</p>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div id="ar" class="difficulty-bar-outside">
+                                                <div class="difficulty-bar-inside"></div>
+                                                <p class="bar-text">AR: {{ map.ar }}</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            </div>
+                            <div class="star-rating" style="display: flex;">
+                                <p class="star-rating-text">⭐{{ map.sr }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
 {% endblock body %}
-{% block headerid %}home{% endblock headerid %}
+{% block headerid %}mappools{% endblock headerid %}
