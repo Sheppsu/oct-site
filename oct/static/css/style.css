@@ -10,6 +10,12 @@ p {
     font-family: 'Inter', sans-serif;
 }
 
+h1 {
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+    font-size: 50px;
+}
+
 .flex-container {
     display: flex;
 }
@@ -137,6 +143,8 @@ p {
 .mappools-beatmap-table {
     width: 80%;
     height: 100%;
+    margin-left: auto;
+    margin-right: auto;
 
 }
 .beatmap-mod {
