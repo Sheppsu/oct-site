@@ -11,7 +11,7 @@
                 <tr>
                     <td>
                         <a href="https://osu.ppy.sh/b/{{ map.id }}" target="_blank">
-                            <div class="flex-container beatmap-container prevent-select" style="background-image: linear-gradient(to right, {{ map.color }}, #6862DD);">
+                            <div id="{{ round.stage }}-{{ map.mod }}-beatmap" class="flex-container beatmap-container prevent-select" style="background-image: linear-gradient(to right, {{ map.color }}, #AAAAAA);">
                                 <div class="beatmap-mod">
                                     <p class="beatmap-mod-text">{{ map.mod }}</p>
                                 </div>
@@ -19,7 +19,7 @@
                                     <img class="beatmap-image" src="{{ map.background }}" alt="">
                                 </div>
                                 <div class="beatmap-info" style="display: flex;">
-                                    <div style="width: 65%;">
+                                    <div style="width: calc(100% - 100px);">
                                         <div class="beatmap-metadata">
                                             <p>{{ map.artist }} - {{ map.title }}</p>
                                         </div>
@@ -27,7 +27,7 @@
                                             <p>[{{ map.difficulty }}]</p>
                                         </div>
                                     </div>
-                                    <div style="width: 35%;">
+                                    <div style="width: 100px;">
                                         <table style="width: 100%; height: 100%;">
                                             <tr>
                                                 <td style="width: 50%; height: 50%;">
@@ -60,11 +60,18 @@
                                         </table>
                                     </div>
                                 </div>
-                                <p class="star-rating-text">⭐{{ map.sr }}</p>
+
+                                <div class="star-rating-container">
+                                    <p class="star-rating-text">⭐{{ map.sr }}</p>
+                                </div>
                             </div>
                         </a>
                     </td>
                 </tr>
+            <script type="module">
+                import { getDiffColor } from "{% static 'js/util.js' %}"
+                document.getElementById("{{ round.stage }}-{{ map.mod }}-beatmap").style.backgroundImage = "linear-gradient(to right, {{ map.color }}, "+getDiffColor({{ map.sr }})+")";
+            </script>
             {% endfor %}
         </table>
     {% endfor %}

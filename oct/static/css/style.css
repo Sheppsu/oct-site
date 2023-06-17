@@ -212,18 +212,14 @@ footer {
 
 .mappools-beatmap-table {
     width: 80%;
-    max-width: 1000px;
-    min-width: 900px;
     height: 100%;
     margin: auto;
     border-spacing: 10px;
 }
 
 .beatmap-mod {
-    width: 12%;
+    width: 100px;
     height: 100%;
-    border-radius: 18px;
-
 }
 
 .beatmap-mod-text {
@@ -252,11 +248,11 @@ footer {
 
 .beatmap-info {
     background-color: var(--bg-color4);
+    width: calc(100% - 500px);
     height: 100%;
     border-radius: 18px;
     margin-left: -30px;
     padding-left: 45px;
-    width: 45%;
     z-index: 2;
     position: relative;
 }
@@ -302,6 +298,12 @@ footer {
     margin-left: 5px;
     text-align: left;
     color: white;
+}
+
+.star-rating-container {
+    width: 100px;
+    height: 100%;
+    text-align: center;
 }
 
 .star-rating-text {
