@@ -20,8 +20,7 @@ class UserRoles(IntFlag):
     COMMENTATOR = auto()
     PLAYTESTER = auto()
     MAPPOOLER = auto()
-
-    ADMIN = auto()
+    HOST = auto()
 
 
 class UserRolesField(models.PositiveSmallIntegerField):
@@ -84,7 +83,7 @@ class TournamentInvolvement(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     tournament_iteration = models.ForeignKey(TournamentIteration, on_delete=models.CASCADE)
     roles = UserRolesField(default=0)
-    join_date = models.DateTimeField(blank=True)
+    join_date = models.DateTimeField(null=True)
 
     def __str__(self):
         return f"{self.user} {self.tournament_iteration} Involvement"
@@ -107,8 +106,14 @@ class TournamentBracket(models.Model):
         return f"{self.tournament_iteration} Bracket"
 
 
+class Mappool(models.Model):
+    def get_beatmaps(self):
+        return MappoolBeatmap.objects.filter(mappool=self)
+
+
 class TournamentRound(models.Model):
     bracket = models.ForeignKey(TournamentBracket, on_delete=models.CASCADE)
+    mappool = models.ForeignKey(Mappool, on_delete=models.RESTRICT)
     name = models.CharField(max_length=16)
 
     def __str__(self):
@@ -125,17 +130,9 @@ class TournamentMatch(models.Model):
         return f"{self.tournament_round} Match {self.match_id}"
 
 
-class Mappool(models.Model):
-    tournament_round = models.ForeignKey(TournamentRound, on_delete=models.CASCADE)
-    name = models.CharField(max_length=16)
-
-    def __str__(self):
-        return f"{self.tournament_round} Mappool"
-
-
 class MappoolBeatmap(models.Model):
     mappool = models.ForeignKey(Mappool, on_delete=models.CASCADE)
-    beatmap_id = models.PositiveSmallIntegerField()
+    beatmap_id = models.PositiveIntegerField()
     modification = models.CharField(max_length=4)
     artist = models.CharField()
     title = models.CharField()
@@ -148,7 +145,8 @@ class MappoolBeatmap(models.Model):
     cover = models.CharField()
 
     @classmethod
-    def from_beatmap_id(cls, mappool, modification, beatmap_id):
+    def from_beatmap_id(cls, mappool: Mappool, modification: str, beatmap_id: int):
+        modification = modification.upper()
         beatmap = OSU_CLIENT.get_beatmap(beatmap_id)
         mod = modification[:2]
         beatmap_difficulty = OSU_CLIENT.get_beatmap_attributes(
@@ -162,14 +160,14 @@ class MappoolBeatmap(models.Model):
             modification=modification,
             artist=beatmap.beatmapset.artist,
             title=beatmap.beatmapset.title,
-            difficulty=beatmap.beatmapset.version,
+            difficulty=beatmap.version,
             star_rating=beatmap_difficulty.star_rating,
             overall_difficulty=beatmap.accuracy,
             approach_rate=beatmap.ar,
             circle_size=beatmap.cs,
             health_drain=beatmap.drain,
-            background=beatmap.beatmapset.covers.cover_2x
+            cover=beatmap.beatmapset.covers.cover_2x
         )
 
     def __str__(self):
-        return f"{self.mappool.tournament_round} {self.modification}"
+        return f"{self.modification}"
