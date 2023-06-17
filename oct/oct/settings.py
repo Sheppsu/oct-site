@@ -14,7 +14,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv()
 import os
-from osu import AuthHandler, Scope
+from osu import AuthHandler, Scope, Client
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -151,3 +151,4 @@ OSU_CLIENT_ID = int(os.getenv("OSU_CLIENT_ID"))
 OSU_CLIENT_SECRET = os.getenv("OSU_CLIENT_SECRET")
 OSU_CLIENT_REDIRECT = os.getenv("OSU_CLIENT_REDIRECT")
 OSU_AUTH_URL = AuthHandler(OSU_CLIENT_ID, OSU_CLIENT_SECRET, OSU_CLIENT_REDIRECT, Scope.identify()).get_auth_url()
+OSU_CLIENT = Client.from_client_credentials(OSU_CLIENT_ID, OSU_CLIENT_SECRET, OSU_CLIENT_REDIRECT)

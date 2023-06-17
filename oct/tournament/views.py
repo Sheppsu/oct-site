@@ -1,5 +1,5 @@
 from django.shortcuts import redirect
-from django.contrib.auth import get_user_model, login as _login
+from django.contrib.auth import get_user_model, login as _login, logout as _logout
 from django.conf import settings
 from django.http import HttpResponseBadRequest, HttpResponseServerError
 
@@ -42,6 +42,8 @@ def login(req):
         code = req.GET.get("code", None)
         if code is not None:
             user = User.objects.create_user(code)
+            if user is None:
+                return HttpResponseServerError()
             _login(req, user, backend=settings.AUTH_BACKEND)
         state = req.GET.get("state", None)
         return redirect(state or "index", permanent=True)
@@ -51,6 +53,13 @@ def login(req):
     except:
         traceback.print_exc()
     return HttpResponseServerError()
+
+
+def logout(req):
+    if req.user.is_authenticated:
+        _logout(req.user)
+    return redirect("index", permanent=True)
+
 
 
 def dashboard(req):
