@@ -2,22 +2,20 @@
 {% load static %}
 {% block title %}Home{% endblock title %}
 {% block body %}
-<div style="margin-top: 170px; margin-left: 75px; margin-right: 75px">
-    <table class="banner">
-        <tr>
-            <td class="banner-image prevent-select">
-                <img class="drill-image" src="{% static 'assets/images/drill.webp' %}" alt="">
-            </td>
-            <td class="banner-title prevent-select">
-                <img class="oct-image" src="{% static 'assets/images/oct4.png' %}" alt="">
-            </td>
-            <td class="banner-stage-block">
-                <p class="banner-text">Current Stage:</p>
-            </td>
+<div style="padding-top: 100px;"></div>
+<div id="video-container">
+    <div id="fade-in-element" class="hidden banner-title prevent-select video-overlay">
+        <img src="{% static 'assets/images/oct4.png' %}" alt="">    
+    </div>
+    <video src="{% static 'assets/videos/octbackground.mp4' %}" autoplay muted loop class="homepage-video"></video>
+</div>
+<div style="margin-left: 75px; margin-right: 75px;">
+    <h1 style="text-align: center;">Welcome to OCT</h1>
 
-        </tr>
-    </table>
 
+
+
+    <script src="{% static 'js/fade-in-script.js' %}"></script>
 </div>
 {% endblock body %}
 {% block headerid %}home{% endblock headerid %}

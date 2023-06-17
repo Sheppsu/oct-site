@@ -6,6 +6,16 @@
     --bg-color4: #e7e7e7;
 }
 
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin: 0 0 100px;
+    padding-bottom: 50px;
+}
+
 p {
     font-family: 'Inter', sans-serif;
     margin: 0;
@@ -21,6 +31,56 @@ h1 {
     font-weight: bold;
     font-size: 50px;
 }
+
+footer {
+    background-color: #454343;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 50px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.footer-block {
+    height: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 15px;
+}
+
+.footer-text {
+    transition: color 0.3s ease;
+}
+
+.footer-text:hover {
+    color: white;
+}
+
+.footer-image {
+    height: 23px;
+    transition: filter 0.3s ease;
+    padding-bottom: 10px;
+}
+
+.footer-image:hover {
+    filter: brightness(0) invert(1);
+}
+
+.footer {
+    width: 100%;
+    height: 100%;
+    padding-left: 5px;
+    display: flex;
+    justify-content: left;
+    align-items: left;
+}
+
+.footer-link {
+    color: inherit;
+    text-decoration: none;
+}
+
 
 .flex-container {
     display: flex;
@@ -47,7 +107,7 @@ h1 {
 .header {
     background-color: var(--bg-color1);
     width: 100%;
-    height: 80px;
+    height: 60px;
     position: absolute;
     left: 0;
     top: 0;
@@ -66,18 +126,28 @@ h1 {
     font-family: 'Inter', sans-serif;
     margin: 0;
     margin-top: 30px;
+    transition: color 0.3s ease;
+}
+
+.header-text:hover {
+    color: #454343;
 }
 
 .header-title {
-    text-align: left;
+    text-align: center;
     font-family: 'Inter', sans-serif;
     font-weight: 800;
     font-style: italic;
     font-size: 65px;
     color: white;
     margin: 0;
-    margin-left: 30px;
+    margin-left: 15px;
+    transition: color 0.3s ease;
 
+}
+
+.header-title:hover {
+    color: #454343;
 }
 
 .empty-header-block {
@@ -150,10 +220,6 @@ h1 {
     width: 180px;
     height: 180px;
     margin-right: 50px;
-}
-
-.oct-image {
-    width: 660px;
 }
 
 .mappools-beatmap-table {
@@ -257,4 +323,45 @@ h1 {
     font-weight: 800;
     color: white;
     padding-top: 15px;
+    padding-left: 8px;
+}
+
+.hidden {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+#fade-in-element {
+    transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+}
+
+.homepage-video {
+    margin-top: -4px;
+}
+
+#video-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#video-container video {
+    width: 100%;
+}
+
+.video-overlay {
+    position: absolute;
+    top: 30px;
+    left: auto;
+    width: 660px;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.video-overlay img {
+    width: 660px;
 }
