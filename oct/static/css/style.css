@@ -276,15 +276,14 @@ footer {
     width: 100%;
     padding-top: 5px;
     line-height: 1.2;
-    max-height: 2.4em;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .beatmap-difficulty {
     font-weight: 300;
-    font-size: 15px;
-    height: 40%;
+    font-size: 12px;
+    height: calc(40% - 5px);
     width: 100%;
 }
 
@@ -298,8 +297,8 @@ footer {
 }
 
 .difficulty-bar-inside {
-    height: 10px;
-    border-radius: 10px;
+    height: 100%;
+    border-radius: inherit;
     background-color: #6862DD;
 }
 
