@@ -4,6 +4,7 @@
     --bg-color2: #e866a0;
     --bg-color3: #52a1ff;
     --bg-color4: #e7e7e7;
+    --bg-color5: #454343;
 }
 
 html {
@@ -33,7 +34,7 @@ h1 {
 }
 
 footer {
-    background-color: #454343;
+    background-color: var(--bg-color1);
     position: absolute;
     left: 0;
     bottom: 0;
@@ -51,20 +52,22 @@ footer {
 
 .footer-text {
     transition: color 0.3s ease;
+    color: white;
 }
 
 .footer-text:hover {
-    color: white;
+    color: black;
 }
 
 .footer-image {
     height: 23px;
     transition: filter 0.3s ease;
     padding-bottom: 10px;
+    filter: brightness(0) invert(1);
 }
 
 .footer-image:hover {
-    filter: brightness(0) invert(1);
+    filter: brightness(1) invert(0);
 }
 
 .footer {
