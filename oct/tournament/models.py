@@ -65,6 +65,9 @@ class User(AbstractBaseUser):
 
     objects = UserManager()
 
+    def get_tournament_involvement(self, **kwargs):
+        return TournamentInvolvement.objects.filter(user=self, **kwargs)
+
     def __str__(self):
         return self.osu_username
 
@@ -102,19 +105,28 @@ class TournamentBracket(models.Model):
     # in the future
     tournament_iteration = models.ForeignKey(TournamentIteration, on_delete=models.CASCADE)
 
+    def get_rounds(self, **kwargs):
+        return TournamentRound.objects.filter(bracket=self, **kwargs)
+
     def __str__(self):
         return f"{self.tournament_iteration} Bracket"
 
 
 class Mappool(models.Model):
-    def get_beatmaps(self):
-        return MappoolBeatmap.objects.filter(mappool=self)
+    def get_rounds(self, **kwargs):
+        return TournamentRound.objects.filter(mappool=self, **kwargs)
+
+    def get_beatmaps(self, **kwargs):
+        return MappoolBeatmap.objects.filter(mappool=self, **kwargs)
 
 
 class TournamentRound(models.Model):
     bracket = models.ForeignKey(TournamentBracket, on_delete=models.CASCADE)
     mappool = models.ForeignKey(Mappool, on_delete=models.RESTRICT)
     name = models.CharField(max_length=16)
+
+    def get_matches(self, **kwargs):
+        return TournamentMatch.objects.filter(tournament_round=self, **kwargs)
 
     def __str__(self):
         return f"{self.bracket.tournament_iteration.name}: {self.name}"
