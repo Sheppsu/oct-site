@@ -1,7 +1,9 @@
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth import get_user_model, login as _login, logout as _logout
 from django.conf import settings
 from django.http import HttpResponseBadRequest, HttpResponseServerError
+
+from .models import TournamentIteration
 
 import requests
 import traceback
@@ -11,7 +13,6 @@ import json
 
 
 User = get_user_model()
-
 
 
 def index(req):
@@ -46,7 +47,7 @@ def login(req):
                 return HttpResponseServerError()
             _login(req, user, backend=settings.AUTH_BACKEND)
         state = req.GET.get("state", None)
-        return redirect(state or "index", permanent=True)
+        return redirect(state or "index")
     except requests.HTTPError as exc:
         print(exc)
         return HttpResponseBadRequest()
@@ -58,9 +59,16 @@ def login(req):
 def logout(req):
     if req.user.is_authenticated:
         _logout(req.user)
-    return redirect("index", permanent=True)
-
+    return redirect("index")
 
 
 def dashboard(req):
     return redirect("index")
+
+
+def tournaments(req, name=None):
+    if name is None:
+        return redirect("named_tournament", name=TournamentIteration.objects.get().name)
+    name = name.upper()
+    tournament = get_object_or_404(TournamentIteration, name=name)
+    return render(req, "tournament/tournaments.html", {"tournament": tournament})

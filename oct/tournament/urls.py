@@ -8,5 +8,7 @@ urlpatterns = [
     path("mappools", views.mappools, name="mappools"),
     path("bracket", views.bracket, name="bracket"),
     path("login", views.login, name="login"),
-    path("dashboard", views.dashboard, name="dashboard")
+    path("dashboard", views.dashboard, name="dashboard"),
+    path("tournaments", views.tournaments, name="tournaments"),
+    path("tournaments/<str:name>", views.tournaments, name="named_tournament")
 ]
