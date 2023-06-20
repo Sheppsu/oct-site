@@ -4,19 +4,19 @@
 {% block body %}
 <div style="margin-top: 150px;">
     <p style="text-align: center;">Note: this is placeholder information, not actual pools of OCT4</p>
-    {% for round in map_list %}
+    {% for round in mappools %}
         <h1 style="text-align: center;">{{ round.stage }}</h1>
         <table class="mappools-beatmap-table">
             {% for map in round.maps %}
                 <tr>
                     <td>
                         <a href="https://osu.ppy.sh/b/{{ map.id }}" target="_blank">
-                            <div id="{{ round.stage }}-{{ map.mod }}-beatmap" class="flex-container beatmap-container prevent-select" style="background-image: linear-gradient(to right, {{ map.color }}, #AAAAAA);">
+                            <div id="{{ round.stage }}-{{ map.modification }}-beatmap" class="flex-container beatmap-container prevent-select" style="background-image: linear-gradient(to right, {{ map.color }}, #AAAAAA);">
                                 <div class="beatmap-mod">
-                                    <p class="beatmap-mod-text">{{ map.mod }}</p>
+                                    <p class="beatmap-mod-text">{{ map.modification }}</p>
                                 </div>
                                 <div>
-                                    <img class="beatmap-image" src="{{ map.background }}" alt="">
+                                    <img class="beatmap-image" src="{{ map.cover }}" alt="">
                                 </div>
                                 <div class="beatmap-info" style="display: flex;">
                                     <div style="width: calc(100% - 150px);">
@@ -33,13 +33,13 @@
                                                 <td style="width: 50%; height: 50%;">
                                                     <div id="cs" class="difficulty-bar-outside">
                                                         <div class="difficulty-bar-inside" style="width: {{ map.cs_percent }}"></div>
-                                                        <p class="bar-text text-stroke">CS: {{ map.cs }}</p>
+                                                        <p class="bar-text text-stroke">CS: {{ map.circle_size }}</p>
                                                     </div>
                                                 </td>
                                                 <td style="width: 50%; height: 50%;">
                                                     <div id="hp" class="difficulty-bar-outside">
                                                         <div class="difficulty-bar-inside" style="width: {{ map.hp_percent }}"></div>
-                                                        <p class="bar-text text-stroke">HP: {{ map.hp }}</p>
+                                                        <p class="bar-text text-stroke">HP: {{ map.health_drain }}</p>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -47,13 +47,13 @@
                                                 <td style="width: 50%; height: 40%;">
                                                     <div id="od" class="difficulty-bar-outside">
                                                         <div class="difficulty-bar-inside" style="width: {{ map.od_percent }}"></div>
-                                                        <p class="bar-text text-stroke">OD: {{ map.od }}</p>
+                                                        <p class="bar-text text-stroke">OD: {{ map.overall_difficulty }}</p>
                                                     </div>
                                                 </td>
                                                 <td style="width: 50%; height: 50%;">
                                                     <div id="ar" class="difficulty-bar-outside">
                                                         <div class="difficulty-bar-inside" style="width: {{ map.ar_percent }}"></div>
-                                                        <p class="bar-text text-stroke">AR: {{ map.ar }}</p>
+                                                        <p class="bar-text text-stroke">AR: {{ map.approach_rate }}</p>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -62,7 +62,7 @@
                                 </div>
 
                                 <div class="star-rating-container">
-                                    <p class="star-rating-text">⭐{{ map.sr }}</p>
+                                    <p class="star-rating-text">⭐{{ map.rounded_sr }}</p>
                                 </div>
                             </div>
                         </a>
@@ -70,7 +70,7 @@
                 </tr>
             <script type="module">
                 import { getDiffColor } from "{% static 'js/util.js' %}"
-                document.getElementById("{{ round.stage }}-{{ map.mod }}-beatmap").style.backgroundImage = "linear-gradient(to right, {{ map.color }}, "+getDiffColor({{ map.sr }})+")";
+                document.getElementById("{{ round.stage }}-{{ map.modification }}-beatmap").style.backgroundImage = "linear-gradient(to right, {{ map.color }}, "+getDiffColor({{ map.star_rating }})+")";
             </script>
             {% endfor %}
         </table>

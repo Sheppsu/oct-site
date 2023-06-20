@@ -2,17 +2,29 @@ from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth import get_user_model, login as _login, logout as _logout
 from django.conf import settings
 from django.http import HttpResponseBadRequest, HttpResponseServerError
+from django.core.cache import cache
 
-from .models import TournamentIteration
+from .models import TournamentIteration, TournamentBracket
 
 import requests
 import traceback
 from common import render
-import os
-import json
 
 
 User = get_user_model()
+
+
+def get_mappools(name):
+    mps = cache.get(f"{name}_mappools")
+    if mps is None:
+        tournament: TournamentIteration = get_object_or_404(TournamentIteration, name=name)
+        # TODO: multiple brackets is possible
+        bracket: TournamentBracket = tournament.get_brackets()[0]
+        # TODO: rounds sharing the same mappool is possible
+        rounds = bracket.get_rounds()
+        mps = [{"maps": rnd.mappool.get_beatmaps(), "stage": rnd.full_name} for rnd in reversed(rounds)]
+        cache.set(f"{name}_mappools", mps, None)
+    return mps
 
 
 def index(req):
@@ -23,15 +35,12 @@ def teams(req):
     return render(req, "tournament/teams.html")
 
 
-def mappools(req):
-    cur_dir = os.getcwd()
-    parent_dir = os.path.abspath(os.path.join(cur_dir, os.pardir))
-    file_path = os.path.join(parent_dir, "oct", "static", "testdata", "map_list.json")
-
-    with open (file_path, "r") as f:
-        map_list = json.load(f)
-
-    return render(req, "tournament/mappools.html", {"map_list": map_list})
+def mappools(req, name=None):
+    if name is None:
+        return redirect("named_mappools", name=TournamentIteration.objects.get().name)
+    return render(req, "tournament/mappools.html", {
+        "mappools": get_mappools(name.upper())
+    })
 
 
 def bracket(req):
@@ -69,6 +78,7 @@ def dashboard(req):
 def tournaments(req, name=None):
     if name is None:
         return redirect("named_tournament", name=TournamentIteration.objects.get().name)
+
     name = name.upper()
     tournament = get_object_or_404(TournamentIteration, name=name)
     return render(req, "tournament/tournaments.html", {"tournament": tournament})

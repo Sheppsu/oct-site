@@ -87,6 +87,9 @@ class TournamentIteration(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
 
+    def get_brackets(self, **kwargs):
+        return TournamentBracket.objects.filter(tournament_iteration=self, **kwargs)
+
     def __str__(self):
         return self.name
 
@@ -134,6 +137,7 @@ class TournamentRound(models.Model):
     bracket = models.ForeignKey(TournamentBracket, on_delete=models.CASCADE)
     mappool = models.ForeignKey(Mappool, on_delete=models.RESTRICT)
     name = models.CharField(max_length=16)
+    full_name = models.CharField(max_length=32)
     ban_order = models.CharField(max_length=16, null=True)
 
     def get_matches(self, **kwargs):
@@ -171,6 +175,23 @@ class MappoolBeatmap(models.Model):
     circle_size = models.FloatField()
     health_drain = models.FloatField()
     cover = models.CharField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.color = {
+            "NM": "#52a1ff",
+            "HD": "#ffe599",
+            "HR": "#ea9999",
+            "DT": "#b4a7d6",
+            "FM": "",
+            "TB": "#d5a6bd"
+        }[self.modification[:2]]
+        self.cs_percent = self.circle_size / 10
+        self.ar_percent = self.approach_rate / (11 if self.modification.startswith("DT") else 10)
+        self.od_percent = self.overall_difficulty / (11 if self.modification.startswith("DT") else 10)
+        self.hp_percent = self.health_drain / 10
+        self.rounded_sr = round(self.star_rating, 2)
 
     @classmethod
     def from_beatmap_id(cls, mappool: Mappool, modification: str, beatmap_id: int):

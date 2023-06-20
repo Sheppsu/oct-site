@@ -152,3 +152,11 @@ OSU_CLIENT_SECRET = os.getenv("OSU_CLIENT_SECRET")
 OSU_CLIENT_REDIRECT = os.getenv("OSU_CLIENT_REDIRECT")
 OSU_AUTH_URL = AuthHandler(OSU_CLIENT_ID, OSU_CLIENT_SECRET, OSU_CLIENT_REDIRECT, Scope.identify()).get_auth_url()
 OSU_CLIENT = Client.from_client_credentials(OSU_CLIENT_ID, OSU_CLIENT_SECRET, OSU_CLIENT_REDIRECT)
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-snowflake",
+    }
+}
