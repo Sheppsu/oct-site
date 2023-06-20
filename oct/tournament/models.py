@@ -3,9 +3,9 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.conf import settings
 
 import uuid
-from enum import IntFlag, auto
+from enum import IntFlag, IntEnum, auto
 from osu import Client, AuthHandler, GameModeStr, Mods
-from common import get_auth_handler
+from common import get_auth_handler, enum_field
 
 
 OSU_CLIENT: Client = settings.OSU_CLIENT
@@ -23,9 +23,18 @@ class UserRoles(IntFlag):
     HOST = auto()
 
 
-class UserRolesField(models.PositiveSmallIntegerField):
-    def to_python(self, value):
-        return UserRoles(value)
+class BracketType(IntEnum):
+    DOUBLE_ELIMINATION = 0
+
+
+@enum_field(UserRoles, models.PositiveSmallIntegerField)
+class UserRolesField:
+    pass
+
+
+@enum_field(BracketType, models.PositiveSmallIntegerField)
+class BracketTypeField:
+    pass
 
 
 class UserManager(BaseUserManager):
@@ -104,6 +113,7 @@ class TournamentBracket(models.Model):
     # one-to-many relationship in case multiple brackets are used
     # in the future
     tournament_iteration = models.ForeignKey(TournamentIteration, on_delete=models.CASCADE)
+    type = BracketTypeField(default=BracketType.DOUBLE_ELIMINATION)
 
     def get_rounds(self, **kwargs):
         return TournamentRound.objects.filter(bracket=self, **kwargs)
@@ -124,6 +134,7 @@ class TournamentRound(models.Model):
     bracket = models.ForeignKey(TournamentBracket, on_delete=models.CASCADE)
     mappool = models.ForeignKey(Mappool, on_delete=models.RESTRICT)
     name = models.CharField(max_length=16)
+    ban_order = models.CharField(max_length=16, null=True)
 
     def get_matches(self, **kwargs):
         return TournamentMatch.objects.filter(tournament_round=self, **kwargs)
@@ -137,6 +148,11 @@ class TournamentMatch(models.Model):
     match_id = models.PositiveSmallIntegerField()
     teams = models.ManyToManyField(TournamentTeam)
     starting_time = models.DateTimeField()
+    is_losers = models.BooleanField(default=False)
+
+    bans = models.CharField(max_length=32, null=True)
+    picks = models.CharField(max_length=64, null=True)
+    wins = models.CharField(max_length=16, null=True)
 
     def __str__(self):
         return f"{self.tournament_round} Match {self.match_id}"
