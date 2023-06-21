@@ -1,0 +1,8 @@
+.content {
+    width: 90%;
+    max-width: 800px;
+    margin: auto;
+    padding: 10px;
+    border: solid black;
+    border-radius: 10px;
+}

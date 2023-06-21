@@ -23,6 +23,7 @@ def get_mappools(name):
         # TODO: rounds sharing the same mappool is possible
         rounds = bracket.get_rounds()
         mps = [{"maps": rnd.mappool.get_beatmaps(), "stage": rnd.full_name} for rnd in reversed(rounds)]
+        # TODO: should it be none...?
         cache.set(f"{name}_mappools", mps, None)
     return mps
 
@@ -72,7 +73,7 @@ def logout(req):
 
 
 def dashboard(req):
-    return redirect("index")
+    return render(req, "tournament/dashboard.html")
 
 
 def tournaments(req, name=None):
