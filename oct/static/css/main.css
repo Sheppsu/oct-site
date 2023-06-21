@@ -123,7 +123,7 @@ footer {
 
 .header-text {
     text-align: center;
-    color: white;
+    color: inherit;
     font-size: 29px;
     font-style: italic;
     font-family: 'Inter', sans-serif;
@@ -132,17 +132,13 @@ footer {
     transition: color 0.3s ease;
 }
 
-.header-text:hover {
-    color: #454343;
-}
-
 .header-title {
     text-align: center;
     font-family: 'Inter', sans-serif;
     font-weight: 800;
     font-style: italic;
     font-size: 65px;
-    color: white;
+    color: inherit;
     margin: 0;
     margin-left: 15px;
     transition: color 0.3s ease;
@@ -162,6 +158,11 @@ footer {
     width: 100%;
     height: 100%;
     padding: 10px 0;
+    color: white;
+}
+
+.header-link-container:hover {
+    color: #454343;
 }
 
 .header-link {
@@ -169,10 +170,21 @@ footer {
 }
 
 .login-box {
-    width: 150px;
+    width: 100%;
     height: 50px;
     background-color: var(--bg-color2);
     border-radius: 50px;
+}
+
+.login-text {
+    width: 100%;
+    height: 100%;
+    margin-top: 25px;
+    text-align: center;
+    color: white;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .osu-logo {
