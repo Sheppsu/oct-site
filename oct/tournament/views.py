@@ -78,8 +78,9 @@ def dashboard(req):
 
 def tournaments(req, name=None):
     if name is None:
-        return redirect("named_tournament", name=TournamentIteration.objects.get().name)
-
+        return render(req, "tournament/tournaments.html", {
+            "tournaments": list(TournamentIteration.objects.all())*6
+        })
     name = name.upper()
     tournament = get_object_or_404(TournamentIteration, name=name)
-    return render(req, "tournament/tournaments.html", {"tournament": tournament})
+    return render(req, "tournament/tournament.html", {"tournament": tournament})

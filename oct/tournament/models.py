@@ -82,10 +82,12 @@ class User(AbstractBaseUser):
 
 
 class TournamentIteration(models.Model):
-    name = models.CharField(max_length=16, primary_key=True)
+    name = models.CharField(max_length=8, primary_key=True)
+    full_name = models.CharField(max_length=32)
     users = models.ManyToManyField(User, through="TournamentInvolvement")
     start_date = models.DateField()
     end_date = models.DateField()
+    thumbnail = models.CharField(max_length=32)
 
     def get_brackets(self, **kwargs):
         return TournamentBracket.objects.filter(tournament_iteration=self, **kwargs)

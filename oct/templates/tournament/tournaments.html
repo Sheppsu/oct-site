@@ -1,8 +1,22 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Tournaments: {{ tournament.name }}{% endblock title %}
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/tournaments.css' %}">
+{% endblock head %}
+{% block title %}Tournaments{% endblock title %}
 {% block body %}
-<div style="margin-top: 150px;">
-
+<div class="tournaments-container">
+    {% for tournament in tournaments %}
+    <a href="{% url 'named_tournament' name=tournament.name %}">
+        <div class="tournament">
+            {% with 'assets/images/'|add:tournament.thumbnail as thumbnail %}
+            <img src="{% static thumbnail %}" class="tournament-thumbnail">
+            {% endwith %}
+            <div class="tournament-label-container">
+                <p>{{ tournament.full_name }}</p>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
 </div>
 {% endblock body %}
