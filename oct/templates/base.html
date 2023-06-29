@@ -39,7 +39,7 @@
                     <p class="header-text">Bracket</p>
                 </div></a>
             </td>
-            <td style="width: calc(100% - 770px;);"></td>
+            <td style="width: calc(100% - 770px);"></td>
             <td class="header-block prevent-select" style="padding-right: 20px; width:150px;">
                 <a href="{% if not is_logged_in %}{{ login_url }}{% else %}{% url 'dashboard' %}{% endif %}">
                     <div class="{% if not is_logged_in %}login-box shadow{% else %}user-box{% endif %}">
