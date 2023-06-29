@@ -68,7 +68,7 @@ def login(req):
 
 def logout(req):
     if req.user.is_authenticated:
-        _logout(req.user)
+        _logout(req)
     return redirect("index")
 
 

@@ -51,8 +51,9 @@ class UserManager(BaseUserManager):
             user_obj.refresh_token = auth.refresh_token
             user_obj.osu_username = user.username
             user_obj.osu_avatar = user.avatar_url
+            user_obj.osu_cover = user.cover["url"]
         except User.DoesNotExist:
-            user_obj = User(osu_id=user.id, osu_username=user.username, osu_avatar=user.avatar_url,
+            user_obj = User(osu_id=user.id, osu_username=user.username, osu_avatar=user.avatar_url, osu_cover=user.cover["url"],
                             refresh_token=auth.refresh_token)
         user_obj.save()
         return user_obj
@@ -63,6 +64,7 @@ class User(AbstractBaseUser):
     osu_id = models.PositiveIntegerField(unique=True, editable=False)
     osu_username = models.CharField(max_length=15, unique=True)
     osu_avatar = models.CharField(default="")
+    osu_cover = models.CharField(default="")
 
     refresh_token = models.CharField(default="")
 
