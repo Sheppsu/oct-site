@@ -69,6 +69,8 @@ button:hover {
     justify-content: center;
     display: flex;
     flex-direction: column;
+    background-position: center;
+    background-repeat: no-repeat
 }
 
 #user-card-username {
@@ -76,6 +78,15 @@ button:hover {
     font-style: italic;
     font-size: 45px;
     padding-bottom: 14px;
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis;
+}
+
+#user-card-rank {
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis;
 }
 
 .user-card-team {
@@ -96,6 +107,8 @@ button:hover {
     padding-right: 30px;
 }
 
+
+
 .stats-box {
     height: 100%;
     width: 230px;
@@ -106,12 +119,13 @@ button:hover {
     flex-direction: column;
     align-items: center;
     margin-right: 10px;
+    transition: all 0.5s ease-out;
 }
 
 .stats-buttons-container {
     width: 100%;
     height: 100%;
-    margin-top: 30px;
+    margin-top: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -126,6 +140,27 @@ button:hover {
     flex-direction: column;
     align-items: center;
     margin-left: 10px;
+    transition: all 0.5s ease-out;
+}
+
+@media (max-width: 750px) {
+    .bottom-container {
+        flex-direction: column;
+    }
+
+    .stats-box {
+        width: 100%;
+    }
+
+    .stats-buttons-container {
+        margin-bottom: 20px;
+    }
+
+    .matches-box {
+        width: 100%;
+        margin-left: 0px;
+        margin-top: 30px;
+    }
 }
 
 .box-header-text {
@@ -139,7 +174,7 @@ button:hover {
     height: calc(100% - 10px);
     max-height: 400px;
     padding-top: 15px;
-    padding: 0px 15px;
+    padding: 0px 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -147,12 +182,12 @@ button:hover {
 }
 
 .match-container {
-    width: 100%;
+    width: calc(100% - 20px);
     height: 70px;
     min-height: 70px;
     border-radius: 13px;
     padding: 10px;
-    margin: 7px;
+    margin-bottom: 15px; 
     background: linear-gradient(90deg, #FF8A8A 0%, #F6F6F6 30.65%, #F6F6F6 100%);
     box-shadow: 1px 6px 11px -3px rgba(0, 0, 0, 0.25);
     display: grid;
