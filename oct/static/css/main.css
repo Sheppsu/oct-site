@@ -116,6 +116,7 @@ footer {
     top: 0;
 }
 
+
 .header-block {
     width: 20%;
     height: 100%;
@@ -129,8 +130,9 @@ footer {
     font-family: 'Inter', sans-serif;
     margin: 0;
     margin-top: 30px;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
 }
+
 
 .header-title {
     text-align: center;
@@ -141,8 +143,23 @@ footer {
     color: inherit;
     margin: 0;
     margin-left: 15px;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
+    
+}
 
+@media (max-width: 650px) {
+    .header-block {
+        width: 7%;
+    }
+
+    .header-text {
+        font-size: 20px;
+    }
+
+    .header-title {
+        font-size: 45px;
+        margin-top: 10px;
+    }
 }
 
 .header-title:hover {
@@ -190,8 +207,6 @@ footer {
     height: 100%;
     margin-top: 25px;
     text-align: center;
-    overflow: hidden;
-    text-overflow: ellipsis;
     white-space: nowrap;
 }
 
@@ -210,7 +225,6 @@ footer {
 
 .banner {
     height: 150px;
-    cell-spacing: 20px;
 }
 
 .banner-image {
