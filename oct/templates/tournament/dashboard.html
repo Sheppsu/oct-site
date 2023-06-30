@@ -9,11 +9,17 @@
     <div class="user-card-container">
         <img src="{{ avatar_url }}" alt="" class="user-card-pfp">
         <div class="user-card-info" style="background-image: linear-gradient(to right, #F6F6F6 40%, transparent), url('{{ banner }}');">
-            <p id="user-card-username">Among Us</p>
+            <p id="user-card-username">{{ username }}</p>
             <p id="user-card-rank">#11000</p>
         </div>
         <div class="user-card-team">
-          <button id="register-button">Register</button>
+            {% if is_registered %}
+            <button id="register-button">Registered</button>
+            {% else %}
+            <a href="{% url 'register' %}">
+                <button id="register-button">Register</button>
+            </a>
+            {% endif %}
         </div>
     </div>
 
