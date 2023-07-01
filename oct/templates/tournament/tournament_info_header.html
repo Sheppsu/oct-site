@@ -1,0 +1,33 @@
+<table class="tournament-header prevent-select">
+    <tr>
+        <td id="info-cell" class="tournament-header-item">
+            <a href="{% url 'tournament_info' name=tournament.name %}">
+                <div style="width:100%;height:100%;">
+                    <p class="tournament-header-text">INFO</p>
+                </div>
+            </a>
+        </td>
+        <td id="mappool-cell" class="tournament-header-item">
+            <a href="{% url 'tournament_section' name=tournament.name section='mappool' %}">
+                <div style="width:100%;height:100%;">
+                    <p class="tournament-header-text">MAPPOOL</p>
+                </div>
+            </a>
+        </td>
+        <td id="teams-cell" class="tournament-header-item">
+            <a href="{% url 'tournament_section' name=tournament.name section='teams' %}">
+                <div style="width:100%;height:100%;">
+                    <p class="tournament-header-text">TEAMS</p>
+                </div>
+            </a>
+        </td>
+        <td id="bracket-cell" class="tournament-header-item">
+            <a href="{% url 'tournament_section' name=tournament.name section='bracket' %}">
+                <div style="width:100%;height:100%;">
+                    <p class="tournament-header-text">BRACKET</p>
+                </div>
+            </a>
+        </td>
+        <td></td>
+    </tr>
+</table>

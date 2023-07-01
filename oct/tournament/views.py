@@ -16,10 +16,10 @@ User = get_user_model()
 OCT4 = TournamentIteration.objects.get(name="OCT4")
 
 
-def get_mappools(name):
-    mps = cache.get(f"{name}_mappools")
+# TODO: maybe move caching logic to models
+def get_mappools(tournament: TournamentIteration):
+    mps = cache.get(f"{tournament.name}_mappools")
     if mps is None:
-        tournament: TournamentIteration = get_object_or_404(TournamentIteration, name=name)
         # TODO: multiple brackets is possible
         brackets = tournament.get_brackets()
         if not brackets:
@@ -34,28 +34,12 @@ def get_mappools(name):
             } for rnd in reversed(rounds)
         ]
         # TODO: should it be None...?
-        cache.set(f"{name}_mappools", mps, None)
+        cache.set(f"{tournament.name}_mappools", mps, None)
     return mps
 
 
 def index(req):
     return render(req, "tournament/index.html")
-
-
-def teams(req):
-    return render(req, "tournament/teams.html")
-
-
-def mappools(req, name=None):
-    if name is None:
-        return redirect("named_mappools", name="OCT4")
-    return render(req, "tournament/mappools.html", {
-        "mappools": get_mappools(name.upper())
-    })
-
-
-def bracket(req):
-    return render(req, "tournament/bracket.html")
 
 
 def login(req):
@@ -91,14 +75,46 @@ def dashboard(req):
     })
 
 
-def tournaments(req, name=None):
+def tournaments(req, name=None, section=None):
     if name is None:
         return render(req, "tournament/tournaments.html", {
-            "tournaments": list(TournamentIteration.objects.all())*6
+            "tournaments": TournamentIteration.objects.all()
         })
     name = name.upper()
     tournament = get_object_or_404(TournamentIteration, name=name)
-    return render(req, "tournament/tournament.html", {"tournament": tournament})
+    if section is None:
+        return render(req, "tournament/tournament_info.html", {"tournament": tournament})
+    try:
+        return {
+            "mappool": mappools,
+            "teams": teams,
+            "bracket": bracket,
+        }[section](req, name=name)
+    except KeyError:
+        raise Http404()
+
+
+def mappools(req, name=None):
+    if name is None:
+        return redirect("tournament_section", name="OCT4", section="mappool")
+    name = name.upper()
+    tournament = get_object_or_404(TournamentIteration, name=name)
+    return render(req, "tournament/tournament_mappool.html", {
+        "mappools": get_mappools(tournament),
+        "tournament": tournament,
+    })
+
+
+def teams(req, name=None):
+    return render(req, "tournament/tournament_teams.html", {
+        "tournament": get_object_or_404(TournamentIteration, name=name.upper())
+    })
+
+
+def bracket(req, name=None):
+    return render(req, "tournament/tournament_bracket.html", {
+        "tournament": get_object_or_404(TournamentIteration, name=name.upper())
+    })
 
 
 def register(req):

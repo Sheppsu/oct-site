@@ -11,7 +11,7 @@ urlpatterns = [
     path("dashboard", views.dashboard, name="dashboard"),
     path("tournaments", views.tournaments, name="tournaments"),
     path("tournaments/mappools", views.mappools, name="mappools"),
-    path("tournaments/<str:name>", views.tournaments, name="named_tournament"),
-    path("tournaments/<str:name>/mappool", views.mappools, name="named_mappools"),
+    path("tournaments/<str:name>", views.tournaments, name="tournament_info"),
+    path("tournaments/<str:name>/<str:section>", views.tournaments, name="tournament_section"),
     path("register", views.register, name="register")
 ]

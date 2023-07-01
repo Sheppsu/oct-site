@@ -7,7 +7,7 @@
 {% block body %}
 <div class="tournaments-container">
     {% for tournament in tournaments %}
-    <a href="{% url 'named_tournament' name=tournament.name %}">
+    <a href="{% url 'tournament_info' name=tournament.name %}">
         <div class="tournament">
             {% with 'assets/images/'|add:tournament.thumbnail as thumbnail %}
             <img src="{% static thumbnail %}" class="tournament-thumbnail">

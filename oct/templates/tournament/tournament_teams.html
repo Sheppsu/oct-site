@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load static %}
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/tournament_info.css' %}">
+{% endblock head %}
+{% block title %}Tournaments: {{ tournament.name }} teams{% endblock title %}
+{% block body %}
+<div style="margin-top: 100px;">
+{% include "tournament/tournament_info_header.html" %}
+</div>
+<script>document.getElementById("teams-cell").classList.add("current-tournament-header");</script>
+{% endblock body %}

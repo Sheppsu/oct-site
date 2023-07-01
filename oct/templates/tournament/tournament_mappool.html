@@ -1,11 +1,13 @@
 {% extends "base.html" %}
 {% load static %}
 {% block head %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/tournament_info.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'css/mappools.css' %}">
 {% endblock head %}
 {% block title %}Mappools{% endblock title %}
 {% block body %}
-<div style="margin-top: 150px;">
+<div style="margin-top: 100px;">
+    {% include "tournament/tournament_info_header.html" %}
     <p style="text-align: center;">Note: this is placeholder information, not actual pools of OCT4</p>
     {% for round in mappools %}
         <h1 style="text-align: center;">{{ round.stage }}</h1>
@@ -79,4 +81,5 @@
         </table>
     {% endfor %}
 </div>
+<script>document.getElementById("mappool-cell").classList.add("current-tournament-header");</script>
 {% endblock body %}
