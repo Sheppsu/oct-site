@@ -107,10 +107,14 @@ footer {
     -1px  0   0 #000;
 }
 
+td {
+    padding: 0;
+}
+
 .header {
     background-color: var(--bg-color1);
     width: 100%;
-    height: 60px;
+    height: 100px;
     position: absolute;
     left: 0;
     top: 0;
@@ -221,36 +225,6 @@ footer {
     box-shadow: 0 0 30px 5px var(--bg-color2);
     -moz-box-shadow: 0 0 30px 5px var(--bg-color2);
     -webkit-box-shadow: 0 0 30px 5px var(--bg-color2);
-}
-
-.banner {
-    height: 150px;
-}
-
-.banner-image {
-    width: 10%;
-    height: 100%;
-    padding: 0;
-    margin: 0;
-}
-
-.banner-title {
-    width: 60%;
-    height: 100%;
-    padding: 0;
-    margin: 0;
-}
-
-.banner-text {
-    font-size: 30px;
-    font-weight: 500;
-}
-
-.banner-stage-block {
-    width: 30%;
-    height: 100%;
-    padding: 0;
-    margin: 0;
 }
 
 .drill-image {

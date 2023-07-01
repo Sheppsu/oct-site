@@ -3,19 +3,16 @@
 }
 
 .homepage-video {
-    margin-top: -4px;
+    width: 100%;
 }
 
 #video-container {
     position: relative;
     width: 100%;
+    margin-top: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-#video-container video {
-    width: 100%;
 }
 
 .video-overlay {
@@ -31,4 +28,11 @@
 
 .video-overlay img {
     width: 660px;
+}
+
+.banner-title {
+    width: 60%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
 }

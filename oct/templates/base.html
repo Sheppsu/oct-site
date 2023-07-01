@@ -16,31 +16,31 @@
     <title>OCT - {% block title %}{% endblock title %}</title>
 </head>
 
-<body style="margin: 0px;">
-    <table class="header">
+<body>
+    <table class="header prevent-select">
         <tr>
             <td style="width: 150px;">
-                <a class="header-link prevent-select" href="{% url 'index' %}"><div class="header-link-container">
+                <a class="header-link" href="{% url 'index' %}"><div class="header-link-container">
                     <h1 class="header-title">OCT</h1>
                 </div></a>
             </td>
-            <td id="teams" class="header-block prevent-select" style="width: 150px;">
+            <td id="teams" class="header-block" style="width: 150px;">
                 <a class="header-link" href="{% url 'teams' %}"><div class="header-link-container">
                     <p class="header-text">Teams</p>
                 </div></a>
             </td>
-            <td id="mappools" class="header-block prevent-select" style="width: 150px;">
+            <td id="mappools" class="header-block" style="width: 150px;">
                 <a class="header-link" href="{% url 'mappools' %}"><div class="header-link-container">
                     <p class="header-text">Mappools</p>
                 </div></a>
             </td>
-            <td id="bracket" class="header-block prevent-select" style="width: 150px;">
+            <td id="bracket" class="header-block" style="width: 150px;">
                 <a class="header-link" href="{% url 'bracket' %}"><div class="header-link-container">
                     <p class="header-text">Bracket</p>
                 </div></a>
             </td>
             <td style="width: calc(100% - 770px);"></td>
-            <td class="header-block prevent-select" style="padding-right: 20px; width:150px;">
+            <td class="header-block" style="padding-right: 20px; width:150px;">
                 <a href="{% if not is_logged_in %}{{ login_url }}{% else %}{% url 'dashboard' %}{% endif %}">
                     <div class="{% if not is_logged_in %}login-box shadow{% else %}user-box{% endif %}">
                         <table style="width: 100%; height: 50px;">
@@ -80,7 +80,7 @@
                 </a>
             </div>
             <div class="footer-block">
-                <p class="footer-text prevent-select">developed by sheppsu & HR Farmer</p>
+                <p class="footer-text">developed by sheppsu & HR Farmer</p>
             </div>
         </div>
     </footer>

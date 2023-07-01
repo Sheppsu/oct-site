@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth import get_user_model, login as _login, logout as _logout
 from django.conf import settings
-from django.http import HttpResponseBadRequest, HttpResponseServerError
+from django.http import HttpResponseBadRequest, HttpResponseServerError, Http404
 from django.core.cache import cache
 
 from .models import *
@@ -21,10 +21,18 @@ def get_mappools(name):
     if mps is None:
         tournament: TournamentIteration = get_object_or_404(TournamentIteration, name=name)
         # TODO: multiple brackets is possible
-        bracket: TournamentBracket = tournament.get_brackets()[0]
+        brackets = tournament.get_brackets()
+        if not brackets:
+            raise Http404()
+        bracket: TournamentBracket = brackets[0]
         # TODO: rounds sharing the same mappool is possible
         rounds = bracket.get_rounds()
-        mps = [{"maps": rnd.mappool.get_beatmaps(), "stage": rnd.full_name} for rnd in reversed(rounds)]
+        mps = [
+            {
+                "maps": sorted(rnd.mappool.get_beatmaps(), key=lambda mp: mp.id),
+                "stage": rnd.full_name
+            } for rnd in reversed(rounds)
+        ]
         # TODO: should it be None...?
         cache.set(f"{name}_mappools", mps, None)
     return mps
@@ -40,7 +48,7 @@ def teams(req):
 
 def mappools(req, name=None):
     if name is None:
-        return redirect("named_mappools", name=TournamentIteration.objects.get().name)
+        return redirect("named_mappools", name="OCT4")
     return render(req, "tournament/mappools.html", {
         "mappools": get_mappools(name.upper())
     })
