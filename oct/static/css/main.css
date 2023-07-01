@@ -43,6 +43,10 @@ footer {
     overflow: hidden;
 }
 
+button {
+    font-family: 'Inter', sans-serif;
+}
+
 .footer-block {
     height: 100%;
     padding-left: 10px;
