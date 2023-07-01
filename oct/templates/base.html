@@ -24,22 +24,22 @@
                     <h1 class="header-title">OCT</h1>
                 </div></a>
             </td>
-            <td id="teams" class="header-block" style="width: 150px;">
-                <a class="header-link" href="{% url 'teams' %}"><div class="header-link-container">
-                    <p class="header-text">Teams</p>
-                </div></a>
-            </td>
-            <td id="mappools" class="header-block" style="width: 150px;">
-                <a class="header-link" href="{% url 'mappools' %}"><div class="header-link-container">
-                    <p class="header-text">Mappools</p>
-                </div></a>
-            </td>
-            <td id="bracket" class="header-block" style="width: 150px;">
-                <a class="header-link" href="{% url 'bracket' %}"><div class="header-link-container">
-                    <p class="header-text">Bracket</p>
-                </div></a>
-            </td>
-            <td style="width: calc(100% - 770px);"></td>
+<!--            <td id="teams" class="header-block" style="width: 150px;">-->
+<!--                <a class="header-link" href="{% url 'teams' %}"><div class="header-link-container">-->
+<!--                    <p class="header-text">Teams</p>-->
+<!--                </div></a>-->
+<!--            </td>-->
+<!--            <td id="mappools" class="header-block" style="width: 150px;">-->
+<!--                <a class="header-link" href="{% url 'mappools' %}"><div class="header-link-container">-->
+<!--                    <p class="header-text">Mappools</p>-->
+<!--                </div></a>-->
+<!--            </td>-->
+<!--            <td id="bracket" class="header-block" style="width: 150px;">-->
+<!--                <a class="header-link" href="{% url 'bracket' %}"><div class="header-link-container">-->
+<!--                    <p class="header-text">Bracket</p>-->
+<!--                </div></a>-->
+<!--            </td>-->
+            <td style="width: calc(100% - 320px);"></td>
             <td class="header-block" style="padding-right: 20px; width:150px;">
                 <a href="{% if not is_logged_in %}{{ login_url }}{% else %}{% url 'dashboard' %}{% endif %}">
                     <div class="{% if not is_logged_in %}login-box shadow{% else %}user-box{% endif %}">
