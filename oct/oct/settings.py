@@ -15,6 +15,9 @@ from dotenv import load_dotenv
 load_dotenv()
 import os
 from osu import AuthHandler, Scope, Client
+import mimetypes
+
+mimetypes.add_type("text/css", ".css", True)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,7 +43,6 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -58,7 +60,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
+
+WHITENOISE_MIMETYPES = {
+    '.css': "text/css",
+}
 
 ROOT_URLCONF = 'oct.urls'
 
@@ -137,6 +144,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 if not DEBUG:
     STATIC_ROOT = BASE_DIR / 'staticfiles'
+    STATIC_URL = 'staticfiles/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
