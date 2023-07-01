@@ -191,11 +191,23 @@ class MappoolBeatmap(models.Model):
             "FM": "",
             "TB": "#d5a6bd"
         }[self.modification[:2]]
-        self.cs_percent = self.circle_size / 10
-        self.ar_percent = self.approach_rate / (11 if self.modification.startswith("DT") else 10)
-        self.od_percent = self.overall_difficulty / (11 if self.modification.startswith("DT") else 10)
-        self.hp_percent = self.health_drain / 10
+        self.cs_percent = str(self.circle_size * 10)+"%"
+        self.ar_percent = str(round(
+            self.approach_rate / (11 if self.modification.startswith("DT") else 10) * 100, 1
+        ))+"%"
+        self.od_percent = str(round(
+            self.overall_difficulty / (11 if self.modification.startswith("DT") else 10) * 100, 1
+        ))+"%"
+        self.hp_percent = str(self.health_drain * 10)+"%"
         self.rounded_sr = round(self.star_rating, 2)
+
+    @property
+    def rounded_ar(self):
+        return round(self.approach_rate, 1)
+
+    @property
+    def rounded_od(self):
+        return round(self.overall_difficulty, 1)
 
     @classmethod
     def from_beatmap_id(cls, mappool: Mappool, modification: str, beatmap_id: int):

@@ -13,7 +13,7 @@
             {% for map in round.maps %}
                 <tr>
                     <td>
-                        <a href="https://osu.ppy.sh/b/{{ map.id }}" target="_blank">
+                        <a href="https://osu.ppy.sh/b/{{ map.beatmap_id }}" target="_blank">
                             <div id="{{ round.stage }}-{{ map.modification }}-beatmap" class="flex-container beatmap-container prevent-select" style="background-image: linear-gradient(to right, {{ map.color }}, #AAAAAA);">
                                 <div class="beatmap-mod">
                                     <p class="beatmap-mod-text">{{ map.modification }}</p>
@@ -50,13 +50,13 @@
                                                 <td style="width: 50%; height: 40%;">
                                                     <div id="od" class="difficulty-bar-outside">
                                                         <div class="difficulty-bar-inside" style="width: {{ map.od_percent }}"></div>
-                                                        <p class="bar-text text-stroke">OD: {{ map.overall_difficulty }}</p>
+                                                        <p class="bar-text text-stroke">OD: {{ map.rounded_od }}</p>
                                                     </div>
                                                 </td>
                                                 <td style="width: 50%; height: 50%;">
                                                     <div id="ar" class="difficulty-bar-outside">
                                                         <div class="difficulty-bar-inside" style="width: {{ map.ar_percent }}"></div>
-                                                        <p class="bar-text text-stroke">AR: {{ map.approach_rate }}</p>
+                                                        <p class="bar-text text-stroke">AR: {{ map.rounded_ar }}</p>
                                                     </div>
                                                 </td>
                                             </tr>
