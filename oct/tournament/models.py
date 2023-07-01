@@ -22,6 +22,14 @@ class UserRoles(IntFlag):
     MAPPOOLER = auto()
     HOST = auto()
 
+    def get_roles(self):
+        count = 1
+        value = self.value
+        while count <= value:
+            if count & value:
+                yield UserRoles(count)
+            count <<= 1
+
 
 class BracketType(IntEnum):
     DOUBLE_ELIMINATION = 0
