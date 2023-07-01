@@ -10,14 +10,13 @@
         <img src="{{ avatar_url }}" alt="" class="user-card-pfp">
         <div class="user-card-info" style="background-image: linear-gradient(to right, #F6F6F6 40%, transparent), url('{{ banner }}');">
             <p id="user-card-username">{{ username }}</p>
-            <p id="user-card-rank">#11000</p>
         </div>
         <div class="user-card-team">
             {% if is_registered %}
-            <button id="register-button">Registered</button>
+            <button id="register-button" class="button-registered">Registered</button>
             {% else %}
             <a href="{% url 'register' %}">
-                <button id="register-button">Register</button>
+                <button id="register-button" class="button-unregistered">Register</button>
             </a>
             {% endif %}
         </div>
@@ -35,7 +34,8 @@
         <div class="matches-box">
             <p class="box-header-text">Matches</p>
             <div class="matches-container">
-                <div class="match-container prevent-select">
+                <h1 style="font-size: 30px;">No matches! (yet...)</h1>
+                <!-- <div class="match-container prevent-select">
                     <div style="margin-block: auto;">
                         <p id="match-result-text">DEFEAT</p>
                     </div>
@@ -50,13 +50,7 @@
                                 </div>
                         </div>
                     </div>
-                </div>
-                <div class="match-container"></div>
-                <div class="match-container"></div>
-                <div class="match-container"></div>
-                <div class="match-container"></div>
-                <div class="match-container"></div>
-                <div class="match-container"></div>
+                </div> -->
             </div>
         </div>
     </div>
