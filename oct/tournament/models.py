@@ -68,6 +68,8 @@ class User(AbstractBaseUser):
 
     refresh_token = models.CharField(default="")
 
+    is_admin = models.BooleanField(default=False)
+
     USERNAME_FIELD = "osu_username"
     EMAIL_FIELD = None
     REQUIRED_FIELDS = [
