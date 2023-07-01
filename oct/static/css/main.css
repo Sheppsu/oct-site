@@ -51,12 +51,7 @@ footer {
 }
 
 .footer-text {
-    transition: color 0.3s ease;
     color: white;
-}
-
-.footer-text:hover {
-    color: black;
 }
 
 .footer-image {
