@@ -135,3 +135,15 @@ def register(req):
     involvement.roles |= UserRoles.REGISTERED_PLAYER
     involvement.save()
     return redirect("dashboard")
+
+
+def unregister(req):
+    if not req.user.is_authenticated:
+        return redirect("index")
+    involvement = req.user.get_tournament_involvement(tournament_iteration=OCT4)
+    if not involvement or UserRoles.REGISTERED_PLAYER not in involvement[0].roles:
+        return redirect("index")
+    involvement = involvement[0]
+    involvement.roles = UserRoles(involvement.roles - UserRoles.REGISTERED_PLAYER)
+    involvement.save()
+    return redirect("dashboard")

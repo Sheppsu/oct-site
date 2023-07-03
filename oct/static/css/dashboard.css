@@ -2,56 +2,44 @@
     --card-color: #E8E7E7;
 }
 
-button {
-    background-color: grey;
-    height: 60px;
-    border: none;
-    border-radius: 15px;
-    box-shadow: 1px 6px 11px -3px rgba(0, 0, 0, 0.25);
-    font-weight: 700;
-    font-size: 30px;
-    text-align: center;
-    color: white;
-}
-
 #register-button {
     margin-left: 175px;
 }
 
+.button-transition {
+    transition: height 0.5s cubic-bezier(0.23, 1, 0.32, 1),
+                width 0.5s cubic-bezier(0.23, 1, 0.32, 1),
+                font-size 0.5s cubic-bezier(0.23, 1, 0.32, 1),
+                box-shadow 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
 
 .button-unregistered {
     width: 150px;
     background-color: var(--bg-color1);
-    transition: height 0.5s cubic-bezier(0.23, 1, 0.32, 1), 
-                width 0.5s cubic-bezier(0.23, 1, 0.32, 1), 
-                font-size 0.5s cubic-bezier(0.23, 1, 0.32, 1),
-                box-shadow 0.5s cubic-bezier(0.23, 1, 0.32, 1)
-}    
+}
 
 .button-unregistered:hover {
     box-shadow: 0 0 30px 5px var(--bg-color1);
     width: 170px;
     height: 75px;
     font-size: 35px;
-}    
+}
 
 .button-registered {
     width: 180px;
-    background-color: gray;
-}    
+    background-color: red;
+}
 
 .button-registered:hover {
-    cursor: not-allowed;
-}    
-
+    box-shadow: 0 0 30px 5px red;
+    width: 200px;
+    height: 75px;
+    font-size: 35px;
+}
 
 #logout-button {
     background-color: red;
     width: 150px;
-    transition: height 0.5s cubic-bezier(0.23, 1, 0.32, 1), 
-                width 0.5s cubic-bezier(0.23, 1, 0.32, 1), 
-                font-size 0.5s cubic-bezier(0.23, 1, 0.32, 1),
-                box-shadow 0.5s cubic-bezier(0.23, 1, 0.32, 1)
 }
 
 #logout-button:hover {

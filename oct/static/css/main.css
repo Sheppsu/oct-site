@@ -44,7 +44,20 @@ footer {
 }
 
 button {
+    background-color: grey;
+    height: 60px;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 1px 6px 11px -3px rgba(0, 0, 0, 0.25);
+    font-weight: 700;
+    font-size: 30px;
     font-family: 'Inter', sans-serif;
+    text-align: center;
+    color: white;
+}
+
+button:hover {
+    cursor: pointer;
 }
 
 .footer-block {
@@ -234,4 +247,44 @@ td {
 .hidden {
     opacity: 0;
     transform: translateY(20px);
+}
+
+#popup-background {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    background-color: black;
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+    z-index: 10;
+}
+
+#popup {
+    width: 400px;
+
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    margin: auto;
+    margin-top: 30vh;
+    padding: 10px;
+
+    background-color: white;
+    border-radius: 15px;
+    z-index: 11;
+    text-align: center;
+}
+
+#popup-title {
+    font-size: 20px;
+    margin: 10px 0;
+}
+
+.popup-button {
+    margin: 0 5px;
+
 }

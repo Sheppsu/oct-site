@@ -13,5 +13,6 @@ urlpatterns = [
     path("tournaments/mappools", views.mappools, name="mappools"),
     path("tournaments/<str:name>", views.tournaments, name="tournament_info"),
     path("tournaments/<str:name>/<str:section>", views.tournaments, name="tournament_section"),
-    path("register", views.register, name="register")
+    path("register", views.register, name="register"),
+    path("unregister", views.unregister, name="unregister")
 ]

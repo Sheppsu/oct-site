@@ -13,10 +13,10 @@
         </div>
         <div class="user-card-team">
             {% if is_registered %}
-            <button id="register-button" class="button-registered">Registered</button>
+            <button id="register-button" class="button-registered button-transition">Unregister</button>
             {% else %}
             <a href="{% url 'register' %}">
-                <button id="register-button" class="button-unregistered">Register</button>
+                <button id="register-button" class="button-unregistered button-transition">Register</button>
             </a>
             {% endif %}
         </div>
@@ -27,7 +27,7 @@
           <p class="box-header-text">Manage</p>
           <div class="stats-buttons-container">
             <a href="{% url 'logout' %}">
-              <button id="logout-button">Logout</button>
+              <button id="logout-button" class="button-transition">Logout</button>
             </a>
           </div>
         </div>
@@ -54,5 +54,40 @@
             </div>
         </div>
     </div>
+
+    {% if is_registered %}
+    <script type="module">
+        import { initiatePopup, closePopup } from "{% static 'js/util.js' %}"
+        const unregisterButton = document.getElementById("register-button");
+        var pressed = false;
+        var redirecting = false;
+
+        unregisterButton.addEventListener("click", (event) => {
+            if (pressed) {return;}
+            pressed = true;
+            initiatePopup("Are you sure you want to unregister?", [
+                {
+                    text: "Yes",
+                    color: "green",
+                    width: 75,
+                    callback: (event) => {
+                        if (redirecting) {return;}
+                        redirecting = true;
+                        window.location.replace("{% url 'unregister' %}");
+                    }
+                },
+                {
+                    text: "No",
+                    color: "red",
+                    width: 75,
+                    callback: (event) => {
+                        closePopup();
+                        pressed = false;
+                    }
+                }
+            ]);
+        })
+    </script>
+    {% endif %}
 </div>
 {% endblock body %}
