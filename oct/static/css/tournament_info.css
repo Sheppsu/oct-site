@@ -1,6 +1,8 @@
 body {
-    background-color: grey;
+    background-color: var(--bg-color4);
 }
+
+/* Header for standard browser on a computer */
 
 .tournament-header {
     width: 100%;
@@ -17,6 +19,12 @@ body {
     text-decoration: underline;
 }
 
+.tournament-header-link {
+    width: 100%;
+    height: 45px;
+    padding-top: 15px;
+}
+
 .current-tournament-header {
     text-decoration: underline;
 }
@@ -24,5 +32,66 @@ body {
 .tournament-header-text {
     font-size: 30px;
     font-style: italic;
-    margin-top: 20px;
+}
+
+/* Header for when width is small such as mobile */
+
+.mobile-tournament-header-container {
+    display: none;  /* Hidden unless width is small */
+    width: 100%;
+    position: relative;
+    z-index: 8;
+}
+
+#mobile-header {
+    width: calc(100% - 40px);
+    padding-left: 10px;
+    padding-right: 30px;
+
+    display: flex;
+    justify-content: space-between;
+
+    background-color: white;
+    cursor: pointer;
+}
+
+.mobile-header-arrow {
+    width: 40px;
+    height: 40px;
+}
+
+#mobile-header-dropdown {
+    width: 100%;
+    height: 200px;
+
+    display: none; /* will be changed to flex */
+    flex-direction: column;
+
+    background-color: var(--bg-color4);
+}
+
+.mobile-header-dropdown-item {
+    height: 40px;
+    padding-left: 20px;
+    padding-top: 10px;
+}
+
+.mobile-header-dropdown-item:hover {
+    background-color: var(--bg-color6);
+    text-decoration: underline;
+}
+
+.mobile-header-dropdown-text {
+    font-size: 20px;
+}
+
+/* Change header */
+@media (max-width: 750px) {
+    .tournament-header {
+        display: none;
+    }
+
+    .mobile-tournament-header-container {
+        display: inherit;
+    }
 }

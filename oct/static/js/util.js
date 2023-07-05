@@ -47,11 +47,25 @@ function createPopupButton(buttonInfo) {
     return button;
 }
 
-export function initiatePopup(title, buttons) {
-    disableScroll();
+export function activateBackground(zIndex = null) {
     const popupBackground = document.getElementById("popup-background");
+    if (zIndex !== null) {
+        popupBackground.style.zIndex = zIndex;
+    }
     popupBackground.removeAttribute("hidden")
     popupBackground.style.opacity = 0.5;
+}
+
+export function disableBackground() {
+    const popupBackground = document.getElementById("popup-background");
+    popupBackground.style.opacity = 0;
+    popupBackground.hidden = true;
+    popupBackground.style.zIndex = 10;
+}
+
+export function initiatePopup(title, buttons) {
+    disableScroll();
+    activateBackground();
     const popup = document.getElementById("popup");
     popup.removeAttribute("hidden");
     const popupTitle = document.getElementById("popup-title");
@@ -63,9 +77,7 @@ export function initiatePopup(title, buttons) {
 }
 
 export function closePopup() {
-    const popupBackground = document.getElementById("popup-background");
-    popupBackground.style.opacity = 0;
-    popupBackground.hidden = true;
+    disableBackground();
     const popup = document.getElementById("popup");
     popup.hidden = true;
     const buttons = document.getElementsByClassName("popup-button");
