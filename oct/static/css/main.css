@@ -9,6 +9,8 @@
     --bg-color6: #d0d0d0;
 }
 
+/* element properties */
+
 html {
     position: relative;
     min-height: 100%;
@@ -62,6 +64,8 @@ button:hover {
     cursor: pointer;
 }
 
+/* Footer */
+
 .footer-block {
     height: 100%;
     padding-left: 10px;
@@ -98,6 +102,7 @@ button:hover {
     text-decoration: none;
 }
 
+/* misc */
 
 .flex-container {
     display: flex;
@@ -125,33 +130,43 @@ td {
     padding: 0;
 }
 
+/* header */
+
 .header {
-    background-color: var(--bg-color1);
-    width: 100%;
+    width: calc(100% - 30px);
     height: 100px;
+
     position: absolute;
+    display: flex;
+    align-items: center;
     left: 0;
     top: 0;
+    padding-left: 10px;
+    padding-right: 20px;
+
     z-index: 9;
+    background-color: var(--bg-color1);
+    text-decoration: none;
+    text-align: center;
 }
 
-
-.header-block {
-    width: 20%;
+.header-link-container {
+    width: 150px;
     height: 100%;
+    color: white;
+}
+
+.header-link-container:hover {
+    color: #454343;
 }
 
 .header-text {
-    text-align: center;
     color: inherit;
     font-size: 29px;
     font-style: italic;
     font-family: 'Inter', sans-serif;
-    margin: 0;
-    margin-top: 30px;
     transition: all 0.3s ease;
 }
-
 
 .header-title {
     text-align: center;
@@ -160,79 +175,41 @@ td {
     font-style: italic;
     font-size: 65px;
     color: inherit;
-    margin: 0;
-    margin-left: 15px;
     transition: all 0.3s ease;
     
-}
-
-@media (max-width: 650px) {
-    .header-block {
-        width: 7%;
-    }
-
-    .header-text {
-        font-size: 20px;
-    }
-
-    .header-title {
-        font-size: 45px;
-        margin-top: 10px;
-    }
 }
 
 .header-title:hover {
     color: #454343;
 }
 
-.empty-header-block {
-    width: 20%;
-    height: 100%;
-}
-
-.header-link-container {
-    width: 100%;
-    height: 100%;
-    padding: 10px 0;
-    color: white;
-}
-
-.header-link-container:hover {
-    color: #454343;
-}
-
-.header-link {
-    text-decoration: none;
-}
-
 .login-box {
-    width: 100%;
+    width: 150px;
     height: 50px;
-    background-color: var(--bg-color2);
     border-radius: 50px;
+
+    display: flex;
+    align-items: center;
+    background-color: var(--bg-color2);
     color: white;
 }
 
 .user-box {
-    width: 100%;
-    height: 50px;
     background-color: #D9D9D9;
-    border-radius: 50px;
     color: black;
 }
 
 .login-text {
-    width: 100%;
-    height: 100%;
+    width: calc(100% - 5px);
+    padding-right: 5px;
+
     text-align: center;
     white-space: nowrap;
 }
 
-.osu-logo {
+.login-pic {
     height: 100%;
     border-radius: 100%;
-    margin-top: -2px;
-    margin-left: -4px;
 }
 
 .shadow {
