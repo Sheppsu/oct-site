@@ -31,18 +31,34 @@
             <p class="header-text">Bracket</p>
         </div></a>
         <div style="flex: 1;"></div>
-        <a href="{% if not is_logged_in %}{{ login_url }}{% else %}{% url 'dashboard' %}{% endif %}">
-            <div class="{% if not is_logged_in %}login-box shadow{% else %}login-box user-box{% endif %}">
-                {% if is_logged_in %}
-                <img src="{{ avatar_url }}" alt="avatar" class="login-pic">
-                {% else %}
-                <img src="{% static 'assets/images/osu.png' %}" alt="osu logo" class="login-pic">
-                {% endif %}
-                <p class="login-text">
-                    {% if is_logged_in %}{{ username }}{% else %}Log in{% endif %}
-                </p>
+        {% include 'user.html' %}
+    </div>
+    <div class="mobile-header-container">
+        <div id="mobile-header" class="header">
+            <a class="header-link" href="{% url 'index' %}"><div class="header-link-container">
+                <h1 class="header-title">OCT</h1>
+            </div></a>
+            <svg id="header-arrow-down" viewBox="0 0 1 1" class="mobile-header-arrow">
+                <polyline points="0.1,0.3 0.5,0.7 0.9,0.3 " style="fill:none;stroke:black;stroke-width:0.1;"/>
+            </svg>
+            <svg id="header-arrow-up" viewBox="0 0 1 1" class="mobile-header-arrow" style="display:none;">
+                <polyline points="0.1,0.7 0.5,0.3 0.9,0.7 " style="fill:none;stroke:black;stroke-width:0.1;"/>
+            </svg>
+        </div>
+        <div id="mobile-header-dropdown" class="header-dropdown">
+            <div class="dropdown-user-container">
+                {% include 'user.html' %}
             </div>
-        </a>
+            <a class="header-link" href="{% url 'teams' %}"><div class="header-dropdown-item">
+                <p class="dropdown header-text">Teams</p>
+            </div></a>
+            <a class="header-link" href="{% url 'mappools' %}"><div class="header-dropdown-item">
+                <p class="dropdown header-text">Mappools</p>
+            </div></a>
+            <a class="header-link" href="{% url 'bracket' %}"><div class="header-dropdown-item">
+                <p class="dropdown header-text">Bracket</p>
+            </div></a>
+        </div>
     </div>
     {% block body %}{% endblock body %}
     <div id="popup-background" hidden></div>
@@ -66,6 +82,38 @@
             </div>
         </div>
     </footer>
+    <script type="module">
+        import { activateBackground, disableBackground } from "{% static 'js/util.js' %}"
+
+        const mobileHeader = document.getElementById("mobile-header");
+        const mobileDropdown = document.getElementById("mobile-header-dropdown");
+        const downArrow = document.getElementById("header-arrow-down");
+        const upArrow = document.getElementById("header-arrow-up");
+
+        function enableDropdown() {
+            downArrow.style.display = "none";
+            upArrow.style.display = "inherit";
+            mobileDropdown.style.display = "flex";
+            activateBackground(8);
+        }
+
+        function disableDropdown() {
+            downArrow.style.display = "inherit";
+            upArrow.style.display = "none";
+            mobileDropdown.style.display = "none";
+            disableBackground();
+        }
+
+        mobileHeader.addEventListener("click", (event) => {
+            ((downArrow.style.display === "none") ? disableDropdown : enableDropdown)()
+        });
+        document.body.addEventListener("click", (event) => {
+            if (downArrow.style.display !== "none") {return;}
+            setTimeout(function() {
+                if (downArrow.style.display === "none") {disableDropdown();}
+            }, 100);
+        }, true);
+    </script>
 </body>
 
 </html>

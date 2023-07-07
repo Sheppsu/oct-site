@@ -6,7 +6,8 @@
     --bg-color3: #52a1ff;
     --bg-color4: #e7e7e7;
     --bg-color5: #454343;
-    --bg-color6: #d0d0d0;
+    --bg-color6: #d7d7d7;
+    --bg-color7: #d0d0d0;
 }
 
 /* element properties */
@@ -62,6 +63,10 @@ button {
 
 button:hover {
     cursor: pointer;
+}
+
+td {
+    padding: 0;
 }
 
 /* Footer */
@@ -126,8 +131,15 @@ button:hover {
     -1px  0   0 #000;
 }
 
-td {
-    padding: 0;
+.shadow {
+    box-shadow: 0 0 30px 5px var(--bg-color2);
+    -moz-box-shadow: 0 0 30px 5px var(--bg-color2);
+    -webkit-box-shadow: 0 0 30px 5px var(--bg-color2);
+}
+
+.hidden {
+    opacity: 0;
+    transform: translateY(20px);
 }
 
 /* header */
@@ -136,11 +148,9 @@ td {
     width: calc(100% - 30px);
     height: 100px;
 
-    position: absolute;
+    position: relative;
     display: flex;
     align-items: center;
-    left: 0;
-    top: 0;
     padding-left: 10px;
     padding-right: 20px;
 
@@ -165,7 +175,6 @@ td {
     font-size: 29px;
     font-style: italic;
     font-family: 'Inter', sans-serif;
-    transition: all 0.3s ease;
 }
 
 .header-title {
@@ -175,8 +184,6 @@ td {
     font-style: italic;
     font-size: 65px;
     color: inherit;
-    transition: all 0.3s ease;
-    
 }
 
 .header-title:hover {
@@ -212,22 +219,67 @@ td {
     border-radius: 100%;
 }
 
-.shadow {
-    box-shadow: 0 0 30px 5px var(--bg-color2);
-    -moz-box-shadow: 0 0 30px 5px var(--bg-color2);
-    -webkit-box-shadow: 0 0 30px 5px var(--bg-color2);
+/* Mobile header */
+
+.mobile-header-container {
+    width: 100%;
+    position: relative;
+    z-index: 9;
 }
 
-.drill-image {
-    width: 180px;
-    height: 180px;
-    margin-right: 50px;
+#mobile-header {
+    display: none;
+    justify-content: space-between;
+    position: relative;
+
+    cursor: pointer;
 }
 
-.hidden {
-    opacity: 0;
-    transform: translateY(20px);
+.mobile-header-arrow {
+    width: 60px;
+    height: 60px;
 }
+
+.header-dropdown {
+    width: 100%;
+
+    display: none; /* will be changed to flex */
+    flex-direction: column;
+
+    background-color: var(--bg-color4);
+}
+
+.header-dropdown-item {
+    height: 40px;
+    padding: 10px 0;
+    padding-left: 20px;
+}
+
+.header-dropdown-item:hover {
+    background-color: var(--bg-color6);
+    text-decoration: underline;
+}
+
+.dropdown-user-container {
+    height: 50px;
+    padding: 10px 0;
+    padding-left: 5px;
+
+    background-color: var(--bg-color7);
+}
+
+/* Change header displayed */
+@media (max-width: 900px) {
+    .header {
+        display: none;
+    }
+
+    #mobile-header {
+        display: flex;
+    }
+}
+
+/* Popup */
 
 #popup-background {
     width: 100vw;

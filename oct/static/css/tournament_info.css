@@ -43,7 +43,7 @@ body {
     z-index: 8;
 }
 
-#mobile-header {
+#mobile-tournament-header {
     width: calc(100% - 40px);
     padding-left: 10px;
     padding-right: 30px;
@@ -55,19 +55,9 @@ body {
     cursor: pointer;
 }
 
-.mobile-header-arrow {
+.mobile-tournament-header-arrow {
     width: 40px;
     height: 40px;
-}
-
-#mobile-header-dropdown {
-    width: 100%;
-    height: 200px;
-
-    display: none; /* will be changed to flex */
-    flex-direction: column;
-
-    background-color: var(--bg-color4);
 }
 
 .mobile-header-dropdown-item {
@@ -77,12 +67,16 @@ body {
 }
 
 .mobile-header-dropdown-item:hover {
-    background-color: var(--bg-color6);
+    background-color: var(--bg-color7);
     text-decoration: underline;
 }
 
 .mobile-header-dropdown-text {
     font-size: 20px;
+}
+
+#mobile-tournament-header-dropdown {
+    background-color: var(--bg-color6);
 }
 
 /* Change header */

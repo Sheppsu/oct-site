@@ -1,0 +1,13 @@
+{% load static %}
+<a href="{% if not is_logged_in %}{{ login_url }}{% else %}{% url 'dashboard' %}{% endif %}">
+    <div class="{% if not is_logged_in %}login-box shadow{% else %}login-box user-box{% endif %}">
+        {% if is_logged_in %}
+        <img src="{{ avatar_url }}" alt="avatar" class="login-pic">
+        {% else %}
+        <img src="{% static 'assets/images/osu.png' %}" alt="osu logo" class="login-pic">
+        {% endif %}
+        <p class="login-text">
+            {% if is_logged_in %}{{ username }}{% else %}Log in{% endif %}
+        </p>
+    </div>
+</a>
