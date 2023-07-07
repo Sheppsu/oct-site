@@ -1,4 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+@font-face {
+    font-family: 'Inter';
+    src: url('../fonts/Inter.ttf');
+
+    font-style: normal;
+}
 :root {
     /* why are these all called bg color */
     --bg-color1: #438efd;
