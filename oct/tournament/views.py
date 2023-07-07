@@ -106,12 +106,16 @@ def mappools(req, name=None):
 
 
 def teams(req, name=None):
+    if name is None:
+        return redirect("tournament_section", name="OCT4", section="teams")
     return render(req, "tournament/tournament_teams.html", {
         "tournament": get_object_or_404(TournamentIteration, name=name.upper())
     })
 
 
 def bracket(req, name=None):
+    if name is None:
+        return redirect("tournament_section", name="OCT4", section="bracket")
     return render(req, "tournament/tournament_bracket.html", {
         "tournament": get_object_or_404(TournamentIteration, name=name.upper())
     })
