@@ -89,3 +89,48 @@ body {
         display: inherit;
     }
 }
+
+/* Info page stuff */
+
+.info-container {
+    width: 90%;
+    max-width: 700px;
+    border-radius: 20px;
+
+    margin: auto;
+    margin-top: 50px;
+    padding: 5px;
+    text-align: center;
+
+    background-color: #ffffff;
+}
+
+.info-title {
+    font-size: 30px;
+    font-weight: 900;
+    margin: 5px 0;
+}
+
+.info-subtitle {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 5px 0;
+}
+
+.info-text {
+    margin: 5px 0;
+}
+
+.specific-container {
+    width: 300px;
+
+    padding: 5px 10px;
+    margin: 5px 10px;
+    border-radius: 20px;
+
+    background-color: var(--bg-color4);
+}
+
+.name-label {
+    font-weight: 500;
+}

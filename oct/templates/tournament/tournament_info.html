@@ -5,8 +5,27 @@
 {% endblock head %}
 {% block title %}Tournaments: {{ tournament.name }}{% endblock title %}
 {% block body %}
-<div>
 {% include "tournament/tournament_info_header.html" %}
+<div class="info-container">
+    <h1 class="info-title">{{ tournament.full_name }}</h1>
+    <h1 class="info-subtitle">{{ tournament.date_span }}</h1>
+    <p style="font-size:10px;margin-top:-5px;margin-bottom:5px;">(MM/DD/YY)</p>
+    <div style="display: flex; justify-content: center;">
+        <div class="specific-container">
+            <h1 class="info-subtitle">Schedule</h1>
+            <hr/>
+            {% for round in rounds %}
+            <p class="info-text"><span class="name-label">{{ round.name }}:</span> {{ round.date }}</p>
+            {% endfor %}
+        </div>
+        <div class="specific-container">
+            <h1 class="info-subtitle">Links</h1>
+            <hr/>
+            {% for link in tournament.links %}
+            <a class="link" href="{{ link.url }}" target="_blank"><p class="info-text name-label">{{ link.name }}</p></a>
+            {% endfor %}
+        </div>
+    </div>
 </div>
 <script>document.getElementById("info-cell").classList.add("current-tournament-header");</script>
 {% endblock body %}

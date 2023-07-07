@@ -75,6 +75,14 @@ td {
     padding: 0;
 }
 
+hr {
+    height: 3px;
+
+    border: none;
+    border-radius: 3px;
+    background-color: #000000;
+}
+
 /* Footer */
 
 .footer-block {
@@ -146,6 +154,10 @@ td {
 .hidden {
     opacity: 0;
     transform: translateY(20px);
+}
+
+.link:hover {
+    color: #b0b0b0;
 }
 
 /* header */

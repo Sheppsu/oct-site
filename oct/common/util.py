@@ -26,3 +26,7 @@ def enum_field(enum, field):
             }
         )
     return decorator
+
+
+def date_to_string(date):
+    return f"{date.month}/{date.day}/{str(date.year)[-2:]}"

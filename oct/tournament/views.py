@@ -83,7 +83,13 @@ def tournaments(req, name=None, section=None):
     name = name.upper()
     tournament = get_object_or_404(TournamentIteration, name=name)
     if section is None:
-        return render(req, "tournament/tournament_info.html", {"tournament": tournament})
+        return render(req, "tournament/tournament_info.html", {
+            "tournament": tournament,
+            "rounds": [{
+                "name": rnd.full_name,
+                "date": rnd.str_date
+            } for rnd in sorted(tournament.get_brackets()[0].get_rounds(), key=lambda rnd: rnd.start_date)]  # TODO: possible multiple brackets
+        })
     try:
         return {
             "mappool": mappools,

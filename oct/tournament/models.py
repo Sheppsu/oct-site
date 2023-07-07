@@ -5,7 +5,7 @@ from django.conf import settings
 import uuid
 from enum import IntFlag, IntEnum, auto
 from osu import Client, AuthHandler, GameModeStr, Mods
-from common import get_auth_handler, enum_field
+from common import get_auth_handler, enum_field, date_to_string
 
 
 OSU_CLIENT: Client = settings.OSU_CLIENT
@@ -100,12 +100,17 @@ class TournamentIteration(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     thumbnail = models.CharField(max_length=32)
+    links = models.JSONField(default=list)
 
     def get_brackets(self, **kwargs):
         return TournamentBracket.objects.filter(tournament_iteration=self, **kwargs)
 
     def __str__(self):
         return self.name
+
+    @property
+    def date_span(self):
+        return f"{date_to_string(self.start_date)} - {date_to_string(self.end_date)}"
 
 
 class TournamentInvolvement(models.Model):
@@ -153,12 +158,17 @@ class TournamentRound(models.Model):
     name = models.CharField(max_length=16)
     full_name = models.CharField(max_length=32)
     ban_order = models.CharField(max_length=16, null=True)
+    start_date = models.DateField()
 
     def get_matches(self, **kwargs):
         return TournamentMatch.objects.filter(tournament_round=self, **kwargs)
 
     def __str__(self):
         return f"{self.bracket.tournament_iteration.name}: {self.name}"
+
+    @property
+    def str_date(self):
+        return date_to_string(self.start_date)
 
 
 class TournamentMatch(models.Model):
