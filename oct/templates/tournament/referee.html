@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% load static %}
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/referee.css' %}">
+{% endblock head %}
+{% block title %}Referee{% endblock title %}
+{% block body %}
+<div style="margin-top: 100px;">
+    <div class="box-container">
+        <div class="match-box">
+            <p class="match-box-title">Quarterfinals - Match 3</p>
+            <div class="score-container">
+                <div class="score-container-score">
+                    <div class="score-container-team" id="red-team">
+                        <p class="team-name-text">RED TEAM</p>
+                    </div>
+                    <p>hi</p>
+                    <div class="score-container-team" id="blue-team">
+                        <p class="team-name-text">BLUE TEAM</p>
+                    </div>
+                </div>
+            </div>
+            <div id="map-list-container" class="map-list-container">
+
+                <div class="map-players-container">
+                    <div class="map-container">
+                        <div class="map-selector">
+                            <p>NM1</p>
+                            <div class="map-commands">
+                                <img class="map-image" src="{% static 'assets/images/oct4-thumbnail-full.png' %}" alt="">
+                            </div>
+                        </div>
+                        <div class="map-winner">
+                              
+                        </div>
+                    </div>
+                    <div class="players-container">
+                        <div class="red-team-player-container">
+                            <div id="red-player-1" onclick="show_dropdown(this.id)" class="player-container">
+                                <div id="red-player-1-dropdown" class="dropdown">
+                                    <div id="red-player-1-dropdown-content" class="dropdown-content prevent-select"></div>
+                                </div>
+                            </div>
+                            <div id="red-player-2" onclick="show_dropdown(this.id)" class="player-container">
+                                <div id="red-player-2-dropdown" class="dropdown">
+                                    <div id="red-player-2-dropdown-content" class="dropdown-content prevent-select"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tier-value-container">
+                            <p>Tier Value</p>
+                            <h1>7</h1>
+                        </div>
+                        <div class="blue-team-player-container">
+                            <div id="blue-player-1" onclick="show_dropdown(this.id)" class="player-container">
+                                <div id="blue-player-1-dropdown" class="dropdown">
+                                    <div id="blue-player-1-dropdown-content" class="dropdown-content prevent-select"></div>
+                                </div>
+                            </div>
+                            <div id="blue-player-2" onclick="show_dropdown(this.id)" class="player-container">
+                                <div id="blue-player-2-dropdown" class="dropdown">
+                                    <div id="blue-player-2-dropdown-content" class="dropdown-content prevent-select"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const map_list_container = document.getElementById("map-list-container");
+    var red_players = ['Player 1', 'Player 2'];
+    var blue_players = ['Player 3', 'Player 4'];
+
+    var dropdown_open = false;
+
+    function show_dropdown(id) {
+        if (dropdown_open == true) {
+            hide_all_dropdowns();
+        }
+        document.getElementById(id+"-dropdown-content").classList.toggle("dropdown-show");
+        dropdown_open = true;
+    }
+
+    function hide_all_dropdowns() {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+            var i;
+            for (i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('dropdown-show')) {
+                    openDropdown.classList.remove('dropdown-show');
+                }
+            }
+        dropdown_open = false;
+    }
+
+
+    function generate_map(map_number) {
+        const map = "map-" + map_number + "-"
+
+        var map_html = document.createElement('div');
+        map_html.classList.add('map-players-container');
+
+        var map_html_string = `<div class="map-container">
+                        <div class="map-selector">
+                            <p>NM1</p>
+                            <div class="map-commands">
+                                <img class="map-image" src="{% static 'assets/images/oct4-thumbnail-full.png' %}" alt="">
+                            </div>
+                        </div>
+                        <div class="map-winner">
+                              
+                        </div>
+                    </div>
+                    <div class="players-container">
+                        <div class="red-team-player-container">
+                            <div id="red-player-1" onclick="show_dropdown(this.id)" class="player-container">
+                                <div id="red-player-1-dropdown" class="dropdown">
+                                    <div id="red-player-1-dropdown-content" class="dropdown-content prevent-select"></div>
+                                </div>
+                            </div>
+                            <div id="red-player-2" onclick="show_dropdown(this.id)" class="player-container">
+                                <div id="red-player-2-dropdown" class="dropdown">
+                                    <div id="red-player-2-dropdown-content" class="dropdown-content prevent-select"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tier-value-container">
+                            <p>Tier Value</p>
+                            <h1>7</h1>
+                        </div>
+                        <div class="blue-team-player-container">
+                            <div id="blue-player-1" onclick="show_dropdown(this.id)" class="player-container">
+                                <div id="blue-player-1-dropdown" class="dropdown">
+                                    <div id="blue-player-1-dropdown-content" class="dropdown-content prevent-select"></div>
+                                </div>
+                            </div>
+                            <div id="blue-player-2" onclick="show_dropdown(this.id)" class="player-container">
+                                <div id="blue-player-2-dropdown" class="dropdown">
+                                    <div id="blue-player-2-dropdown-content" class="dropdown-content prevent-select"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+        var fragment = document.createRange().createContextualFragment(map_html_string);
+
+        // change ids
+        rp1 = fragment.querySelector("#red-player-1-dropdown-content");
+        rp1.id = map + "red-player-1-dropdown-content";
+
+        rp2 = fragment.querySelector("#red-player-2-dropdown-content");
+        rp2.id = map + "red-player-2-dropdown-content";
+
+        bp1 = fragment.querySelector("#blue-player-1-dropdown-content");
+        bp1.id = map + "blue-player-1-dropdown-content";
+
+        bp2 = fragment.querySelector("#blue-player-2-dropdown-content");
+        bp2.id = map + "blue-player-2-dropdown-content";
+        for (i in red_players) {
+            a = document.createElement('a');
+            a.href = '#';
+            a.innerHTML = red_players[i];
+            console.log(a)
+            rp1.appendChild(a);
+            rp2.appendChild(a);
+        }
+        
+        map_html.appendChild(fragment);
+        map_list_container.appendChild(map_html);
+    }
+
+    window.onclick = function(event) {
+        if (!event.target.matches('.player-container')) {
+            hide_all_dropdowns();
+        }
+    }   
+    window.onload = function() {
+        for (let i = 1; i < 11; i++) {
+            generate_map(i);
+        }
+    }
+</script>
+{% endblock body %}

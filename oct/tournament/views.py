@@ -157,3 +157,6 @@ def unregister(req):
     involvement.roles = UserRoles(involvement.roles - UserRoles.REGISTERED_PLAYER)
     involvement.save()
     return redirect("dashboard")
+
+def referee(req):
+    return render(req, "tournament/referee.html")
