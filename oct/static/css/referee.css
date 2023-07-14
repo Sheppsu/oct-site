@@ -86,6 +86,7 @@ body {
     width: 100%;
     height: 90px;
     display: flex;
+    z-index: 2;
 }
 
 .map-selector {
@@ -113,10 +114,12 @@ body {
 }
 
 .map-image {
+    position: relative;
     border-radius: 14px;
     width: 350px;
     height: 100%;
-    margin-left: 8rem;
+    left: 100px;
+    bottom: 416px;
 }
 
 .map-winner {
@@ -179,15 +182,12 @@ body {
     background-color: var(--dark-grey);
 }
 
-.player-container:hover {
-    cursor: pointer;
-}
-
 /* dropdown */
 
 .dropdown {
     position: relative;
     display: inline-block;
+    z-index: 75389753892573892;
 }
 
 .dropdown-content {
@@ -199,7 +199,7 @@ body {
     z-index: 1;
     border-radius: 7px;
     margin-top: 16px;
-    z-index: 3;
+    z-index: 758937589327589279;
 }
 
 .dropdown-content a {
