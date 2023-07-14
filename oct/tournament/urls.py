@@ -1,4 +1,5 @@
 from django.urls import path
+from rest_framework.decorators import api_view
 
 from . import views
 
@@ -14,5 +15,8 @@ urlpatterns = [
     path("tournaments/<str:name>", views.tournaments, name="tournament_info"),
     path("tournaments/<str:name>/<str:section>", views.tournaments, name="tournament_section"),
     path("register", views.register, name="register"),
-    path("unregister", views.unregister, name="unregister")
+    path("unregister", views.unregister, name="unregister"),
+    path("referee", views.referee, name="referee"),
+
+    path("api/tournaments/<str:name>/<str:round>/mappool", api_view(['GET'])(views.mappools), kwargs={"api": True}, name="mappools_api")
 ]
