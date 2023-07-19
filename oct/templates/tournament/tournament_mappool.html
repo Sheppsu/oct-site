@@ -8,7 +8,6 @@
 {% block body %}
 <div>
     {% include "tournament/tournament_info_header.html" %}
-    <p style="text-align: center;">Note: this is placeholder information, not actual pools of OCT4</p>
     {% for round in mappools %}
         <h1 style="text-align: center;">{{ round.stage }}</h1>
         <table class="mappools-beatmap-table">

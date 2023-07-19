@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model, login as _login, logout as _logo
 from django.conf import settings
 from django.http import HttpResponseBadRequest, HttpResponseServerError, Http404
 from django.core.cache import cache
+from django.views.decorators.cache import cache_page
 
 from .models import *
 
@@ -33,6 +34,7 @@ def get_mappools(tournament: TournamentIteration):
                 "stage": rnd.full_name
             } for rnd in reversed(rounds)
         ]
+        mps = tuple(filter(lambda m: len(m["maps"]) != 0, mps))
         # TODO: should it be None...?
         cache.set(f"{tournament.name}_mappools", mps, None)
     return mps
@@ -111,6 +113,7 @@ def mappools(req, name=None):
     })
 
 
+@cache_page(None)
 def teams(req, name=None):
     if name is None:
         return redirect("tournament_section", name="OCT4", section="teams")
@@ -119,6 +122,7 @@ def teams(req, name=None):
     })
 
 
+@cache_page(None)
 def bracket(req, name=None):
     if name is None:
         return redirect("tournament_section", name="OCT4", section="bracket")
