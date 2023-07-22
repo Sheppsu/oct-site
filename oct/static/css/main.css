@@ -4,6 +4,21 @@
 
     font-style: normal;
 }
+
+/* icons */
+
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 48
+}
+
+.material-symbols-outlined:hover {
+    cursor: pointer;
+}
+
 :root {
     /* why are these all called bg color */
     --bg-color1: #438efd;

@@ -1,16 +1,19 @@
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth import get_user_model, login as _login, logout as _logout
 from django.conf import settings
-from django.http import HttpResponseBadRequest, HttpResponseServerError, Http404
+from django.http import HttpResponseBadRequest, HttpResponseServerError, Http404, JsonResponse
 from django.core.cache import cache
 from django.views.decorators.cache import cache_page
 
 from .models import *
+from .serializers import *
 
 import requests
 import traceback
 from common import render
 from datetime import datetime, timezone
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 
 
 User = get_user_model()
@@ -18,7 +21,8 @@ OCT4 = TournamentIteration.objects.get(name="OCT4")
 
 
 # TODO: maybe move caching logic to models
-def get_mappools(tournament: TournamentIteration):
+def get_mappools(tournament: TournamentIteration, rnd="all"):
+    
     mps = cache.get(f"{tournament.name}_mappools")
     if mps is None:
         # TODO: multiple brackets is possible
@@ -101,17 +105,22 @@ def tournaments(req, name=None, section=None):
     except KeyError:
         raise Http404()
 
-
-def mappools(req, name=None):
+def mappools(req, name=None, round="qualifiers", **kwargs):
+    tournament = get_object_or_404(TournamentIteration, name=name.upper())
+    
     if name is None:
         return redirect("tournament_section", name="OCT4", section="mappool")
     name = name.upper()
-    tournament = get_object_or_404(TournamentIteration, name=name)
+
+    if kwargs.get('api') == True:
+        maps = get_object_or_404(TournamentRound, bracket=tournament.get_brackets()[0], name=round.upper()).mappool.get_beatmaps()
+        serializer = MappoolBeatmapSerializer(maps, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
     return render(req, "tournament/tournament_mappool.html", {
         "mappools": get_mappools(tournament),
         "tournament": tournament,
     })
-
 
 @cache_page(None)
 def teams(req, name=None):
@@ -161,3 +170,6 @@ def unregister(req):
     involvement.roles = UserRoles(involvement.roles - UserRoles.REGISTERED_PLAYER)
     involvement.save()
     return redirect("dashboard")
+
+def referee(req):
+    return render(req, "tournament/referee.html")
