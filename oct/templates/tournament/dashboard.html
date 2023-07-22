@@ -10,6 +10,7 @@
         <img src="{{ avatar_url }}" alt="" class="user-card-pfp">
         <div class="user-card-info" style="background-image: linear-gradient(to right, #F6F6F6 40%, transparent), url('{{ banner }}');">
             <p id="user-card-username">{{ username }}</p>
+            <p>OCT4: {{ roles }}</p>
         </div>
         <div class="user-card-team">
             {% if is_registered %}

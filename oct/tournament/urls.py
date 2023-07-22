@@ -4,19 +4,22 @@ from rest_framework.decorators import api_view
 from . import views
 
 urlpatterns = [
+    # pages
     path("", views.index, name="index"),
-    path("teams", views.teams, name="teams"),
-    path("bracket", views.bracket, name="bracket"),
+    path("teams", views.tournament_teams, name="teams"),
+    path("bracket", views.tournament_bracket, name="bracket"),
     path("login", views.login, name="login"),
     path("logout", views.logout, name="logout"),
     path("dashboard", views.dashboard, name="dashboard"),
     path("tournaments", views.tournaments, name="tournaments"),
-    path("tournaments/mappools", views.mappools, name="mappools"),
+    path("tournaments/mappools", views.tournament_mappools, name="mappools"),
     path("tournaments/<str:name>", views.tournaments, name="tournament_info"),
     path("tournaments/<str:name>/<str:section>", views.tournaments, name="tournament_section"),
     path("register", views.register, name="register"),
     path("unregister", views.unregister, name="unregister"),
     path("referee", views.referee, name="referee"),
 
-    path("api/tournaments/<str:name>/<str:round>/mappool", api_view(['GET'])(views.mappools), kwargs={"api": True}, name="mappools_api")
+    # api
+    path("api/tournaments/<str:name>/<str:round>/mappool", api_view(['GET'])(views.tournament_mappools), kwargs={"api": True}),
+    path("api/tournaments/<str:name>/users", api_view(['GET'])(views.tournament_users))
 ]
