@@ -1,11 +1,9 @@
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth import get_user_model, login as _login, logout as _logout
-from django.conf import settings
 from django.http import HttpResponseBadRequest, HttpResponseServerError, Http404, JsonResponse
 from django.core.cache import cache
 from django.views.decorators.cache import cache_page
 
-from .models import *
 from .serializers import *
 
 import requests
@@ -18,10 +16,19 @@ from rest_framework.decorators import api_view
 
 User = get_user_model()
 OCT4 = TournamentIteration.objects.get(name="OCT4")
+USER_DISPLAY_ORDER = [
+    UserRoles.HOST,
+    UserRoles.REGISTERED_PLAYER,
+    UserRoles.MAPPOOLER,
+    UserRoles.PLAYTESTER,
+    UserRoles.STREAMER,
+    UserRoles.COMMENTATOR,
+    UserRoles.REFEREE
+]
 
 
 # TODO: maybe move caching logic to models
-def get_mappools(tournament: TournamentIteration, rnd="all"):
+def get_mappools(tournament: TournamentIteration):
     
     mps = cache.get(f"{tournament.name}_mappools")
     if mps is None:
@@ -31,7 +38,7 @@ def get_mappools(tournament: TournamentIteration, rnd="all"):
             raise Http404()
         bracket: TournamentBracket = brackets[0]
         # TODO: rounds sharing the same mappool is possible
-        rounds = bracket.get_rounds()
+        rounds = TournamentRound.objects.select_related("mappool").filter(bracket=bracket)
         mps = [
             {
                 "maps": sorted(rnd.mappool.get_beatmaps(), key=lambda mp: mp.id),
@@ -76,13 +83,15 @@ def dashboard(req):
     if not req.user.is_authenticated:
         return redirect("index")
     involvement = req.user.get_tournament_involvement(tournament_iteration=OCT4)
+    roles = sorted(involvement[0].roles.get_roles(), key=lambda r: USER_DISPLAY_ORDER.index(r))
     return render(req, "tournament/dashboard.html", {
-        "is_registered": involvement and UserRoles.REGISTERED_PLAYER in involvement[0].roles
+        "is_registered": involvement and UserRoles.REGISTERED_PLAYER in involvement[0].roles,
+        "roles": ", ".join(map(lambda r: r.name[0]+r.name[1:].replace("_", " ").lower(), roles))
     })
 
 
 def tournaments(req, name=None, section=None):
-    if name is None:
+    if name is None or name == "":
         return render(req, "tournament/tournaments.html", {
             "tournaments": TournamentIteration.objects.all()
         })
@@ -98,45 +107,75 @@ def tournaments(req, name=None, section=None):
         })
     try:
         return {
-            "mappool": mappools,
-            "teams": teams,
-            "bracket": bracket,
-        }[section](req, name=name)
+            "mappool": tournament_mappools,
+            "teams": tournament_teams,
+            "bracket": tournament_bracket,
+            "users": tournament_users
+        }[section.lower()](req, name=name, tournament=tournament)
     except KeyError:
         raise Http404()
 
-def mappools(req, name=None, round="qualifiers", **kwargs):
-    tournament = get_object_or_404(TournamentIteration, name=name.upper())
-    
+
+def tournament_mappools(req, name=None, round="qualifiers", **kwargs):
+    tournament = kwargs.get("tournament") or get_object_or_404(TournamentIteration, name=name.upper())
+
     if name is None:
         return redirect("tournament_section", name="OCT4", section="mappool")
-    name = name.upper()
 
-    if kwargs.get('api') == True:
+    if kwargs.get("api"):
         maps = get_object_or_404(TournamentRound, bracket=tournament.get_brackets()[0], name=round.upper()).mappool.get_beatmaps()
         serializer = MappoolBeatmapSerializer(maps, many=True)
-        return JsonResponse(serializer.data, safe=False)
+        return JsonResponse(serializer.serialize(), safe=False)
 
     return render(req, "tournament/tournament_mappool.html", {
         "mappools": get_mappools(tournament),
         "tournament": tournament,
     })
 
-@cache_page(None)
-def teams(req, name=None):
+
+@cache_page(60)
+def tournament_teams(req, name=None, **kwargs):
     if name is None:
         return redirect("tournament_section", name="OCT4", section="teams")
+    tournament = kwargs.get("tournament") or get_object_or_404(TournamentIteration, name=name.upper())
     return render(req, "tournament/tournament_teams.html", {
-        "tournament": get_object_or_404(TournamentIteration, name=name.upper())
+        "tournament": tournament
     })
 
 
-@cache_page(None)
-def bracket(req, name=None):
+@cache_page(60)
+def tournament_bracket(req, name=None, **kwargs):
     if name is None:
         return redirect("tournament_section", name="OCT4", section="bracket")
+    tournament = kwargs.get("tournament") or get_object_or_404(TournamentIteration, name=name.upper())
     return render(req, "tournament/tournament_bracket.html", {
-        "tournament": get_object_or_404(TournamentIteration, name=name.upper())
+        "tournament": tournament
+    })
+
+
+@cache_page(60)
+def tournament_users(req, name, **kwargs):
+    tournament = kwargs.get("tournament") or get_object_or_404(TournamentIteration, name=name.upper())
+    involvements = TournamentInvolvement.objects \
+        .select_related("user") \
+        .filter(tournament_iteration=tournament)
+
+    if kwargs.get("api"):
+        serializer = TournamentInvolvementSerializer(involvements, many=True)
+        return JsonResponse(serializer.serialize(exclude=["tournament_iteration"]), safe=False)
+
+    users = []
+    for enum in USER_DISPLAY_ORDER:
+        role = " ".join(map(lambda string: string[0] + string[1:].lower(), enum.name.split("_")))+"s"
+        players = sorted(filter(lambda i: enum in i.roles, involvements), key=lambda i: i.join_date)
+        users.append({
+            "role": role,
+            "players": players,
+            "count": len(players)
+        })
+    return render(req, "tournament/tournament_users.html", {
+        "tournament": tournament,
+        "users": users
     })
 
 
@@ -171,5 +210,9 @@ def unregister(req):
     involvement.save()
     return redirect("dashboard")
 
+
 def referee(req):
+    involvement = get_object_or_404(TournamentInvolvement, tournament_iteration=OCT4, user=req.user)
+    if UserRoles.REGISTERED_PLAYER in involvement.roles:
+        raise Http404()
     return render(req, "tournament/referee.html")

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/tournament_info.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/tournament_users.css' %}">
+{% endblock head %}
+{% block title %}Tournaments: {{ tournament.name }} teams{% endblock title %}
+{% block body %}
+{% include "tournament/tournament_info_header.html" %}
+<div>
+    {% for group in users %}
+    <div class="role-container">
+        <h1 class="role-title">{{ group.role }} ({{ group.count }})</h1>
+        <div class="user-container">
+            {% for player in group.players %}
+            <a href="https://osu.ppy.sh/u/{{ player.user.osu_id }}" target="_blank"><div class="user-display">
+                <img class="user-avatar" src="{{ player.user.osu_avatar }}">
+                <div class="user-info"><p class="username">{{ player.user.osu_username }}</p></div>
+            </div></a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<script>document.getElementById("users-cell").classList.add("current-tournament-header");</script>
+{% endblock body %}

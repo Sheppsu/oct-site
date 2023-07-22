@@ -29,6 +29,13 @@
                 </div>
             </a>
         </td>
+        <td id="users-cell" class="tournament-header-item">
+            <a href="{% url 'tournament_section' name=tournament.name section='users' %}">
+                <div class="tournament-header-link">
+                    <p class="tournament-header-text">USERS</p>
+                </div>
+            </a>
+        </td>
         <td></td>
     </tr>
 </table>
@@ -61,6 +68,11 @@
         <a href="{% url 'tournament_section' name=tournament.name section='bracket' %}">
             <div class="mobile-header-dropdown-item">
                 <p class="mobile-header-dropdown-text">BRACKET</p>
+            </div>
+        </a>
+        <a href="{% url 'tournament_section' name=tournament.name section='users' %}">
+            <div class="mobile-header-dropdown-item">
+                <p class="mobile-header-dropdown-text">USERS</p>
             </div>
         </a>
     </div>
