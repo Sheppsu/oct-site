@@ -10,8 +10,6 @@ import requests
 import traceback
 from common import render
 from datetime import datetime, timezone
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
 
 
 User = get_user_model()
@@ -116,10 +114,18 @@ def tournaments(req, name=None, section=None):
         raise Http404()
 
 
-def tournament_mappools(req, name=None, round="qualifiers", **kwargs):
-    tournament = kwargs.get("tournament") or get_object_or_404(TournamentIteration, name=name.upper())
+def get_tournament(name, kwargs):
+    tournament = kwargs.get("tournament")
+    if name is None and tournament is None:
+        return
+    if tournament is None:
+        tournament = get_object_or_404(TournamentIteration, name=name.upper())
+    return tournament
 
-    if name is None:
+
+def tournament_mappools(req, name=None, round="qualifiers", **kwargs):
+    tournament = get_tournament(name, kwargs)
+    if tournament is None:
         return redirect("tournament_section", name="OCT4", section="mappool")
 
     if kwargs.get("api"):
@@ -135,9 +141,9 @@ def tournament_mappools(req, name=None, round="qualifiers", **kwargs):
 
 @cache_page(60)
 def tournament_teams(req, name=None, **kwargs):
-    if name is None:
+    tournament = get_tournament(name, kwargs)
+    if tournament is None:
         return redirect("tournament_section", name="OCT4", section="teams")
-    tournament = kwargs.get("tournament") or get_object_or_404(TournamentIteration, name=name.upper())
     return render(req, "tournament/tournament_teams.html", {
         "tournament": tournament
     })
@@ -145,9 +151,9 @@ def tournament_teams(req, name=None, **kwargs):
 
 @cache_page(60)
 def tournament_bracket(req, name=None, **kwargs):
-    if name is None:
+    tournament = get_tournament(name, kwargs)
+    if tournament is None:
         return redirect("tournament_section", name="OCT4", section="bracket")
-    tournament = kwargs.get("tournament") or get_object_or_404(TournamentIteration, name=name.upper())
     return render(req, "tournament/tournament_bracket.html", {
         "tournament": tournament
     })
