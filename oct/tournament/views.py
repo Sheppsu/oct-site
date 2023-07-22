@@ -82,9 +82,12 @@ def dashboard(req):
         return redirect("index")
     involvement = req.user.get_tournament_involvement(tournament_iteration=OCT4)
     roles = sorted(involvement[0].roles.get_roles(), key=lambda r: USER_DISPLAY_ORDER.index(r))
+    formatted_roles = ", ".join(map(lambda r: r.name[0]+r.name[1:].replace("_", " ").lower(), roles)) if roles else "No Roles"
+    print(formatted_roles)
+   
     return render(req, "tournament/dashboard.html", {
         "is_registered": involvement and UserRoles.REGISTERED_PLAYER in involvement[0].roles,
-        "roles": ", ".join(map(lambda r: r.name[0]+r.name[1:].replace("_", " ").lower(), roles))
+        "roles": formatted_roles
     })
 
 
@@ -219,6 +222,6 @@ def unregister(req):
 
 def referee(req):
     involvement = get_object_or_404(TournamentInvolvement, tournament_iteration=OCT4, user=req.user)
-    if UserRoles.REGISTERED_PLAYER in involvement.roles:
-        raise Http404()
+    # if UserRoles.REGISTERED_PLAYER in involvement.roles:
+    #     raise Http404()
     return render(req, "tournament/referee.html")
