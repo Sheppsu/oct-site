@@ -22,8 +22,8 @@
         <a class="header-link" href="{% url 'index' %}"><div class="header-link-container">
             <h1 class="header-title">OCT</h1>
         </div></a>
-        <a class="header-link" href="{% url 'teams' %}"><div class="header-link-container">
-            <p class="header-text">Teams</p>
+        <a class="header-link" href="{% url 'tournament_info' name='OCT4' %}"><div class="header-link-container">
+            <p class="header-text">OCT4</p>
         </div></a>
         <a class="header-link" href="{% url 'mappools' %}"><div class="header-link-container">
             <p class="header-text">Mappools</p>
@@ -50,8 +50,8 @@
             <div class="dropdown-user-container">
                 {% include 'user.html' %}
             </div>
-            <a class="header-link" href="{% url 'teams' %}"><div class="header-dropdown-item">
-                <p class="dropdown header-text">Teams</p>
+            <a class="header-link" href="{% url 'tournament_info' name='OCT4' %}"><div class="header-dropdown-item">
+                <p class="dropdown header-text">OCT4</p>
             </div></a>
             <a class="header-link" href="{% url 'mappools' %}"><div class="header-dropdown-item">
                 <p class="dropdown header-text">Mappools</p>

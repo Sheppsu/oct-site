@@ -3,8 +3,7 @@ from django.contrib.auth import get_user_model, login as _login, logout as _logo
 from django.conf import settings
 from django.http import HttpResponseBadRequest, HttpResponseServerError, Http404, JsonResponse
 from django.core.cache import cache
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from django.views.decorators.cache import cache_page
 
 from .models import *
 from .serializers import *
@@ -13,6 +12,8 @@ import requests
 import traceback
 from common import render
 from datetime import datetime, timezone
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 
 
 User = get_user_model()
@@ -37,6 +38,7 @@ def get_mappools(tournament: TournamentIteration, rnd="all"):
                 "stage": rnd.full_name
             } for rnd in reversed(rounds)
         ]
+        mps = tuple(filter(lambda m: len(m["maps"]) != 0, mps))
         # TODO: should it be None...?
         cache.set(f"{tournament.name}_mappools", mps, None)
     return mps
@@ -120,6 +122,7 @@ def mappools(req, name=None, round="qualifiers", **kwargs):
         "tournament": tournament,
     })
 
+@cache_page(None)
 def teams(req, name=None):
     if name is None:
         return redirect("tournament_section", name="OCT4", section="teams")
@@ -128,6 +131,7 @@ def teams(req, name=None):
     })
 
 
+@cache_page(None)
 def bracket(req, name=None):
     if name is None:
         return redirect("tournament_section", name="OCT4", section="bracket")
