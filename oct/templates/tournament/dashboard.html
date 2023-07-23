@@ -12,15 +12,6 @@
             <p id="user-card-username">{{ username }}</p>
             <p>OCT4: {{ roles }}</p>
         </div>
-        <div class="user-card-team">
-            {% if is_registered %}
-            <button id="register-button" class="button-registered button-transition">Unregister</button>
-            {% else %}
-            <a href="{% url 'register' %}">
-                <button id="register-button" class="button-unregistered button-transition">Register</button>
-            </a>
-            {% endif %}
-        </div>
     </div>
 
     <div class="bottom-container">

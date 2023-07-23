@@ -17,6 +17,7 @@ OCT4 = TournamentIteration.objects.get(name="OCT4")
 USER_DISPLAY_ORDER = [
     UserRoles.HOST,
     UserRoles.REGISTERED_PLAYER,
+    UserRoles.CUSTOM_MAPPER,
     UserRoles.MAPPOOLER,
     UserRoles.PLAYTESTER,
     UserRoles.STREAMER,
@@ -81,9 +82,10 @@ def dashboard(req):
     if not req.user.is_authenticated:
         return redirect("index")
     involvement = req.user.get_tournament_involvement(tournament_iteration=OCT4)
-    roles = sorted(involvement[0].roles.get_roles(), key=lambda r: USER_DISPLAY_ORDER.index(r))
-    formatted_roles = ", ".join(map(lambda r: r.name[0]+r.name[1:].replace("_", " ").lower(), roles)) if roles else "No Roles"
-    print(formatted_roles)
+    roles = sorted(involvement[0].roles.get_roles(), key=lambda r: USER_DISPLAY_ORDER.index(r)) \
+        if involvement else None
+    formatted_roles = ", ".join(map(lambda r: r.name[0]+r.name[1:].replace("_", " ").lower(), roles)) \
+        if roles else "No Roles"
    
     return render(req, "tournament/dashboard.html", {
         "is_registered": involvement and UserRoles.REGISTERED_PLAYER in involvement[0].roles,
@@ -177,6 +179,8 @@ def tournament_users(req, name, **kwargs):
     for enum in USER_DISPLAY_ORDER:
         role = " ".join(map(lambda string: string[0] + string[1:].lower(), enum.name.split("_")))+"s"
         players = sorted(filter(lambda i: enum in i.roles, involvements), key=lambda i: i.join_date)
+        if len(players) == 0:
+            continue
         users.append({
             "role": role,
             "players": players,
