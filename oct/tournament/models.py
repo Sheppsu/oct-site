@@ -14,13 +14,13 @@ OSU_CLIENT: Client = settings.OSU_CLIENT
 class UserRoles(IntFlag):
     # max 15 fields cuz small integer field
     REGISTERED_PLAYER = auto()
-
     REFEREE = auto()
     STREAMER = auto()
     COMMENTATOR = auto()
     PLAYTESTER = auto()
     MAPPOOLER = auto()
     HOST = auto()
+    CUSTOM_MAPPER = auto()
 
     def get_roles(self):
         count = 1
