@@ -125,10 +125,20 @@ class TournamentInvolvement(models.Model):
 
 class TournamentTeam(models.Model):
     team_name = models.CharField(max_length=64)
-    players = models.ManyToManyField(User)
 
     def __str__(self):
         return self.team_name
+
+
+class StaticPlayer(models.Model):
+    user = models.ForeignKey(User, on_delete=models.RESTRICT)
+    team = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE)
+    osu_rank = models.PositiveIntegerField()
+    is_captain = models.BooleanField(default=False)
+    tier = models.CharField(max_length=1, null=True)
+
+    def __str__(self):
+        return f"{self.team}: {self.user} #{self.osu_rank}"
 
 
 class TournamentBracket(models.Model):
@@ -157,7 +167,6 @@ class TournamentRound(models.Model):
     mappool = models.ForeignKey(Mappool, on_delete=models.RESTRICT)
     name = models.CharField(max_length=16)
     full_name = models.CharField(max_length=32)
-    ban_order = models.CharField(max_length=16, null=True)
     start_date = models.DateField()
 
     def get_matches(self, **kwargs):
@@ -175,12 +184,17 @@ class TournamentMatch(models.Model):
     tournament_round = models.ForeignKey(TournamentRound, on_delete=models.CASCADE)
     match_id = models.PositiveSmallIntegerField()
     teams = models.ManyToManyField(TournamentTeam)
-    starting_time = models.DateTimeField()
+    starting_time = models.DateTimeField(null=True)
     is_losers = models.BooleanField(default=False)
 
     bans = models.CharField(max_length=32, null=True)
     picks = models.CharField(max_length=64, null=True)
     wins = models.CharField(max_length=16, null=True)
+
+    referee = models.ForeignKey(User, on_delete=models.RESTRICT, null=True, related_name="+")
+    streamer = models.ForeignKey(User, on_delete=models.RESTRICT, null=True, related_name="+")
+    commentator1 = models.ForeignKey(User, on_delete=models.RESTRICT, null=True, related_name="+")
+    commentator2 = models.ForeignKey(User, on_delete=models.RESTRICT, null=True, related_name="+")
 
     def __str__(self):
         return f"{self.tournament_round} Match {self.match_id}"
