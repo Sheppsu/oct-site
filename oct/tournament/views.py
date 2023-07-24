@@ -28,7 +28,6 @@ USER_DISPLAY_ORDER = [
 
 # TODO: maybe move caching logic to models
 def get_mappools(tournament: TournamentIteration):
-    
     mps = cache.get(f"{tournament.name}_mappools")
     if mps is None:
         # TODO: multiple brackets is possible
