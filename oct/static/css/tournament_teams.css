@@ -1,0 +1,48 @@
+.team-icon {
+    width: 64px;
+    height: 64px;
+
+    border: solid black;
+    border-radius: 10px;
+}
+
+.team-container {
+    width: 400px;
+    padding: 10px;
+
+    border-radius: 10px;
+
+    background-color: var(--bg-color6);
+}
+
+.team-title-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.team-name {
+    font-size: 30px;
+}
+
+.player-list {
+    margin-top: 10px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.player-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.player-container:hover {
+    background-color: var(--bg-color7);
+}
+
+.player-name {
+    font-size: 20px;
+}

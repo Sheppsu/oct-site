@@ -143,14 +143,20 @@ def tournament_mappools(req, name=None, round="qualifiers", **kwargs):
     })
 
 
-@cache_page(60)
+# @cache_page(60)
 def tournament_teams(req, name=None, **kwargs):
     tournament = get_tournament(name, kwargs)
     if tournament is None:
         return redirect("tournament_section", name="OCT4", section="teams")
     return render(req, "tournament/tournament_teams.html", {
         "tournament": tournament,
-        "teams": TournamentTeam.objects.filter(bracket__tournament_iteration=tournament),
+        "teams": map(
+            lambda team: (team, sorted(team.get_players_with_user(), key=lambda p: p.osu_rank)),
+            sorted(
+                TournamentTeam.objects.filter(bracket__tournament_iteration=tournament),
+                key=lambda t: ord(t.name.lower()[0])
+            )
+        ),
     })
 
 

@@ -136,4 +136,20 @@ body {
     font-weight: 500;
 }
 
-/**/
+/* broad use classes */
+
+.user-container {
+    width: 100%;
+    gap: 10px;
+
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.user-avatar {
+    width: 48px;
+    height: 48px;
+    border: 2px solid black;
+    border-radius: 50px;
+}
