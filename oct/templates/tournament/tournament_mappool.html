@@ -10,19 +10,15 @@
     {% include "tournament/tournament_info_header.html" %}
     {% for round in mappools %}
         <h1 style="text-align: center;">{{ round.stage }}</h1>
-        <table class="mappools-beatmap-table">
+        <div class="mappool-container">
             {% for map in round.maps %}
-                <tr>
-                    <td>
                         <a href="https://osu.ppy.sh/b/{{ map.beatmap_id }}" target="_blank">
-                            <div id="{{ round.stage }}-{{ map.modification }}-beatmap" class="flex-container beatmap-container prevent-select" style="background-image: linear-gradient(to right, {{ map.color }}, #AAAAAA);">
-                                <div class="beatmap-mod">
+                            <div id="{{ round.stage }}-{{ map.modification }}-beatmap" class="beatmap-container prevent-select" style="background-image: linear-gradient(to right, {{ map.color }}, #AAAAAA);">
+                                <div>
                                     <p class="beatmap-mod-text">{{ map.modification }}</p>
                                 </div>
-                                <div>
-                                    <img class="beatmap-image" src="{{ map.cover }}" alt="">
-                                </div>
-                                <div class="beatmap-info" style="display: flex;">
+                                <img class="beatmap-image" src="{{ map.cover }}" alt="">
+                                <div class="beatmap-info">
                                     <div style="width: calc(100% - 150px);">
                                         <div class="beatmap-metadata">
                                             <p>{{ map.artist }} - {{ map.title }}</p>
@@ -70,14 +66,12 @@
                                 </div>
                             </div>
                         </a>
-                    </td>
-                </tr>
             <script type="module">
                 import { getDiffColor } from "{% static 'js/util.js' %}"
                 document.getElementById("{{ round.stage }}-{{ map.modification }}-beatmap").style.backgroundImage = "linear-gradient(to right, {{ map.color }}, "+getDiffColor({{ map.star_rating }})+")";
             </script>
             {% endfor %}
-        </table>
+        </div>
     {% endfor %}
 </div>
 <script>document.getElementById("mappool-cell").classList.add("current-tournament-header");</script>
