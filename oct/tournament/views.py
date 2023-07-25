@@ -143,7 +143,7 @@ def tournament_mappools(req, name=None, round="qualifiers", **kwargs):
     })
 
 
-# @cache_page(60)
+@cache_page(60)
 def tournament_teams(req, name=None, **kwargs):
     tournament = get_tournament(name, kwargs)
     if tournament is None:
