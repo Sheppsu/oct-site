@@ -150,7 +150,8 @@ def tournament_teams(req, name=None, **kwargs):
     if tournament is None:
         return redirect("tournament_section", name="OCT4", section="teams")
     return render(req, "tournament/tournament_teams.html", {
-        "tournament": tournament
+        "tournament": tournament,
+        "teams": TournamentTeam.objects.filter(bracket__tournament_iteration=tournament),
     })
 
 
