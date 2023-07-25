@@ -229,6 +229,7 @@ class MappoolBeatmap(models.Model):
             "HR": "#ea9999",
             "DT": "#b4a7d6",
             "FM": "",
+            "EZ": "99ea99",
             "TB": "#d5a6bd"
         }[self.modification[:2]]
         self.cs_percent = str(self.circle_size * 10)+"%"
@@ -249,6 +250,14 @@ class MappoolBeatmap(models.Model):
     def rounded_od(self):
         return round(self.overall_difficulty, 1)
 
+    @property
+    def rounded_cs(self):
+        return round(self.circle_size, 1)
+
+    @property
+    def rounded_hp(self):
+        return round(self.health_drain, 1)
+
     @classmethod
     def from_beatmap_id(cls, mappool: Mappool, modification: str, beatmap_id: int):
         modification = modification.upper()
@@ -259,6 +268,14 @@ class MappoolBeatmap(models.Model):
             mods=Mods.get_from_abbreviation(mod) if mod not in ("NM", "FM", "TB") else None,
             ruleset=GameModeStr.STANDARD
         )
+        circle_size = beatmap.cs
+        health_drain = beatmap.drain
+        if mod == "HR":
+            circle_size = min(circle_size * 1.3, 10)
+            health_drain = min(health_drain * 1.4, 10)
+        elif mod == "EZ":
+            circle_size *= 0.5
+            health_drain *= 0.5
         return cls(
             mappool=mappool,
             beatmap_id=beatmap_id,
@@ -267,10 +284,10 @@ class MappoolBeatmap(models.Model):
             title=beatmap.beatmapset.title,
             difficulty=beatmap.version,
             star_rating=beatmap_difficulty.star_rating,
-            overall_difficulty=beatmap.accuracy,
-            approach_rate=beatmap.ar,
-            circle_size=beatmap.cs,
-            health_drain=beatmap.drain,
+            overall_difficulty=beatmap_difficulty.mode_attributes.overall_difficulty,
+            approach_rate=beatmap_difficulty.mode_attributes.approach_rate,
+            circle_size=circle_size,
+            health_drain=health_drain,
             cover=beatmap.beatmapset.covers.cover_2x
         )
 
