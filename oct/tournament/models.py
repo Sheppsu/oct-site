@@ -123,24 +123,6 @@ class TournamentInvolvement(models.Model):
         return f"{self.user} {self.tournament_iteration} Involvement"
 
 
-class TournamentTeam(models.Model):
-    team_name = models.CharField(max_length=64)
-
-    def __str__(self):
-        return self.team_name
-
-
-class StaticPlayer(models.Model):
-    user = models.ForeignKey(User, on_delete=models.RESTRICT)
-    team = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE)
-    osu_rank = models.PositiveIntegerField()
-    is_captain = models.BooleanField(default=False)
-    tier = models.CharField(max_length=1, null=True)
-
-    def __str__(self):
-        return f"{self.team}: {self.user} #{self.osu_rank}"
-
-
 class TournamentBracket(models.Model):
     # one-to-many relationship in case multiple brackets are used
     # in the future
@@ -152,6 +134,29 @@ class TournamentBracket(models.Model):
 
     def __str__(self):
         return f"{self.tournament_iteration} Bracket"
+
+
+class TournamentTeam(models.Model):
+    bracket = models.ForeignKey(TournamentBracket, on_delete=models.RESTRICT)
+    name = models.CharField(max_length=64)
+    icon = models.CharField(max_length=64, null=True)
+
+    def get_players_with_user(self):
+        return StaticPlayer.objects.select_related("user").filter(team=self)
+
+    def __str__(self):
+        return self.name
+
+
+class StaticPlayer(models.Model):
+    user = models.ForeignKey(User, on_delete=models.RESTRICT)
+    team = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE)
+    osu_rank = models.PositiveIntegerField()
+    is_captain = models.BooleanField(default=False)
+    tier = models.CharField(max_length=1, null=True)
+
+    def __str__(self):
+        return f"{self.team}: {self.user} #{self.osu_rank}"
 
 
 class Mappool(models.Model):
@@ -186,6 +191,7 @@ class TournamentMatch(models.Model):
     teams = models.ManyToManyField(TournamentTeam)
     starting_time = models.DateTimeField(null=True)
     is_losers = models.BooleanField(default=False)
+    osu_match_id = models.PositiveIntegerField(null=True)
 
     bans = models.CharField(max_length=32, null=True)
     picks = models.CharField(max_length=64, null=True)
