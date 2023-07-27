@@ -26,23 +26,25 @@
         <div class="matches-box">
             <p class="box-header-text">Matches</p>
             <div class="matches-container">
-                <h1 style="font-size: 30px;">No matches! (yet...)</h1>
-                <!-- <div class="match-container prevent-select">
-                    <div style="margin-block: auto;">
-                        <p id="match-result-text">DEFEAT</p>
+                {% for match in matches %}
+                <div class="match-container prevent-select" style="background: linear-gradient(to right, {{ match.color }} 0%, #F6F6F6 30%, #F6F6F6 100%);">
+                    {% if match.tournament_round.name == "QUALIFIERS" %}
+                    <p id="match-result-text">QUALIFIERS</p>
+                    <p style="text-align: center;">{{ match.time_str }}</p>
+                    <p style="text-align: right;">Q{{ match.match_id }}</p>
+                    {% else %}
+                    <p id="match-result-text">DEFEAT</p>
+                    <div class="match-information-container">
+                        <img src="{{ avatar_url }}" alt="" class="match-information-pfp">
+                        <p id="team-1-name">Team 1</p>
+                        <p id="score">5-7</p>
+                        <p id="team-2-name">Team 2</p>
+                        <img src="{{ avatar_url }}" alt="" class="match-information-pfp">
                     </div>
-                    <div style="margin-block: auto;">
-                        <div class="match-information-container">
-                            <img src="{{ avatar_url }}" alt¬="" class="match-information-pfp">
-                                <p id="team-1-name">Team 1</p>
-                                <p id="score">5-7</p>
-                                <p id="team-2-name">Team 2</p>
-                                <div style="display: flex; justify-content: right; width: 100%; height: 100%;">
-                                  <img src="{{ avatar_url }}" alt="" class="match-information-pfp">
-                                </div>
-                        </div>
-                    </div>
-                </div> -->
+                    <p style="text-align: right;">M{{ match.match_id }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
