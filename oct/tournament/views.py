@@ -85,11 +85,16 @@ def dashboard(req):
         if involvement else None
     formatted_roles = ", ".join(map(lambda r: r.name[0]+r.name[1:].replace("_", " ").lower(), roles)) \
         if roles else "No Roles"
-   
-    return render(req, "tournament/dashboard.html", {
+
+    context = {
         "is_registered": involvement and UserRoles.REGISTERED_PLAYER in involvement[0].roles,
         "roles": formatted_roles
-    })
+    }
+    player = StaticPlayer.objects.select_related("team").filter(user__osu_username="Marlooo", team__bracket__tournament_iteration=OCT4)
+    if player:
+        context["matches"] = player[0].team.tournamentmatch_set.select_related("tournament_round").all()
+   
+    return render(req, "tournament/dashboard.html", context)
 
 
 def tournaments(req, name=None, section=None):
