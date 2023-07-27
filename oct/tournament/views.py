@@ -90,7 +90,7 @@ def dashboard(req):
         "is_registered": involvement and UserRoles.REGISTERED_PLAYER in involvement[0].roles,
         "roles": formatted_roles
     }
-    player = StaticPlayer.objects.select_related("team").filter(user__osu_username="Marlooo", team__bracket__tournament_iteration=OCT4)
+    player = StaticPlayer.objects.select_related("team").filter(user=req.user, team__bracket__tournament_iteration=OCT4)
     if player:
         context["matches"] = player[0].team.tournamentmatch_set.select_related("tournament_round").all()
    
