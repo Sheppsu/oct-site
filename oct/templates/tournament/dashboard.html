@@ -48,40 +48,5 @@
             </div>
         </div>
     </div>
-
-    <!-- {% if is_registered %}
-    <script type="module">
-        import { initiatePopup, closePopup } from "{% static 'js/util.js' %}"
-        const unregisterButton = document.getElementById("register-button");
-        var pressed = false;
-        var redirecting = false;
-
-        unregisterButton.addEventListener("click", (event) => {
-            if (pressed) {return;}
-            pressed = true;
-            initiatePopup("Are you sure you want to unregister?", [
-                {
-                    text: "Yes",
-                    color: "green",
-                    width: 75,
-                    callback: (event) => {
-                        if (redirecting) {return;}
-                        redirecting = true;
-                        window.location.replace("{% url 'unregister' %}");
-                    }
-                },
-                {
-                    text: "No",
-                    color: "red",
-                    width: 75,
-                    callback: (event) => {
-                        closePopup();
-                        pressed = false;
-                    }
-                }
-            ]);
-        })
-    </script>
-    {% endif %} -->
 </div>
 {% endblock body %}
