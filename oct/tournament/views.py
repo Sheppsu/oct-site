@@ -84,7 +84,7 @@ def logout(req):
 def dashboard(req):
     if not req.user.is_authenticated:
         return redirect("index")
-    involvement = req.user.get_tournament_involvement(tournament_iteration=OCT)
+    involvement = req.user.get_tournament_involvement(tournament_iteration=OCT4)
     roles = sorted(involvement[0].roles.get_roles(), key=lambda r: USER_DISPLAY_ORDER.index(r)) \
         if involvement else None
     formatted_roles = ", ".join(map(lambda r: r.name[0]+r.name[1:].replace("_", " ").lower(), roles)) \
