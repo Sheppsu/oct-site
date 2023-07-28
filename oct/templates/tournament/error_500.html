@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>500 Server Error</title>
+</head>
+<body>
+    <h1>500 Server Error</h1>
+    <p>Oops! Something went wrong. Please try again later.</p>
+    {% if error_trace %}
+        <h2>Error Details:</h2>
+        <div>
+            {{ error_trace | safe }}
+        </div>
+    {% endif %}
+</body>
+</html>

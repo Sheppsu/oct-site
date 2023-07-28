@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.urls import path, include
 
+handler500 = "tournament.views.error_500"
+
 urlpatterns = [
     path("", include("tournament.urls"))
 ]
