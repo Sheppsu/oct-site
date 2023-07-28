@@ -13,18 +13,6 @@
                 box-shadow 0.5s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.button-unregistered {
-    width: 150px;
-    background-color: var(--bg-color1);
-}
-
-.button-unregistered:hover {
-    box-shadow: 0 0 30px 5px var(--bg-color1);
-    width: 170px;
-    height: 75px;
-    font-size: 35px;
-}
-
 .button-registered {
     width: 180px;
     background-color: red;
