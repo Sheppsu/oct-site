@@ -15,8 +15,6 @@ urlpatterns = [
     path("tournaments/bracket", views.tournament_bracket, name="bracket"),
     path("tournaments/<str:name>", views.tournaments, name="tournament_info"),
     path("tournaments/<str:name>/<str:section>", views.tournaments, name="tournament_section"),
-    # path("register", views.register, name="register"),
-    # path("unregister", views.unregister, name="unregister"),
     path("referee", views.referee, name="referee"),
 
     # api
