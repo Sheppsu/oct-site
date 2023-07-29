@@ -122,7 +122,7 @@ class TournamentInvolvement(models.Model):
     join_date = models.DateTimeField(null=True)
 
     def __str__(self):
-        return f"{self.user} {self.tournament_iteration} Involvement"
+        return self.user
 
 
 class TournamentBracket(models.Model):
@@ -135,13 +135,14 @@ class TournamentBracket(models.Model):
         return TournamentRound.objects.filter(bracket=self, **kwargs)
 
     def __str__(self):
-        return f"{self.tournament_iteration} Bracket"
+        return self.type.name
 
 
 class TournamentTeam(models.Model):
     bracket = models.ForeignKey(TournamentBracket, on_delete=models.RESTRICT)
     name = models.CharField(max_length=64)
     icon = models.CharField(max_length=64, null=True)
+    seed = models.PositiveSmallIntegerField(null=True)
 
     def get_players_with_user(self):
         return StaticPlayer.objects.select_related("user").filter(team=self)
@@ -156,9 +157,6 @@ class StaticPlayer(models.Model):
     osu_rank = models.PositiveIntegerField()
     is_captain = models.BooleanField(default=False)
     tier = models.CharField(max_length=1, null=True)
-
-    def __str__(self):
-        return f"{self.team}: {self.user} #{self.osu_rank}"
 
 
 class Mappool(models.Model):
@@ -180,7 +178,7 @@ class TournamentRound(models.Model):
         return TournamentMatch.objects.filter(tournament_round=self, **kwargs)
 
     def __str__(self):
-        return f"{self.bracket.tournament_iteration.name}: {self.name}"
+        return self.full_name
 
     @property
     def str_date(self):
@@ -215,7 +213,7 @@ class TournamentMatch(models.Model):
             if self.starting_time else "No scheduled time"
 
     def __str__(self):
-        return f"{self.tournament_round} Match {self.match_id}"
+        return str(self.match_id)
 
 
 class MappoolBeatmap(models.Model):
@@ -304,4 +302,4 @@ class MappoolBeatmap(models.Model):
         )
 
     def __str__(self):
-        return f"{self.modification}"
+        return self.modification
