@@ -20,13 +20,16 @@ class Serializer:
         for serializer in _SERIALIZERS:
             if isinstance(obj, serializer.model):
                 return serializer
-        raise NotImplementedError(f"Could not find model for {obj.__class__.__name__}")
+        raise NotImplementedError(f"Could not find serializer for {obj.__class__.__name__}")
 
     def _transform(self, obj, fields):
         data = {}
         for field in fields:
             field_type = getattr(self.model, field)
             value = getattr(obj, field)
+            if value is None:
+                data[field] = value
+                continue
             if isinstance(field_type, ForwardManyToOneDescriptor):
                 serializer = self._get_serializer(value)
                 data[field] = serializer(value).serialize()
