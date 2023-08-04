@@ -151,6 +151,14 @@ def tournament_mappools(req, name=None, round="qualifiers", **kwargs):
         "tournament": tournament,
     })
 
+def match(req, id=None):
+    if id == None:
+        return JsonResponse({"error": "Please give an id"})
+    match = get_object_or_404(TournamentMatch, match_id=id)
+    print(match)
+    serializer = TournamentMatchSerializer(match)
+    return JsonResponse(serializer.serialize(exclude=['tournament_round']), safe=False)
+
 
 @cache_page(60)
 def tournament_teams(req, name=None, **kwargs):
