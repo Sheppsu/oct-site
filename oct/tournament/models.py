@@ -240,8 +240,8 @@ class MappoolBeatmap(models.Model):
             "HD": "#ffe599",
             "HR": "#ea9999",
             "DT": "#b4a7d6",
-            "FM": "",
-            "EZ": "99ea99",
+            "FM": "#50f6fc",
+            "EZ": "#99ea99",
             "TB": "#d5a6bd"
         }[self.modification[:2]]
         self.cs_percent = str(self.circle_size * 10)+"%"
