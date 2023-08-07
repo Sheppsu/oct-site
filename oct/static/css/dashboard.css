@@ -173,11 +173,10 @@
     padding: 0 15px;
 
     box-shadow: 1px 6px 11px -3px rgba(0, 0, 0, 0.25);
-    border: 1px solid black;
     border-radius: 13px;
 
     display: grid;
-    grid-template-columns: 30% 40% 30%;
+    grid-template-columns: 25% 70% 5%;
     grid-auto-columns: 1fr;
     justify-items: stretch;
     align-items: center;
@@ -192,7 +191,7 @@
 .match-information-container {
     display: grid; 
     grid-auto-columns: 1fr; 
-    grid-template-columns: 15% 30% 10% 30% 15%;
+    grid-template-columns: 50px auto 16% auto 50px;
 }
 
 .match-information-container p {
@@ -200,12 +199,13 @@
 }
 
 .match-information-pfp {
-    height: 40px;
+    height: 50px;
     border-radius: 100%;
 }
 
 #team-1-name {
     margin-block: auto;
+    margin-left: 5px;
 }
 
 #score {
@@ -215,5 +215,6 @@
 
 #team-2-name {
     margin-block: auto;
+    margin-right: 5px;
     text-align: right;
 }

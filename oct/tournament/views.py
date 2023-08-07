@@ -96,7 +96,26 @@ def dashboard(req):
     }
     player = StaticPlayer.objects.select_related("team").filter(user=req.user, team__bracket__tournament_iteration=OCT4)
     if player:
-        context["matches"] = player[0].team.tournamentmatch_set.select_related("tournament_round").all()
+        m = []
+        for match in player[0].team.tournamentmatch_set.select_related("tournament_round").all():
+            teams = match.teams.all()
+            if match.team_order:
+                teams = sorted(teams, key=lambda m: match.team_order.index(str(m.id)))
+            match_info = {"obj": match}
+            if not match.tournament_round.name == "QUALIFIERS":
+                winner = None
+                if match.wins:
+                    team1_score = match.wins.count("1")
+                    team2_score = match.wins.count("2")
+                    winner = teams[0] if team1_score > team2_score else teams[1]
+                match_info["team1"] = teams[0]
+                match_info["team2"] = teams[1]
+                match_info["score"] = f"{team1_score}-{team2_score}" if match.wins else "0-0"
+                match_info["result"] = "UPCOMING" \
+                    if match.starting_time is None or datetime.now() > match.starting_time \
+                    else ("ONGOING" if winner is None else ("WON" if player.team == winner else "DEFEAT"))
+            m.append(match_info)
+        context["matches"] = m
    
     return render(req, "tournament/dashboard.html", context)
 
@@ -150,6 +169,14 @@ def tournament_mappools(req, name=None, round="qualifiers", **kwargs):
         "mappools": get_mappools(tournament),
         "tournament": tournament,
     })
+
+def matches(req, id=None):
+    if id is None:
+        return JsonResponse({"error": "Please give an id"})
+    match = get_object_or_404(TournamentMatch, match_id=id)
+    print(match)
+    serializer = TournamentMatchSerializer(match)
+    return JsonResponse(serializer.serialize(exclude=['tournament_round']), safe=False)
 
 
 @cache_page(60)
@@ -206,8 +233,9 @@ def tournament_users(req, name, **kwargs):
         "users": users
     })
 
+
 def referee(req):
     involvement = get_object_or_404(TournamentInvolvement, tournament_iteration=OCT4, user=req.user)
-    # if UserRoles.REGISTERED_PLAYER in involvement.roles:
-    #     raise Http404()
+    if UserRoles.REFEREE not in involvement.roles:
+        raise Http404()
     return render(req, "tournament/referee.html")

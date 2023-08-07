@@ -61,7 +61,7 @@ class UserManager(BaseUserManager):
             user_obj.refresh_token = auth.refresh_token
             user_obj.osu_username = user.username
             user_obj.osu_avatar = user.avatar_url
-            user_obj.osu_cover = user.cover["url"]
+            user_obj.osu_cover = user.cover.url
         except User.DoesNotExist:
             user_obj = User(osu_id=user.id, osu_username=user.username, osu_avatar=user.avatar_url, osu_cover=user.cover["url"],
                             refresh_token=auth.refresh_token)
@@ -122,7 +122,7 @@ class TournamentInvolvement(models.Model):
     join_date = models.DateTimeField(null=True)
 
     def __str__(self):
-        return f"{self.user} {self.tournament_iteration} Involvement"
+        return self.user
 
 
 class TournamentBracket(models.Model):
@@ -135,13 +135,14 @@ class TournamentBracket(models.Model):
         return TournamentRound.objects.filter(bracket=self, **kwargs)
 
     def __str__(self):
-        return f"{self.tournament_iteration} Bracket"
+        return self.type.name
 
 
 class TournamentTeam(models.Model):
     bracket = models.ForeignKey(TournamentBracket, on_delete=models.RESTRICT)
     name = models.CharField(max_length=64)
     icon = models.CharField(max_length=64, null=True)
+    seed = models.PositiveSmallIntegerField(null=True)
 
     def get_players_with_user(self):
         return StaticPlayer.objects.select_related("user").filter(team=self)
@@ -156,9 +157,6 @@ class StaticPlayer(models.Model):
     osu_rank = models.PositiveIntegerField()
     is_captain = models.BooleanField(default=False)
     tier = models.CharField(max_length=1, null=True)
-
-    def __str__(self):
-        return f"{self.team}: {self.user} #{self.osu_rank}"
 
 
 class Mappool(models.Model):
@@ -180,7 +178,7 @@ class TournamentRound(models.Model):
         return TournamentMatch.objects.filter(tournament_round=self, **kwargs)
 
     def __str__(self):
-        return f"{self.bracket.tournament_iteration.name}: {self.name}"
+        return self.full_name
 
     @property
     def str_date(self):
@@ -191,6 +189,7 @@ class TournamentMatch(models.Model):
     tournament_round = models.ForeignKey(TournamentRound, on_delete=models.CASCADE)
     match_id = models.PositiveSmallIntegerField()
     teams = models.ManyToManyField(TournamentTeam)
+    team_order = models.CharField(default="")
     starting_time = models.DateTimeField(null=True)
     is_losers = models.BooleanField(default=False)
     osu_match_id = models.PositiveIntegerField(null=True)
@@ -198,6 +197,7 @@ class TournamentMatch(models.Model):
     bans = models.CharField(max_length=32, null=True)
     picks = models.CharField(max_length=64, null=True)
     wins = models.CharField(max_length=16, null=True)
+    finished = models.BooleanField(default=False)
 
     referee = models.ForeignKey(User, on_delete=models.RESTRICT, null=True, related_name="+")
     streamer = models.ForeignKey(User, on_delete=models.RESTRICT, null=True, related_name="+")
@@ -212,10 +212,24 @@ class TournamentMatch(models.Model):
     @property
     def time_str(self):
         return self.starting_time.strftime("%m/%d %H:%M (%Z)") \
-            if self.starting_time else "No scheduled time"
+            if self.starting_time else "Not scheduled"
+
+    @property
+    def winner(self):
+        return round(self.wins.count("2")/len(self.wins)) if self.finished else None
+
+    def get_match_info(self):
+        if self.osu_match_id is None:
+            return
+        return OSU_CLIENT.get_match(self.osu_match_id)
+
+    def add_team(self, team: TournamentTeam):
+        self.teams.add(team)
+        self.team_order += f",{team.id}"
+        self.save()
 
     def __str__(self):
-        return f"{self.tournament_round} Match {self.match_id}"
+        return str(self.match_id)
 
 
 class MappoolBeatmap(models.Model):
@@ -304,4 +318,4 @@ class MappoolBeatmap(models.Model):
         )
 
     def __str__(self):
-        return f"{self.modification}"
+        return self.modification
