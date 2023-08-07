@@ -38,8 +38,8 @@ html {
 }
 
 body {
-    margin: 0 0 100px;
-    padding-bottom: 50px;
+    margin: 0;
+    overflow-x: hidden;
 }
 
 p {
