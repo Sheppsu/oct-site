@@ -20,5 +20,5 @@ urlpatterns = [
     # api
     path("api/tournaments/<str:name>/<str:round>/mappool", api_view(['GET'])(views.tournament_mappools), kwargs={"api": True}),
     path("api/tournaments/<str:name>/users", api_view(['GET'])(views.tournament_users)),
-    path("api/match/<str:id>", api_view(['GET'])(views.match))
+    path("api/matches/<str:id>", api_view(['GET'])(views.matches))
 ]
