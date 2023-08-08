@@ -112,7 +112,7 @@ def dashboard(req):
                 match_info["team2"] = teams[1]
                 match_info["score"] = f"{team1_score}-{team2_score}" if match.wins else "0-0"
                 match_info["result"] = "UPCOMING" \
-                    if match.starting_time is None or datetime.now() > match.starting_time \
+                    if match.starting_time is None or datetime.now(tz=timezone.utc) > match.starting_time \
                     else ("ONGOING" if winner is None else ("WON" if player.team == winner else "DEFEAT"))
             m.append(match_info)
         context["matches"] = m
