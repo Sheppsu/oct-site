@@ -81,6 +81,28 @@ def logout(req):
     return redirect("index")
 
 
+def _map_match_object(match, player=None):
+    match_info = {"obj": match}
+    result = match.get_progress()
+    match_info["color"] = "#AAAAAA" if result != "FINISHED" else "#8A8AFF"
+    if match.tournament_round.name != "QUALIFIERS":
+        teams = match.teams.all()
+        if match.team_order:
+            teams = sorted(teams, key=lambda m: match.team_order.index(str(m.id)))
+        winner = None
+        if match.wins:
+            team1_score = match.wins.count("1")
+            team2_score = match.wins.count("2")
+            winner = teams[0] if team1_score > team2_score else teams[1]
+        match_info["team1"] = teams[0]
+        match_info["team2"] = teams[1]
+        match_info["score"] = f"{team1_score}-{team2_score}" if match.wins else "0-0"
+        match_info["result"] = result if result != "FINISHED" else ("WON" if player.team == winner else "DEFEAT")
+    else:
+        match_info["result"] = "QUALIFIERS"
+    return match_info
+
+
 def dashboard(req):
     if not req.user.is_authenticated:
         return redirect("index")
@@ -96,26 +118,10 @@ def dashboard(req):
     }
     player = StaticPlayer.objects.select_related("team").filter(user=req.user, team__bracket__tournament_iteration=OCT4)
     if player:
-        m = []
-        for match in player[0].team.tournamentmatch_set.select_related("tournament_round").all():
-            teams = match.teams.all()
-            if match.team_order:
-                teams = sorted(teams, key=lambda m: match.team_order.index(str(m.id)))
-            match_info = {"obj": match}
-            if not match.tournament_round.name == "QUALIFIERS":
-                winner = None
-                if match.wins:
-                    team1_score = match.wins.count("1")
-                    team2_score = match.wins.count("2")
-                    winner = teams[0] if team1_score > team2_score else teams[1]
-                match_info["team1"] = teams[0]
-                match_info["team2"] = teams[1]
-                match_info["score"] = f"{team1_score}-{team2_score}" if match.wins else "0-0"
-                match_info["result"] = "UPCOMING" \
-                    if match.starting_time is None or datetime.now(tz=timezone.utc) > match.starting_time \
-                    else ("ONGOING" if winner is None else ("WON" if player.team == winner else "DEFEAT"))
-            m.append(match_info)
-        context["matches"] = m
+        context["matches"] = map(
+            lambda m: _map_match_object(m, player),
+            sorted(player[0].team.tournamentmatch_set.select_related("tournament_round").all(), reverse=True)
+        )
    
     return render(req, "tournament/dashboard.html", context)
 
@@ -140,7 +146,8 @@ def tournaments(req, name=None, section=None):
             "mappool": tournament_mappools,
             "teams": tournament_teams,
             "bracket": tournament_bracket,
-            "users": tournament_users
+            "users": tournament_users,
+            "matches": tournament_matches,
         }[section.lower()](req, name=name, tournament=tournament)
     except KeyError:
         raise Http404()
@@ -231,6 +238,24 @@ def tournament_users(req, name, **kwargs):
     return render(req, "tournament/tournament_users.html", {
         "tournament": tournament,
         "users": users
+    })
+
+
+# @cache_page(60)
+def tournament_matches(req, name, **kwargs):
+    tournament = kwargs.get("tournament") or get_object_or_404(TournamentIteration, name=name.upper())
+    matches = sorted(
+        TournamentMatch.objects\
+        .select_related("tournament_round")\
+        .filter(tournament_round__bracket__tournament_iteration=tournament),
+    reverse=True)
+    if kwargs.get("api"):
+        serializer = TournamentMatchSerializer(matches, many=True)
+        return JsonResponse(serializer.serialize(exclude=["tournament_round.bracket"]), safe=False)
+
+    return render(req, "tournament/tournament_matches.html", {
+        "tournament": tournament,
+        "matches": map(_map_match_object, matches),
     })
 
 
