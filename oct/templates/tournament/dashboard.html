@@ -27,7 +27,7 @@
             <p class="box-header-text">Matches</p>
             <div class="matches-container">
                 {% for match in matches %}
-                <div class="match-container prevent-select" style="background: linear-gradient(to right, {{ match.obj.color }} 0%, #F6F6F6 30%, #F6F6F6 100%);">
+                <div class="match-container prevent-select" style="background: linear-gradient(to right, {{ match.color }} 0%, #F6F6F6 30%, #F6F6F6 100%);">
                     {% if match.obj.tournament_round.name == "QUALIFIERS" %}
                     <p id="match-result-text">QUALIFIERS</p>
                     <p style="text-align: center;">{{ match.obj.time_str }}</p>

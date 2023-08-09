@@ -25,6 +25,11 @@
             <p class="tournament-header-text">USERS</p>
         </div>
     </a>
+    <a href="{% url 'tournament_section' name=tournament.name section='matches' %}">
+        <div id="matches-header" class="tournament-header-link">
+            <p class="tournament-header-text">MATCHES</p>
+        </div>
+    </a>
 </div>
 <div class="mobile-tournament-header-container prevent-select">
     <div id="mobile-tournament-header">
@@ -60,6 +65,11 @@
         <a href="{% url 'tournament_section' name=tournament.name section='users' %}">
             <div class="mobile-header-dropdown-item">
                 <p class="mobile-header-dropdown-text">USERS</p>
+            </div>
+        </a>
+        <a href="{% url 'tournament_section' name=tournament.name section='matches' %}">
+            <div class="mobile-header-dropdown-item">
+                <p class="mobile-header-dropdown-text">MATCHES</p>
             </div>
         </a>
     </div>

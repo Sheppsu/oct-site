@@ -203,11 +203,6 @@ class TournamentMatch(models.Model):
     streamer = models.ForeignKey(User, on_delete=models.RESTRICT, null=True, related_name="+")
     commentator1 = models.ForeignKey(User, on_delete=models.RESTRICT, null=True, related_name="+")
     commentator2 = models.ForeignKey(User, on_delete=models.RESTRICT, null=True, related_name="+")
-    
-    @property
-    def color(self):
-        return "#8A8AFF" if self.starting_time is not None and \
-                            datetime.now(tz=timezone.utc) > self.starting_time else "#AAAAAA"
 
     @property
     def time_str(self):
@@ -217,6 +212,10 @@ class TournamentMatch(models.Model):
     @property
     def winner(self):
         return round(self.wins.count("2")/len(self.wins)) if self.finished else None
+
+    def get_progress(self):
+        return "UPCOMING" if self.starting_time is None or datetime.now(tz=timezone.utc) < self.starting_time\
+                          else ("ONGOING" if not self.finished else "FINISHED")
 
     def get_match_info(self):
         if self.osu_match_id is None:
@@ -230,6 +229,12 @@ class TournamentMatch(models.Model):
 
     def __str__(self):
         return str(self.match_id)
+
+    def __gt__(self, other):
+        return True if self.starting_time is None or other.starting_time is None else self.starting_time > other.starting_time
+
+    def __lt__(self, other):
+        return False if self.starting_time is None or other.starting_time is None else self.starting_time < other.starting_time
 
 
 class MappoolBeatmap(models.Model):
