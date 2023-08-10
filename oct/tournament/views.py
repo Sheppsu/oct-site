@@ -241,12 +241,12 @@ def tournament_users(req, name, **kwargs):
     })
 
 
-# @cache_page(60)
+@cache_page(60)
 def tournament_matches(req, name, **kwargs):
     tournament = kwargs.get("tournament") or get_object_or_404(TournamentIteration, name=name.upper())
     matches = sorted(
-        TournamentMatch.objects\
-        .select_related("tournament_round")\
+        TournamentMatch.objects
+        .select_related("tournament_round")
         .filter(tournament_round__bracket__tournament_iteration=tournament),
     reverse=True)
     if kwargs.get("api"):

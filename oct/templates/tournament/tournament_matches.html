@@ -17,10 +17,10 @@
                     <p class="match-info"><b>{{ match.obj.time_str }}</b></p>
                 </div>
                 <div id="bottom-container" class="horizontal-container">
-                    <p class="match-info">Referee: {% if match.referee is not None %}{{ match.referee.username }}{% else %}N/A{% endif %}</p>
-                    <p class="match-info">Streamer: {% if match.referee is not None %}{{ match.streamer.username }}{% else %}N/A{% endif %}</p>
-                    <p class="match-info">Commentator 1: {% if match.referee is not None %}{{ match.commentator1.username }}{% else %}N/A{% endif %}</p>
-                    <p class="match-info">Commentator 2: {% if match.referee is not None %}{{ match.commentator2.username }}{% else %}N/A{% endif %}</p>
+                    <p class="match-info">Referee: {% if match.obj.referee is not None %}{{ match.obj.referee.osu_username }}{% else %}N/A{% endif %}</p>
+                    <p class="match-info">Streamer: {% if match.obj.streamer is not None %}{{ match.obj.streamer.osu_username }}{% else %}N/A{% endif %}</p>
+                    <p class="match-info">Commentator 1: {% if match.obj.commentator1 is not None %}{{ match.obj.commentator1.osu_username }}{% else %}N/A{% endif %}</p>
+                    <p class="match-info">Commentator 2: {% if match.obj.commentator2 is not None %}{{ match.obj.commentator2.osu_username }}{% else %}N/A{% endif %}</p>
                 </div>
             </div>
             <p class="match-title">{% if match.obj.tournament_round.name == 'QUALIFIERS' %}Q{% else %}M{% endif %}{{ match.obj.match_id }}</p>
