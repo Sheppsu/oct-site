@@ -30,6 +30,7 @@ USER_DISPLAY_ORDER = [
 def error_500(request):
     return render(request, "tournament/error_500.html")
 
+
 # TODO: maybe move caching logic to models
 def get_mappools(tournament: TournamentIteration):
     mps = cache.get(f"{tournament.name}_mappools")
@@ -51,6 +52,50 @@ def get_mappools(tournament: TournamentIteration):
         # TODO: should it be None...?
         cache.set(f"{tournament.name}_mappools", mps, None)
     return mps
+
+
+def get_teams(tournament: TournamentIteration):
+    teams = cache.get(f"{tournament.name}_teams")
+    if teams is None:
+        teams = tuple(map(
+            lambda team: (team, sorted(team.get_players_with_user(), key=lambda p: p.osu_rank)),
+            sorted(
+                TournamentTeam.objects.filter(bracket__tournament_iteration=tournament),
+                key=lambda t: ord(t.name.lower()[0])
+            )
+        ))
+        cache.set(f"{tournament.name}_teams", teams, 60)
+    return teams
+
+
+def get_users(tournament: TournamentIteration, involvements):
+    users = cache.get(f"{tournament.name}_users")
+    if users is None:
+        users = []
+        for enum in USER_DISPLAY_ORDER:
+            role = " ".join(map(lambda string: string[0] + string[1:].lower(), enum.name.split("_"))) + "s"
+            players = sorted(filter(lambda i: enum in i.roles, involvements), key=lambda i: i.join_date)
+            if len(players) == 0:
+                continue
+            users.append({
+                "role": role,
+                "players": players,
+                "count": len(players)
+            })
+        cache.set(f"{tournament.name}_users", users, 60)
+    return users
+
+
+def get_matches(tournament: TournamentIteration):
+    matches = cache.get(f"{tournament.name}_matches")
+    if matches is None:
+        matches = sorted(
+            TournamentMatch.objects
+            .select_related("tournament_round")
+            .filter(tournament_round__bracket__tournament_iteration=tournament),
+            reverse=True)
+        cache.set(f"{tournament.name}_matches", matches, 60)
+    return matches
 
 
 def index(req):
@@ -188,6 +233,7 @@ def tournament_mappools(req, name=None, round="qualifiers", **kwargs):
         "tournament": tournament,
     })
 
+
 def matches(req, id=None):
     if id is None:
         return JsonResponse({"error": "Please give an id"})
@@ -197,24 +243,16 @@ def matches(req, id=None):
     return JsonResponse(serializer.serialize(exclude=['tournament_round']), safe=False)
 
 
-@cache_page(60)
 def tournament_teams(req, name=None, **kwargs):
     tournament = get_tournament(name, kwargs)
     if tournament is None:
         return redirect("tournament_section", name="OCT4", section="teams")
     return render(req, "tournament/tournament_teams.html", {
         "tournament": tournament,
-        "teams": map(
-            lambda team: (team, sorted(team.get_players_with_user(), key=lambda p: p.osu_rank)),
-            sorted(
-                TournamentTeam.objects.filter(bracket__tournament_iteration=tournament),
-                key=lambda t: ord(t.name.lower()[0])
-            )
-        ),
+        "teams": get_teams(tournament),
     })
 
 
-@cache_page(60)
 def tournament_bracket(req, name=None, **kwargs):
     tournament = get_tournament(name, kwargs)
     if tournament is None:
@@ -224,7 +262,6 @@ def tournament_bracket(req, name=None, **kwargs):
     })
 
 
-@cache_page(60)
 def tournament_users(req, name, **kwargs):
     tournament = kwargs.get("tournament") or get_object_or_404(TournamentIteration, name=name.upper())
     involvements = TournamentInvolvement.objects \
@@ -235,31 +272,16 @@ def tournament_users(req, name, **kwargs):
         serializer = TournamentInvolvementSerializer(involvements, many=True)
         return JsonResponse(serializer.serialize(exclude=["tournament_iteration"]), safe=False)
 
-    users = []
-    for enum in USER_DISPLAY_ORDER:
-        role = " ".join(map(lambda string: string[0] + string[1:].lower(), enum.name.split("_")))+"s"
-        players = sorted(filter(lambda i: enum in i.roles, involvements), key=lambda i: i.join_date)
-        if len(players) == 0:
-            continue
-        users.append({
-            "role": role,
-            "players": players,
-            "count": len(players)
-        })
     return render(req, "tournament/tournament_users.html", {
         "tournament": tournament,
-        "users": users
+        "users": get_users(tournament, involvements)
     })
 
 
-@cache_page(60)
 def tournament_matches(req, name, **kwargs):
     tournament = kwargs.get("tournament") or get_object_or_404(TournamentIteration, name=name.upper())
-    matches = sorted(
-        TournamentMatch.objects
-        .select_related("tournament_round")
-        .filter(tournament_round__bracket__tournament_iteration=tournament),
-    reverse=True)
+    matches = get_matches(tournament)
+
     if kwargs.get("api"):
         serializer = TournamentMatchSerializer(matches, many=True)
         return JsonResponse(serializer.serialize(exclude=["tournament_round.bracket"]), safe=False)
