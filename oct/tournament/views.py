@@ -84,7 +84,6 @@ def logout(req):
 def _map_match_object(match, player=None):
     match_info = {"obj": match}
     result = match.get_progress()
-    match_info["color"] = "#AAAAAA" if result != "FINISHED" else "#8A8AFF"
     if match.tournament_round.name != "QUALIFIERS":
         teams = match.teams.all()
         if match.team_order:
@@ -97,9 +96,20 @@ def _map_match_object(match, player=None):
         match_info["team1"] = teams[0]
         match_info["team2"] = teams[1]
         match_info["score"] = f"{team1_score}-{team2_score}" if match.wins else "0-0"
-        match_info["result"] = result if result != "FINISHED" else ("WON" if player.team == winner else "DEFEAT")
+        if player is not None:
+            match_info["result"] = result if result != "FINISHED" else ("WON" if player.team == winner else "DEFEAT")
+        else:
+            match_info["result"] = result
     else:
         match_info["result"] = "QUALIFIERS"
+    match_info["color"] = {
+        "FINISHED": "#8AFF8A",
+        "UPCOMING": "#AAAAAA",
+        "ONGOING": "#8A8AFF",
+        "WON": "#8AFF8A",
+        "DEFEAT": "#FF8A8A",
+        "QUALIFIERS": "#AAAAAA" if not match.finished else "#8A8AFF",
+    }[match_info["result"]]
     return match_info
 
 
@@ -118,9 +128,10 @@ def dashboard(req):
     }
     player = StaticPlayer.objects.select_related("team").filter(user=req.user, team__bracket__tournament_iteration=OCT4)
     if player:
+        player = player[0]
         context["matches"] = map(
             lambda m: _map_match_object(m, player),
-            sorted(player[0].team.tournamentmatch_set.select_related("tournament_round").all(), reverse=True)
+            sorted(player.team.tournamentmatch_set.select_related("tournament_round").all(), reverse=True)
         )
    
     return render(req, "tournament/dashboard.html", context)
