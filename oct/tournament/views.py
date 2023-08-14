@@ -234,15 +234,6 @@ def tournament_mappools(req, name=None, round="qualifiers", **kwargs):
     })
 
 
-def matches(req, id=None):
-    if id is None:
-        return JsonResponse({"error": "Please give an id"})
-    match = get_object_or_404(TournamentMatch, match_id=id)
-    print(match)
-    serializer = TournamentMatchSerializer(match)
-    return JsonResponse(serializer.serialize(exclude=['tournament_round']), safe=False)
-
-
 def tournament_teams(req, name=None, **kwargs):
     tournament = get_tournament(name, kwargs)
     if tournament is None:
@@ -278,12 +269,17 @@ def tournament_users(req, name, **kwargs):
     })
 
 
-def tournament_matches(req, name, **kwargs):
+def tournament_matches(req, name, match_id=None, **kwargs):
     tournament = kwargs.get("tournament") or get_object_or_404(TournamentIteration, name=name.upper())
-    matches = get_matches(tournament)
+    if match_id is None:
+        matches = get_matches(tournament)
+    else:
+        quals = req.GET.get("quals", "").lower() == "true"
+        matches = TournamentMatch.objects.exclude(tournament_round__name="QUALIFIERS").get(match_id=match_id) \
+            if not quals else TournamentMatch.objects.get(match_id=match_id, tournament_round__name="QUALIFIERS")
 
     if kwargs.get("api"):
-        serializer = TournamentMatchSerializer(matches, many=True)
+        serializer = TournamentMatchSerializer(matches, many=match_id is None)
         return JsonResponse(serializer.serialize(exclude=["tournament_round.bracket"]), safe=False)
 
     return render(req, "tournament/tournament_matches.html", {
