@@ -1,7 +1,7 @@
 from .models import *
 
-from typing import Type, List, Union, Iterable
-from django.db.models.fields.related_descriptors import ForwardManyToOneDescriptor, ManyToManyDescriptor
+from typing import Type, List, Union, Iterable, Dict
+from django.db.models.fields.related_descriptors import ForwardManyToOneDescriptor, ReverseManyToOneDescriptor
 from collections import defaultdict
 
 
@@ -9,8 +9,11 @@ _SERIALIZERS: List[Type['Serializer']] = []
 
 
 class Serializer:
+    # TODO: incorporate select_related
     model: Type[models.Model]
     fields: List[str]
+    excludes: List[str] = []
+    transforms: Dict[str, str] = {}
 
     def __init__(self, obj: Union[models.Model, Iterable], many: bool = False):
         self.obj: Union[models.Model, Iterable] = obj
@@ -32,18 +35,25 @@ class Serializer:
         data = {}
         for field in fields:
             field_type = getattr(self.model, field)
+            json_name = self.transforms[field] if field in self.transforms else field
             value = getattr(obj, field)
             if value is None:
-                data[field] = value
+                data[json_name] = None
                 continue
             if isinstance(field_type, ForwardManyToOneDescriptor):
                 serializer = self._get_serializer_of_obj(value)
-                data[field] = serializer(value).serialize(exclude.get(field), include.get(field))
-            elif isinstance(field_type, ManyToManyDescriptor):
+                data[json_name] = serializer(value).serialize(
+                    exclude.get(field, [])+serializer.excludes,
+                    include.get(field)
+                )
+            elif isinstance(field_type, ReverseManyToOneDescriptor):
                 serializer = self._get_serializer_of_model(value.model)
-                data[field] = serializer(value.all(), many=True).serialize(exclude.get(field), include.get(field))
+                data[json_name] = serializer(value.all(), many=True).serialize(
+                    exclude.get(field, [])+serializer.excludes,
+                    include.get(field)
+                )
             else:
-                data[field] = value
+                data[json_name] = value
         return data
 
     def _separate_field_args(self, fields):
@@ -59,7 +69,7 @@ class Serializer:
 
     def serialize(self, exclude=None, include=None):
         if exclude is None:
-            exclude = []
+            exclude = self.excludes
         if include is None:
             include = []
         exclude_now, exclude_later = self._separate_field_args(exclude)
@@ -77,7 +87,7 @@ class Serializer:
 
 
 def serializer(cls):
-    new_cls = type(cls.__name__, (Serializer, cls), {})
+    new_cls = type(cls.__name__, (cls, Serializer), {})
     _SERIALIZERS.append(new_cls)
     return new_cls
 
@@ -113,9 +123,13 @@ class StaticPlayerSerializer:
 
 
 @serializer
-class TeamSerializer:
+class TournamentTeamSerializer:
     model = TournamentTeam
-    fields = ['name', 'icon', 'seed']
+    fields = ['name', 'icon', 'seed', 'staticplayer_set']
+    excludes = ["staticplayer_set.team"]
+    transforms = {
+        "staticplayer_set": "players"
+    }
 
 
 @serializer
