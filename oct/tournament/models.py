@@ -11,6 +11,7 @@ from common import get_auth_handler, enum_field, date_to_string
 
 
 OSU_CLIENT: Client = settings.OSU_CLIENT
+ROUNDS_ORDER = ("QUALIFIERS", "RO128", "RO64", "RO32", "RO16", "QF", "SF", "FINALS", "GF")
 
 
 class UserRoles(IntFlag):
@@ -61,7 +62,7 @@ class UserManager(BaseUserManager):
             user_obj.refresh_token = auth.refresh_token
             user_obj.osu_username = user.username
             user_obj.osu_avatar = user.avatar_url
-            user_obj.osu_cover = user.cover["url"]
+            user_obj.osu_cover = user.cover.url
         except User.DoesNotExist:
             user_obj = User(osu_id=user.id, osu_username=user.username, osu_avatar=user.avatar_url, osu_cover=user.cover["url"],
                             refresh_token=auth.refresh_token)
@@ -189,6 +190,7 @@ class TournamentMatch(models.Model):
     tournament_round = models.ForeignKey(TournamentRound, on_delete=models.CASCADE)
     match_id = models.PositiveSmallIntegerField()
     teams = models.ManyToManyField(TournamentTeam)
+    team_order = models.CharField(default="")
     starting_time = models.DateTimeField(null=True)
     is_losers = models.BooleanField(default=False)
     osu_match_id = models.PositiveIntegerField(null=True)
@@ -196,24 +198,48 @@ class TournamentMatch(models.Model):
     bans = models.CharField(max_length=32, null=True)
     picks = models.CharField(max_length=64, null=True)
     wins = models.CharField(max_length=16, null=True)
+    finished = models.BooleanField(default=False)
 
     referee = models.ForeignKey(User, on_delete=models.RESTRICT, null=True, related_name="+")
     streamer = models.ForeignKey(User, on_delete=models.RESTRICT, null=True, related_name="+")
     commentator1 = models.ForeignKey(User, on_delete=models.RESTRICT, null=True, related_name="+")
     commentator2 = models.ForeignKey(User, on_delete=models.RESTRICT, null=True, related_name="+")
-    
-    @property
-    def color(self):
-        return "#8A8AFF" if self.starting_time is not None and \
-                            datetime.now(tz=timezone.utc) > self.starting_time else "#AAAAAA"
 
     @property
     def time_str(self):
         return self.starting_time.strftime("%m/%d %H:%M (%Z)") \
-            if self.starting_time else "No scheduled time"
+            if self.starting_time else "Not scheduled"
+
+    @property
+    def winner(self):
+        return round(self.wins.count("2")/len(self.wins)) if self.finished else None
+
+    def get_progress(self):
+        return "UPCOMING" if self.starting_time is None or datetime.now(tz=timezone.utc) < self.starting_time\
+                          else ("ONGOING" if not self.finished else "FINISHED")
+
+    def get_match_info(self):
+        if self.osu_match_id is None:
+            return
+        return OSU_CLIENT.get_match(self.osu_match_id)
+
+    def add_team(self, team: TournamentTeam):
+        self.teams.add(team)
+        self.team_order += ("," if self.team_order else "") + str({team.id})
+        self.save()
 
     def __str__(self):
         return str(self.match_id)
+
+    def __gt__(self, other):
+        if self.tournament_round.name == other.tournament_round.name:
+            return True if self.starting_time is None or other.starting_time is None else self.starting_time > other.starting_time
+        return ROUNDS_ORDER.index(self.tournament_round.name) > ROUNDS_ORDER.index(other.tournament_round.name)
+
+    def __lt__(self, other):
+        if self.tournament_round.name == other.tournament_round.name:
+            return False if self.starting_time is None or other.starting_time is None else self.starting_time < other.starting_time
+        return ROUNDS_ORDER.index(self.tournament_round.name) < ROUNDS_ORDER.index(other.tournament_round.name)
 
 
 class MappoolBeatmap(models.Model):
@@ -238,8 +264,8 @@ class MappoolBeatmap(models.Model):
             "HD": "#ffe599",
             "HR": "#ea9999",
             "DT": "#b4a7d6",
-            "FM": "",
-            "EZ": "99ea99",
+            "FM": "#50f6fc",
+            "EZ": "#99ea99",
             "TB": "#d5a6bd"
         }[self.modification[:2]]
         self.cs_percent = str(self.circle_size * 10)+"%"

@@ -2,12 +2,13 @@
 {% load static %}
 {% block head %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/tournament_info.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/tournament_bracket.css' %}">
 {% endblock head %}
 {% block title %}Tournaments: {{ tournament.name }} bracket{% endblock title %}
 {% block body %}
 <div>
 {% include "tournament/tournament_info_header.html" %}
-    <p style="text-align: center; margin-top: 20px;">Under construction...</p>
+    <iframe src="https://challonge.com/qz54d0uz/module" width="100%" height="700" frameborder="0" scrolling="auto" allowtransparency="true"></iframe>
 </div>
-<script>document.getElementById("bracket-cell").classList.add("current-tournament-header");</script>
+<script>document.getElementById("bracket-header").classList.add("current-tournament-header");</script>
 {% endblock body %}

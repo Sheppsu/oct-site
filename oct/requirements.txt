@@ -7,6 +7,6 @@ whitenoise==6.4.0
 python-dotenv==1.0.0
 requests==2.28.0
 pymongo==4.3.3
-osu.py==0.6.0
+osu.py==1.0.0
 djangorestframework==3.14.0
 sentry-sdk==1.28.1

@@ -28,20 +28,20 @@
             <div class="matches-container">
                 {% for match in matches %}
                 <div class="match-container prevent-select" style="background: linear-gradient(to right, {{ match.color }} 0%, #F6F6F6 30%, #F6F6F6 100%);">
-                    {% if match.tournament_round.name == "QUALIFIERS" %}
+                    {% if match.obj.tournament_round.name == "QUALIFIERS" %}
                     <p id="match-result-text">QUALIFIERS</p>
-                    <p style="text-align: center;">{{ match.time_str }}</p>
-                    <p style="text-align: right;">Q{{ match.match_id }}</p>
+                    <p style="text-align: center;">{{ match.obj.time_str }}</p>
+                    <p style="text-align: right;">Q{{ match.obj.match_id }}</p>
                     {% else %}
-                    <p id="match-result-text">DEFEAT</p>
+                    <p id="match-result-text">{{ match.result }}</p>
                     <div class="match-information-container">
-                        <img src="{{ avatar_url }}" alt="" class="match-information-pfp">
-                        <p id="team-1-name">Team 1</p>
-                        <p id="score">5-7</p>
-                        <p id="team-2-name">Team 2</p>
-                        <img src="{{ avatar_url }}" alt="" class="match-information-pfp">
+                        <img src="{% static 'assets/images/'|add:match.team1.icon %}" alt="" class="match-information-pfp">
+                        <p id="team-1-name">{{ match.team1.name }}</p>
+                        {% if match.result == 'UPCOMING' %}<p style="text-align: center; font-size: 20px;">{{ match.obj.time_str }}</p>{% else %}<p id="score">{{ match.score }}</p>{% endif %}
+                        <p id="team-2-name">{{ match.team2.name }}</p>
+                        <img src="{% static 'assets/images/'|add:match.team2.icon %}" alt="" class="match-information-pfp">
                     </div>
-                    <p style="text-align: right;">M{{ match.match_id }}</p>
+                    <p style="text-align: right;">M{{ match.obj.match_id }}</p>
                     {% endif %}
                 </div>
                 {% endfor %}
