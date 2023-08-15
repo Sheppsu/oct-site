@@ -11,6 +11,7 @@ from common import get_auth_handler, enum_field, date_to_string
 
 
 OSU_CLIENT: Client = settings.OSU_CLIENT
+ROUNDS_ORDER = ("QUALIFIERS", "RO128", "RO64", "RO32", "RO16", "QF", "SF", "FINALS", "GF")
 
 
 class UserRoles(IntFlag):
@@ -224,17 +225,21 @@ class TournamentMatch(models.Model):
 
     def add_team(self, team: TournamentTeam):
         self.teams.add(team)
-        self.team_order += f",{team.id}"
+        self.team_order += ("," if self.team_order else "") + str({team.id})
         self.save()
 
     def __str__(self):
         return str(self.match_id)
 
     def __gt__(self, other):
-        return True if self.starting_time is None or other.starting_time is None else self.starting_time > other.starting_time
+        if self.tournament_round.name == other.tournament_round.name:
+            return True if self.starting_time is None or other.starting_time is None else self.starting_time > other.starting_time
+        return ROUNDS_ORDER.index(self.tournament_round.name) > ROUNDS_ORDER.index(other.tournament_round.name)
 
     def __lt__(self, other):
-        return False if self.starting_time is None or other.starting_time is None else self.starting_time < other.starting_time
+        if self.tournament_round.name == other.tournament_round.name:
+            return False if self.starting_time is None or other.starting_time is None else self.starting_time < other.starting_time
+        return ROUNDS_ORDER.index(self.tournament_round.name) < ROUNDS_ORDER.index(other.tournament_round.name)
 
 
 class MappoolBeatmap(models.Model):
