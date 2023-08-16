@@ -185,6 +185,12 @@ class TournamentRound(models.Model):
     def str_date(self):
         return date_to_string(self.start_date)
 
+    def __lt__(self, other):
+        return ROUNDS_ORDER.index(self.name) < ROUNDS_ORDER.index(other.name)
+
+    def __gt__(self, other):
+        return ROUNDS_ORDER.index(self.name) > ROUNDS_ORDER.index(other.name)
+
 
 class TournamentMatch(models.Model):
     tournament_round = models.ForeignKey(TournamentRound, on_delete=models.CASCADE)

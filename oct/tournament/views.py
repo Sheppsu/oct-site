@@ -41,7 +41,7 @@ def get_mappools(tournament: TournamentIteration):
             raise Http404()
         bracket: TournamentBracket = brackets[0]
         # TODO: rounds sharing the same mappool is possible
-        rounds = TournamentRound.objects.select_related("mappool").filter(bracket=bracket)
+        rounds = sorted(TournamentRound.objects.select_related("mappool").filter(bracket=bracket))
         mps = [
             {
                 "maps": sorted(rnd.mappool.get_beatmaps(), key=lambda mp: mp.id),
@@ -131,6 +131,8 @@ def _map_match_object(match, player=None):
     result = match.get_progress()
     if match.tournament_round.name != "QUALIFIERS":
         teams = match.teams.all()
+        if len(teams) < 2:
+            return
         if match.team_order:
             teams = sorted(teams, key=lambda m: match.team_order.index(str(m.id)))
         winner = None
@@ -174,10 +176,10 @@ def dashboard(req):
     player = StaticPlayer.objects.select_related("team").filter(user=req.user, team__bracket__tournament_iteration=OCT4)
     if player:
         player = player[0]
-        context["matches"] = map(
+        context["matches"] = filter(lambda m: m is not None, map(
             lambda m: _map_match_object(m, player),
             sorted(player.team.tournamentmatch_set.select_related("tournament_round").all(), reverse=True)
-        )
+        ))
    
     return render(req, "tournament/dashboard.html", context)
 
@@ -218,13 +220,18 @@ def get_tournament(name, kwargs):
     return tournament
 
 
-def tournament_mappools(req, name=None, round="qualifiers", **kwargs):
+def tournament_mappools(req, name=None, round=None, **kwargs):
     tournament = get_tournament(name, kwargs)
     if tournament is None:
         return redirect("tournament_section", name="OCT4", section="mappool")
 
     if kwargs.get("api"):
-        maps = get_object_or_404(TournamentRound, bracket=tournament.get_brackets()[0], name=round.upper()).mappool.get_beatmaps()
+        round = TournamentRound.objects\
+            .select_related("mappool", "mappool.mappoolbeatmap_set")\
+            .filter(bracket__tournament_iteration=tournament, name=round.upper())
+        if not round:
+            raise Http404()
+        maps = round.mappool.mappoolbeatmap_set.all()
         serializer = MappoolBeatmapSerializer(maps, many=True)
         return JsonResponse(serializer.serialize(), safe=False)
 
@@ -284,7 +291,7 @@ def tournament_matches(req, name, match_id=None, **kwargs):
 
     return render(req, "tournament/tournament_matches.html", {
         "tournament": tournament,
-        "matches": map(_map_match_object, matches),
+        "matches": filter(lambda m: m is not None, map(_map_match_object, matches)),
     })
 
 
