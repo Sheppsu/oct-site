@@ -10,21 +10,22 @@
 {% include "tournament/tournament_info_header.html" %}
     <div class="matches-container">
         {% for match in matches %}
-        <div class="match" style="background: linear-gradient(to right, {{ match.color }} 0%, #F6F6F6 30%, #F6F6F6 100%);">
-            <p class="match-title">{{ match.result }}</p>
-            <div>
-                <div id="top-container" class="horizontal-container">
-                    <p class="match-info"><b>{{ match.obj.time_str }}</b></p>
-                </div>
-                <div id="bottom-container" class="horizontal-container">
-                    <p class="match-info">Referee: {% if match.obj.referee is not None %}{{ match.obj.referee.osu_username }}{% else %}N/A{% endif %}</p>
-                    <p class="match-info">Streamer: {% if match.obj.streamer is not None %}{{ match.obj.streamer.osu_username }}{% else %}N/A{% endif %}</p>
-                    <p class="match-info">Commentator 1: {% if match.obj.commentator1 is not None %}{{ match.obj.commentator1.osu_username }}{% else %}N/A{% endif %}</p>
-                    <p class="match-info">Commentator 2: {% if match.obj.commentator2 is not None %}{{ match.obj.commentator2.osu_username }}{% else %}N/A{% endif %}</p>
-                </div>
-            </div>
-            <p class="match-title">{% if match.obj.tournament_round.name == 'QUALIFIERS' %}Q{% else %}M{% endif %}{{ match.obj.match_id }}</p>
-        </div>
+        <a style="width: 100%;" {% if match.obj.osu_match_id %}href="https://osu.ppy.sh/community/matches/{{ match.obj.osu_match_id }}" target="_blank"{% endif %}>
+			<div class="match" style="background: linear-gradient(to right, {{ match.color }} 0%, #F6F6F6 30%, #F6F6F6 100%);">
+				<p class="match-title">{{ match.result }}</p>
+				<div>
+					<div id="top-container" class="horizontal-container">
+						<p class="match-info"><b>{{ match.obj.time_str }}</b></p>
+					</div>
+					<div id="bottom-container" class="horizontal-container">
+						<p class="match-info">Referee: {% if match.obj.referee is not None %}{{ match.obj.referee.osu_username }}{% else %}N/A{% endif %}</p>
+						<p class="match-info">Streamer: {% if match.obj.streamer is not None %}{{ match.obj.streamer.osu_username }}{% else %}N/A{% endif %}</p>
+						<p class="match-info">Commentators: {% if match.obj.commentator1 is None and match.obj.commentator2 is None %}N/A{% elif match.obj.commentator1 is None %}{{ match.obj.commentator2.osu_username }}{% elif match.obj.commentator2 is None %}{{ match.obj.commentator1.osu_username }}{% else %}{{ match.obj.commentator1.osu_username }} and {{ match.obj.commentator2.osu_username }}{% endif %}</p>
+					</div>
+				</div>
+				<p class="match-title">{% if match.obj.tournament_round.name == 'QUALIFIERS' %}Q{% else %}M{% endif %}{{ match.obj.match_id }}</p>
+			</div>
+		</a>
         {% endfor %}
     </div>
 </div>

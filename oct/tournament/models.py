@@ -231,7 +231,7 @@ class TournamentMatch(models.Model):
 
     def add_team(self, team: TournamentTeam):
         self.teams.add(team)
-        self.team_order += ("," if self.team_order else "") + str({team.id})
+        self.team_order += ("," if self.team_order else "") + str(team.id)
         self.save()
 
     def __str__(self):
