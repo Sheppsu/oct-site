@@ -228,7 +228,7 @@ def tournament_mappools(req, name=None, round=None, **kwargs):
     if kwargs.get("api"):
         round = TournamentRound.objects\
             .select_related("mappool", "mappool")\
-            .filter(bracket__tournament_iteration=tournament, name=round.upper())
+            .get(bracket__tournament_iteration=tournament, name=round.upper())
         if not round:
             raise Http404()
         maps = round.mappool.mappoolbeatmap_set.all()
