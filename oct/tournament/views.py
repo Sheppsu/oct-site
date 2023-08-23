@@ -155,7 +155,6 @@ def _map_match_object(match, player=None):
         "DEFEAT": "#FF8A8A",
         "QUALIFIERS": "#AAAAAA" if not match.finished else "#8A8AFF",
     }[match_info["result"]]
-    print(match_info)
     return match_info
 
 
