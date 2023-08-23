@@ -5,7 +5,7 @@
 {% endblock head %}
 {% block title %}Dashboard{% endblock title %}
 {% block body %}
-<div style="margin-bottom: 50px;">
+<div style="margin-bottom: 100px;">
     <div class="user-card-container">
         <img src="{{ avatar_url }}" alt="" class="user-card-pfp">
         <div class="user-card-info" style="background-image: linear-gradient(to right, #F6F6F6 40%, transparent), url('{{ banner }}');">
@@ -25,27 +25,34 @@
         </div>
         <div class="matches-box">
             <p class="box-header-text">Matches</p>
-            <div class="matches-container">
-                {% for match in matches %}
-                <div class="match-container prevent-select" style="background: linear-gradient(to right, {{ match.color }} 0%, #F6F6F6 30%, #F6F6F6 100%);">
-                    {% if match.obj.tournament_round.name == "QUALIFIERS" %}
-                    <p id="match-result-text">QUALIFIERS</p>
-                    <p style="text-align: center;">{{ match.obj.time_str }}</p>
-                    <p style="text-align: right;">Q{{ match.obj.match_id }}</p>
-                    {% else %}
-                    <p id="match-result-text">{{ match.result }}</p>
-                    <div class="match-information-container">
-                        <img src="{% static 'assets/images/'|add:match.team1.icon %}" alt="" class="match-information-pfp">
-                        <p id="team-1-name">{{ match.team1.name }}</p>
-                        {% if match.result == 'UPCOMING' %}<p style="text-align: center; font-size: 20px;">{{ match.obj.time_str }}</p>{% else %}<p id="score">{{ match.score }}</p>{% endif %}
-                        <p id="team-2-name">{{ match.team2.name }}</p>
-                        <img src="{% static 'assets/images/'|add:match.team2.icon %}" alt="" class="match-information-pfp">
-                    </div>
-                    <p style="text-align: right;">M{{ match.obj.match_id }}</p>
-                    {% endif %}
-                </div>
-                {% endfor %}
-            </div>
+			<div class="scroll-container">
+				<div class="matches-container">
+					{% for match in matches %}
+					<div class="match-container prevent-select" style="background: linear-gradient(to right, {{ match.color }} 0%, #F6F6F6 30%, #F6F6F6 100%);">
+						{% if match.obj.tournament_round.name == "QUALIFIERS" %}
+						<p id="match-result-text">QUALIFIERS</p>
+						<p style="text-align: center;">{{ match.obj.time_str }}</p>
+						<p style="text-align: right;">Q{{ match.obj.match_id }}</p>
+						{% else %}
+						<p id="match-result-text">{{ match.result }}</p>
+						<div class="match-information-container">
+							<img src="{% static 'assets/images/'|add:match.team1.icon %}" alt="" class="match-information-pfp">
+							<p id="team-1-name">{{ match.team1.name }}</p>
+							{% if match.result == 'UPCOMING' %}<p style="text-align: center; font-size: 20px;">{{ match.obj.time_str }}</p>{% else %}<p id="score">{{ match.score }}</p>{% endif %}
+							{% if match.team2 is not None %}
+							<p id="team-2-name">{{ match.team2.name }}</p>
+							<img src="{% static 'assets/images/'|add:match.team2.icon %}" alt="" class="match-information-pfp">
+							{% else %}
+							<p id="team-2-name">TBD</p>
+							<img alt="" class="match-information-pfp">
+							{% endif %}
+						</div>
+						<p style="text-align: right;">M{{ match.obj.match_id }}</p>
+						{% endif %}
+					</div>
+					{% endfor %}
+				</div>
+			</div>
         </div>
     </div>
 </div>

@@ -131,17 +131,15 @@ def _map_match_object(match, player=None):
     result = match.get_progress()
     if match.tournament_round.name != "QUALIFIERS":
         teams = match.teams.all()
-        if len(teams) < 2:
-            return
-        if match.team_order:
+        if match.team_order and teams:
             teams = sorted(teams, key=lambda m: match.team_order.index(str(m.id)))
         winner = None
         if match.wins:
             team1_score = match.wins.count("1")
             team2_score = match.wins.count("2")
             winner = teams[0] if team1_score > team2_score else teams[1]
-        match_info["team1"] = teams[0]
-        match_info["team2"] = teams[1]
+        match_info["team1"] = teams[0] if len(teams) > 0 else None
+        match_info["team2"] = teams[1] if len(teams) > 1 else None
         match_info["score"] = f"{team1_score}-{team2_score}" if match.wins else "0-0"
         if player is not None:
             match_info["result"] = result if result != "FINISHED" else ("WON" if player.team == winner else "DEFEAT")
@@ -157,6 +155,7 @@ def _map_match_object(match, player=None):
         "DEFEAT": "#FF8A8A",
         "QUALIFIERS": "#AAAAAA" if not match.finished else "#8A8AFF",
     }[match_info["result"]]
+    print(match_info)
     return match_info
 
 
