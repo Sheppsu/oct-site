@@ -6,7 +6,7 @@
 {% endblock head %}
 {% block title %}Mappools{% endblock title %}
 {% block body %}
-<div>
+<div style="margin-bottom: 100px;">
     {% include "tournament/tournament_info_header.html" %}
     {% for round in mappools %}
         <h1 style="text-align: center;">{{ round.stage }}</h1>
