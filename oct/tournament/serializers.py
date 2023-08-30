@@ -125,7 +125,7 @@ class StaticPlayerSerializer:
 @serializer
 class TournamentTeamSerializer:
     model = TournamentTeam
-    fields = ['name', 'icon', 'seed', 'staticplayer_set']
+    fields = ['id', 'name', 'icon', 'seed', 'staticplayer_set']
     excludes = ["staticplayer_set.team"]
     transforms = {
         "staticplayer_set": "players"

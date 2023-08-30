@@ -67,7 +67,7 @@
                             </div>
                         </a>
             <script type="module">
-                import { getDiffColor } from "{% static 'js/util.js' %}"
+                import { getDiffColor } from "{% static 'js/diffColor.js' %}"
                 document.getElementById("{{ round.stage }}-{{ map.modification }}-beatmap").style.backgroundImage = "linear-gradient(to right, {{ map.color }}, "+getDiffColor({{ map.star_rating }})+")";
             </script>
             {% endfor %}

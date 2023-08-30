@@ -1,16 +1,20 @@
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth import get_user_model, login as _login, logout as _logout
-from django.http import HttpResponseBadRequest, HttpResponseServerError, Http404, JsonResponse
+from django.http import (
+    HttpResponseBadRequest,
+    HttpResponseServerError,
+    Http404,
+    JsonResponse,
+    HttpResponseForbidden
+)
 from django.core.cache import cache
-from django.views.decorators.cache import cache_page
 
 from .serializers import *
 
 import requests
 import traceback
-import sys
-from common import render
-from datetime import datetime, timezone
+from common import render, get_auth_handler
+from osu.path import Path
 
 
 User = get_user_model()
@@ -91,7 +95,8 @@ def get_matches(tournament: TournamentIteration):
     if matches is None:
         matches = sorted(
             TournamentMatch.objects
-            .select_related("tournament_round")
+            .select_related("tournament_round", "referee", "streamer", "commentator1", "commentator2")
+            .prefetch_related("teams__staticplayer_set__user")
             .filter(tournament_round__bracket__tournament_iteration=tournament),
             reverse=True)
         cache.set(f"{tournament.name}_matches", matches, 60)
@@ -229,7 +234,7 @@ def tournament_mappools(req, name=None, round=None, **kwargs):
             .get(bracket__tournament_iteration=tournament, name=round.upper())
         if not round:
             raise Http404()
-        maps = round.mappool.mappoolbeatmap_set.all()
+        maps = sorted(round.mappool.mappoolbeatmap_set.all(), key=lambda m: m.id)
         serializer = MappoolBeatmapSerializer(maps, many=True)
         return JsonResponse(serializer.serialize(), safe=False)
 
@@ -294,7 +299,25 @@ def tournament_matches(req, name, match_id=None, **kwargs):
 
 
 def referee(req):
+    if not req.user.is_authenticated:
+        return HttpResponseForbidden()
     involvement = get_object_or_404(TournamentInvolvement, tournament_iteration=OCT4, user=req.user)
     if UserRoles.REFEREE not in involvement.roles:
-        raise Http404()
-    return render(req, "tournament/referee.html")
+        return HttpResponseForbidden()
+    return render(req, "tournament/refereev1.html")
+
+
+def get_osu_match_info(req):
+    if not req.user.is_authenticated:
+        return HttpResponseForbidden()
+    involvement = get_object_or_404(TournamentInvolvement, tournament_iteration=OCT4, user=req.user)
+    if UserRoles.REFEREE not in involvement.roles:
+        return HttpResponseForbidden()
+
+    try:
+        match_id = int(req.GET.get("match_id", None))
+    except ValueError:
+        return HttpResponseBadRequest()
+
+    client = Client(req.user.get_auth_handler())
+    return JsonResponse(client.http.make_request(Path.get_match(match_id)), safe=False)

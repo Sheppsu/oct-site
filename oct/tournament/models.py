@@ -6,6 +6,7 @@ import uuid
 from enum import IntFlag, IntEnum, auto
 from osu import Client, AuthHandler, GameModeStr, Mods
 from datetime import datetime, timezone
+from time import time
 
 from common import get_auth_handler, enum_field, date_to_string
 
@@ -77,7 +78,9 @@ class User(AbstractBaseUser):
     osu_avatar = models.CharField(default="")
     osu_cover = models.CharField(default="")
 
+    auth_token = models.CharField(default="")
     refresh_token = models.CharField(default="")
+    refresh_at = models.PositiveIntegerField(default=0)
 
     is_admin = models.BooleanField(default=False)
 
@@ -88,6 +91,20 @@ class User(AbstractBaseUser):
     ]
 
     objects = UserManager()
+
+    def get_auth_handler(self):
+        auth: AuthHandler = get_auth_handler()
+        now = time()
+        if self.refresh_at < now:
+            auth.refresh_access_token(self.refresh_token)
+            self.refresh_token = auth.refresh_token
+            self.refresh_at = now+600
+            self.auth_token = auth.token
+            self.save()
+        else:
+            auth._token = self.auth_token
+            auth.expire_time = time()
+        return auth
 
     def get_tournament_involvement(self, **kwargs):
         return TournamentInvolvement.objects.filter(user=self, **kwargs)
