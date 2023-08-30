@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load static %}
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/refereev1.css' %}">
+{% endblock head %}
+{% block title %}Referee{% endblock title %}
+{% block body %}
+<div style="margin-left: 50px; margin-top: 50px;">
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <div> <!-- Dropdowns -->
+            <div id="match-dropdown" class="prevent-select dropdown">
+                <p id="match-dropdown-label" class="dropdown-label">Choose a match</p>
+                <div id="match-dropdown-container" class="dropdown-container" hidden></div>
+            </div>
+            <div id="map-dropdown" class="prevent-select dropdown" hidden>
+                <p id="map-dropdown-label" class="dropdown-label">Choose a map</p>
+                <div id="map-dropdown-container" class="dropdown-container" hidden></div>
+            </div>
+            <div id="ban-dropdown" class="prevent-select dropdown" hidden>
+                <p id="ban-dropdown-label" class="dropdown-label">Who bans first</p>
+                <div id="ban-dropdown-container" class="dropdown-container" hidden></div>
+            </div>
+            <div id="pick-dropdown" class="prevent-select dropdown" hidden>
+                <p id="pick-dropdown-label" class="dropdown-label">Who picks first</p>
+                <div id="pick-dropdown-container" class="dropdown-container" hidden></div>
+            </div>
+        </div>
+        <div> <!-- Match info -->
+            <div id="match-info">
+                <p id="match-time" class="grid-item"></p>
+                <p id="team-1-label">Team 1</p>
+                <p id="team-2-label">Team 2</p>
+                <p id="team-1-name" class="grid-item"></p>
+                <p id="team-2-name" class="grid-item"></p>
+                <p id="mp-make" class="grid-item small-grid-text" copyable>!mp make</p>
+                <p class="grid-item small-grid-text" copyable>!mp set 0 5 6</p>
+                <p id="team-1-captain" class="grid-item small-grid-text" copyable>!mp invite</p>
+                <p id="team-2-captain" class="grid-item small-grid-text" copyable>!mp invite</p>
+                <p id="mp-mods" class="grid-item small-grid-text" copyable>!mp mods</p>
+                <p id="mp-map" class="grid-item small-grid-text" copyable>!mp map</p>
+                <p id="mp-score" class="grid-item small-grid-text" copyable>0 - 0</p>
+                <p id="ref-notes" class="grid-item">
+                    Notes<br/>
+                    - Double bans ✅ Double picks ❌<br/>
+                    - All maps allow optional mods EXCEPT HR on hd2 and nm7 and EZ on nm6<br/>
+                    - As long as both teams have at least 4 players present,
+                    no players can play more than twice in a row.
+                    This rules does NOT apply to TB.<br/>
+                    - FM rules require one person HD/EZ and another person HDHR/HR.
+                    FL counts for either (double FL is allowed).<br/>
+                    - GF is BO13.
+                </p>
+            </div>
+        </div>
+        <div id="result-container" hidden> <!-- Results -->
+            <div id="result-box">
+                <p class="grid-item">Action</p>
+                <p class="grid-item">Map</p>
+                <p class="grid-item">Team</p>
+                <p class="grid-item">Team 1 score</p>
+                <p class="grid-item">Team 2 score</p>
+                <p class="grid-item">Ban</p>
+                <p id="result-map-0" class="grid-item">...</p>
+                <p id="result-team-0" class="grid-item">...</p>
+                <p class="grid-item">N/A</p>
+                <p class="grid-item">N/A</p>
+                <p class="grid-item">Ban</p>
+                <p id="result-map-1" class="grid-item">...</p>
+                <p id="result-team-1" class="grid-item">...</p>
+                <p class="grid-item">N/A</p>
+                <p class="grid-item">N/A</p>
+                <p class="grid-item">Ban</p>
+                <p id="result-map-2" class="grid-item">...</p>
+                <p id="result-team-2" class="grid-item">...</p>
+                <p class="grid-item">N/A</p>
+                <p class="grid-item">N/A</p>
+                <p class="grid-item">Ban</p>
+                <p id="result-map-3" class="grid-item">...</p>
+                <p id="result-team-3" class="grid-item">...</p>
+                <p class="grid-item">N/A</p>
+                <p class="grid-item">N/A</p>
+            </div>
+            <div class="control-panel">
+                <input id="mp-link-input" type="text" placeholder="mp link" style="border-width: 2px; border-radius: 8px; border-color: red; outline-color: red;ref shee">
+                <div id="set-ban-button" class="btn">
+                    <p class="dropdown-label">Set map</p>
+                </div>
+                <div id="clear-bans-button" class="btn">
+                    <p class="dropdown-label">Clear bans</p>
+                </div>
+                <div id="update-button" class="btn">
+                    <p class="dropdown-label">Update</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="module">
+    import { init } from "{% static 'js/referee.js' %}"
+    import { initCopyableElements, initDropdowns } from "{% static 'js/util.js' %}"
+
+    init();
+    initCopyableElements();
+    initDropdowns();
+</script>
+{% endblock body %}

@@ -1,17 +1,3 @@
-import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-const difficultyColourSpectrum = d3.scaleLinear()
-  .domain([0.1, 1.25, 2, 2.5, 3.3, 4.2, 4.9, 5.8, 6.7, 7.7, 9])
-  .clamp(true)
-  .range(['#4290FB', '#4FC0FF', '#4FFFD5', '#7CFF4F', '#F6F05C', '#FF8068', '#FF4E6F', '#C645B8', '#6563DE', '#18158E', '#000000'])
-  .interpolate(d3.interpolateRgb.gamma(2.2));
-
-
-export function getDiffColor(starRating) {
-	if (starRating < 0.1) return "#AAAAAA";
-	if (starRating >= 9) return "#000000";
-	return difficultyColourSpectrum(starRating);
-}
-
 function disableScroll() {
     const body = document.getElementsByTagName("body")[0];
     body.style.height = "100vh";
@@ -85,4 +71,61 @@ export function closePopup() {
         buttons[0].remove();
     }
     enableScroll();
+}
+
+export function initCopyableElements() {
+    document.querySelectorAll("[copyable]").forEach((elm) => {
+        elm.style.cursor = "pointer";
+        elm.addEventListener("click", (evt) => {
+            var text = elm.innerHTML;
+            if (text.endsWith("✔")) {
+                text = text.substring(0, text.length-2);
+            } else {
+                elm.innerHTML += " ✔";
+                setTimeout(() => {
+                    if (elm.innerHTML.endsWith("✔")) {
+                        elm.innerHTML = elm.innerHTML.substring(0, elm.innerHTML.length-2);
+                    }
+                }, 5000);
+            }
+            navigator.clipboard.writeText(text);
+        });
+    });
+}
+
+export function initDropdowns() {
+    document.querySelectorAll(".dropdown").forEach((elm) => {
+        const container = elm.querySelector(".dropdown-container");
+        elm.addEventListener("click", (evt) => {
+            if (container.hasAttribute("hidden")) {
+                return container.removeAttribute("hidden");
+            }
+            container.setAttribute("hidden", null);
+        });
+    });
+}
+
+export function createDropdownItem(dropdown, text) {
+    const dropdownLabel = dropdown.querySelector(".dropdown-label");
+    const dropdownContainer = dropdown.querySelector(".dropdown-container");
+
+    const dropdownItem = document.createElement("div");
+    dropdownItem.classList.add("dropdown-item");
+    const label = document.createElement("p");
+    label.classList.add("dropdown-item-label");
+    label.innerHTML = text;
+
+    dropdownItem.appendChild(label);
+    dropdownContainer.appendChild(dropdownItem);
+    dropdownItem.addEventListener("click", (evt) => {
+        dropdownLabel.innerHTML = label.innerHTML;
+    });
+    
+    return dropdownItem;
+}
+
+export function clearChildren(elm) {
+    while (elm.children.length > 0) {
+        elm.children.item(0).remove();
+    }
 }

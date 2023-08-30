@@ -7,15 +7,17 @@
 
 body {
     background-color: var(--dark-grey);
+    margin-bottom: 200px;
 }
 
 .box-container {
-    display: flex;
     height: 1000px;
     width: 100%;
+    margin-top: 100px;
+
+    display: flex;
 }
 .box {
-    width: 45%;
     height: 100%;
     margin: 25px;
     background-color: #f8f8f8;
