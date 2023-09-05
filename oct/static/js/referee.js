@@ -176,7 +176,7 @@ function onUpdate(evt) {
             var team2Tier = 0;
             for (const score of game.scores) {
                 const player = getPlayerInfo(score.user_id);
-                if (player == null) return;
+                if (player == null) continue;
                 if (player.team == 0) {
                     const addScore = Math.round(score.score * getScoreMultiplier(bmMod, score.mods));
                     team1Score += addScore;
@@ -275,7 +275,7 @@ export function init() {
                 return;
             }
             data.forEach((match) => {
-                // if (match.finished) return;
+                if (match.finished) return;
                 
                 const dropdownItem = createDropdownItem(matchDropdown, "M"+match.match_id);
                 dropdownItem.addEventListener("click", (evt) => {
