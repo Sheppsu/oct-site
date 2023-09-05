@@ -256,12 +256,12 @@ class TournamentMatch(models.Model):
 
     def __gt__(self, other):
         if self.tournament_round.name == other.tournament_round.name:
-            return True if self.starting_time is None or other.starting_time is None else self.starting_time > other.starting_time
+            return self.match_id > other.match_id if self.starting_time is None or other.starting_time is None else self.starting_time > other.starting_time
         return ROUNDS_ORDER.index(self.tournament_round.name) > ROUNDS_ORDER.index(other.tournament_round.name)
 
     def __lt__(self, other):
         if self.tournament_round.name == other.tournament_round.name:
-            return False if self.starting_time is None or other.starting_time is None else self.starting_time < other.starting_time
+            return self.match_id < other.match_id if self.starting_time is None or other.starting_time is None else self.starting_time < other.starting_time
         return ROUNDS_ORDER.index(self.tournament_round.name) < ROUNDS_ORDER.index(other.tournament_round.name)
 
 
