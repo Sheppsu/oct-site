@@ -18,7 +18,7 @@ from osu.path import Path
 
 
 User = get_user_model()
-OCT4 = TournamentIteration.objects.get(name="OCT4")
+OCT5 = TournamentIteration.objects.get(name="OCT5")
 USER_DISPLAY_ORDER = [
     UserRoles.HOST,
     UserRoles.REGISTERED_PLAYER,
@@ -166,7 +166,7 @@ def _map_match_object(match, player=None):
 def dashboard(req):
     if not req.user.is_authenticated:
         return redirect("index")
-    involvement = req.user.get_tournament_involvement(tournament_iteration=OCT4)
+    involvement = req.user.get_tournament_involvement(tournament_iteration=OCT5)
     roles = sorted(involvement[0].roles.get_roles(), key=lambda r: USER_DISPLAY_ORDER.index(r)) \
         if involvement else None
     formatted_roles = ", ".join(map(lambda r: r.name[0]+r.name[1:].replace("_", " ").lower(), roles)) \
@@ -176,7 +176,7 @@ def dashboard(req):
         "is_registered": involvement and UserRoles.REGISTERED_PLAYER in involvement[0].roles,
         "roles": formatted_roles
     }
-    player = StaticPlayer.objects.select_related("team").filter(user=req.user, team__bracket__tournament_iteration=OCT4)
+    player = StaticPlayer.objects.select_related("team").filter(user=req.user, team__bracket__tournament_iteration=OCT5)
     if player:
         player = player[0]
         context["matches"] = filter(lambda m: m is not None, map(
@@ -226,7 +226,7 @@ def get_tournament(name, kwargs):
 def tournament_mappools(req, name=None, round=None, **kwargs):
     tournament = get_tournament(name, kwargs)
     if tournament is None:
-        return redirect("tournament_section", name="OCT4", section="mappool")
+        return redirect("tournament_section", name="OCT5", section="mappool")
 
     if kwargs.get("api"):
         round = TournamentRound.objects\
@@ -247,7 +247,7 @@ def tournament_mappools(req, name=None, round=None, **kwargs):
 def tournament_teams(req, name=None, **kwargs):
     tournament = get_tournament(name, kwargs)
     if tournament is None:
-        return redirect("tournament_section", name="OCT4", section="teams")
+        return redirect("tournament_section", name="OCT5", section="teams")
     return render(req, "tournament/tournament_teams.html", {
         "tournament": tournament,
         "teams": get_teams(tournament),
@@ -257,7 +257,7 @@ def tournament_teams(req, name=None, **kwargs):
 def tournament_bracket(req, name=None, **kwargs):
     tournament = get_tournament(name, kwargs)
     if tournament is None:
-        return redirect("tournament_section", name="OCT4", section="bracket")
+        return redirect("tournament_section", name="OCT5", section="bracket")
     return render(req, "tournament/tournament_bracket.html", {
         "tournament": tournament
     })
@@ -301,7 +301,7 @@ def tournament_matches(req, name, match_id=None, **kwargs):
 def referee(req):
     if not req.user.is_authenticated:
         return HttpResponseForbidden()
-    involvement = get_object_or_404(TournamentInvolvement, tournament_iteration=OCT4, user=req.user)
+    involvement = get_object_or_404(TournamentInvolvement, tournament_iteration=OCT5, user=req.user)
     if UserRoles.REFEREE not in involvement.roles:
         return HttpResponseForbidden()
     return render(req, "tournament/refereev1.html")
@@ -310,7 +310,7 @@ def referee(req):
 def get_osu_match_info(req):
     if not req.user.is_authenticated:
         return HttpResponseForbidden()
-    involvement = get_object_or_404(TournamentInvolvement, tournament_iteration=OCT4, user=req.user)
+    involvement = get_object_or_404(TournamentInvolvement, tournament_iteration=OCT5, user=req.user)
     if UserRoles.REFEREE not in involvement.roles:
         return HttpResponseForbidden()
 
