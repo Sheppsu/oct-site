@@ -10,7 +10,16 @@
         <img src="{{ avatar_url }}" alt="" class="user-card-pfp">
         <div class="user-card-info" style="background-image: linear-gradient(to right, #F6F6F6 40%, transparent), url('{{ banner }}');">
             <p id="user-card-username">{{ username }}</p>
-            <p>OCT4: {{ roles }}</p>
+            <p>OCT5: {{ roles }}</p>
+        </div>
+		<div class="user-card-team">
+            {% if is_registered %}
+            <button id="register-button" class="button-registered button-transition">Unregister</button>
+            {% else %}
+            <a href="{% url 'register' %}">
+                <button id="register-button" class="button-unregistered button-transition">Register</button>
+            </a>
+            {% endif %}
         </div>
     </div>
 
@@ -55,5 +64,40 @@
 			</div>
         </div>
     </div>
+	
+	{% if is_registered %}
+    <script type="module">
+        import { initiatePopup, closePopup } from "{% static 'js/util.js' %}"
+        const unregisterButton = document.getElementById("register-button");
+        var pressed = false;
+        var redirecting = false;
+
+        unregisterButton.addEventListener("click", (event) => {
+            if (pressed) {return;}
+            pressed = true;
+            initiatePopup("Are you sure you want to unregister?", [
+                {
+                    text: "Yes",
+                    color: "green",
+                    width: 75,
+                    callback: (event) => {
+                        if (redirecting) {return;}
+                        redirecting = true;
+                        window.location.replace("{% url 'unregister' %}");
+                    }
+                },
+                {
+                    text: "No",
+                    color: "red",
+                    width: 75,
+                    callback: (event) => {
+                        closePopup();
+                        pressed = false;
+                    }
+                }
+            ]);
+        })
+    </script>
+    {% endif %}
 </div>
 {% endblock body %}

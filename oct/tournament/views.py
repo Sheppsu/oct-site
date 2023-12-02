@@ -321,3 +321,35 @@ def get_osu_match_info(req):
 
     client = Client(req.user.get_auth_handler())
     return JsonResponse(client.http.make_request(Path.get_match(match_id)), safe=False)
+    
+    
+def register(req):
+    if not req.user.is_authenticated:
+        return redirect("index")
+    involvement = req.user.get_tournament_involvement(tournament_iteration=OCT5)
+    if not involvement:
+        TournamentInvolvement.objects.create(
+            user=req.user,
+            tournament_iteration=OCT5,
+            roles=UserRoles.REGISTERED_PLAYER,
+            join_date=datetime.now(timezone.utc)
+        ).save()
+        return redirect("dashboard")
+    involvement = involvement[0]
+    if UserRoles.REGISTERED_PLAYER in involvement.roles:
+        return redirect("index")
+    involvement.roles |= UserRoles.REGISTERED_PLAYER
+    involvement.save()
+    return redirect("dashboard")
+
+
+def unregister(req):
+    if not req.user.is_authenticated:
+        return redirect("index")
+    involvement = req.user.get_tournament_involvement(tournament_iteration=OCT5)
+    if not involvement or UserRoles.REGISTERED_PLAYER not in involvement[0].roles:
+        return redirect("index")
+    involvement = involvement[0]
+    involvement.roles = UserRoles(involvement.roles - UserRoles.REGISTERED_PLAYER)
+    involvement.save()
+    return redirect("dashboard")
