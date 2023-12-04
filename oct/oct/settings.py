@@ -189,3 +189,8 @@ CACHES = {
         "LOCATION": "unique-snowflake",
     }
 }
+
+
+ADMINS = [
+    ("Admin", os.getenv("ERROR_REPORT_EMAIL"))
+]
