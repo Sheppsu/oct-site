@@ -8,7 +8,7 @@ from osu import Client, AuthHandler, GameModeStr, Mods
 from datetime import datetime, timezone
 from time import time
 
-from common import get_auth_handler, enum_field, date_to_string, log_err
+from common import get_auth_handler, enum_field, date_to_string
 
 
 OSU_CLIENT: Client = settings.OSU_CLIENT
@@ -52,12 +52,9 @@ class BracketTypeField:
 class UserManager(BaseUserManager):
     def create_user(self, code):
         auth: AuthHandler = get_auth_handler()
-        try:
-            auth.get_auth_token(code)
-            client = Client(auth)
-            user = client.get_own_data(GameModeStr.STANDARD)
-        except Exception as exc:
-            return log_err(exc)
+        auth.get_auth_token(code)
+        client = Client(auth)
+        user = client.get_own_data(GameModeStr.STANDARD)
         try:
             user_obj = User.objects.get(osu_id=user.id)
             user_obj.refresh_token = auth.refresh_token
@@ -65,7 +62,7 @@ class UserManager(BaseUserManager):
             user_obj.osu_avatar = user.avatar_url
             user_obj.osu_cover = user.cover.url
         except User.DoesNotExist:
-            user_obj = User(osu_id=user.id, osu_username=user.username, osu_avatar=user.avatar_url, osu_cover=user.cover["url"],
+            user_obj = User(osu_id=user.id, osu_username=user.username, osu_avatar=user.avatar_url, osu_cover=user.cover.url,
                             refresh_token=auth.refresh_token)
         user_obj.save()
         return user_obj
