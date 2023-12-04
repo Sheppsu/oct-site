@@ -10,10 +10,10 @@ from django.http import (
 from django.core.cache import cache
 
 from .serializers import *
+from common import render, get_auth_handler, log_err
 
 import requests
 import traceback
-from common import render, get_auth_handler
 from osu.path import Path
 
 
@@ -118,10 +118,10 @@ def login(req):
         state = req.GET.get("state", None)
         return redirect(state or "index")
     except requests.HTTPError as exc:
-        print(exc)
+        log_err(req, exc)
         return HttpResponseBadRequest()
-    except:
-        traceback.print_exc()
+    except Exception as exc:
+        log_err(req, exc)
     return HttpResponseServerError()
 
 

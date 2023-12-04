@@ -8,7 +8,7 @@ from osu import Client, AuthHandler, GameModeStr, Mods
 from datetime import datetime, timezone
 from time import time
 
-from common import get_auth_handler, enum_field, date_to_string
+from common import get_auth_handler, enum_field, date_to_string, log_err
 
 
 OSU_CLIENT: Client = settings.OSU_CLIENT
@@ -56,8 +56,8 @@ class UserManager(BaseUserManager):
             auth.get_auth_token(code)
             client = Client(auth)
             user = client.get_own_data(GameModeStr.STANDARD)
-        except:
-            return
+        except Exception as exc:
+            return log_err(exc)
         try:
             user_obj = User.objects.get(osu_id=user.id)
             user_obj.refresh_token = auth.refresh_token
