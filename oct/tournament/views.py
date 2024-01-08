@@ -8,9 +8,10 @@ from django.http import (
     HttpResponseForbidden
 )
 from django.core.cache import cache
+from django.db import connection
 
 from .serializers import *
-from common import render, get_auth_handler, log_err
+from common import render, get_auth_handler, log_err, parse_sql_row
 
 import requests
 import traceback
@@ -61,13 +62,42 @@ def get_mappools(tournament: TournamentIteration):
 def get_teams(tournament: TournamentIteration):
     teams = cache.get(f"{tournament.name}_teams")
     if teams is None:
-        teams = tuple(map(
-            lambda team: (team, sorted(team.get_players_with_user(), key=lambda p: p.osu_rank)),
-            sorted(
-                TournamentTeam.objects.filter(bracket__tournament_iteration=tournament),
-                key=lambda t: ord(t.name.lower()[0])
+        teams = []
+        team_ids = []
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT (
+                    tournament_tournamentteam.id,
+                    tournament_tournamentteam.name,
+                    tournament_tournamentteam.icon,
+                    tournament_tournamentteam.seed,
+                    tournament_staticplayer.osu_rank,
+                    tournament_staticplayer.is_captain,
+                    tournament_staticplayer.tier,
+                    tournament_user.osu_username,
+                    tournament_user.osu_avatar,
+                    tournament_user.osu_id
+                ) FROM tournament_tournamentteam
+                INNER JOIN tournament_tournamentbracket ON (tournament_tournamentteam.bracket_id = tournament_tournamentbracket.id)
+                INNER JOIN tournament_staticplayer ON (tournament_staticplayer.team_id = tournament_tournamentteam.id)
+                INNER JOIN tournament_user ON (tournament_user.id = tournament_staticplayer.user_id)
+                WHERE tournament_iteration_id = '%s'
+                """ % tournament.name
             )
-        ))
+            bool_transform = lambda value: True if value == "t" else False
+            rows = tuple(map(
+                lambda row: parse_sql_row(row[0], [int, str, str, int, int, bool_transform, str, str, str, int]),
+                cursor.fetchall()
+            ))
+            for row in rows:
+                if row[0] not in team_ids:
+                    team_ids.append(row[0])
+                    teams.append({"name": row[1], "icon": row[2], "seed": row[3], "players": []})
+                teams[team_ids.index(row[0])]["players"].append({"osu_rank": row[4], "is_captain": row[5], "tier": row[6], "osu_username": row[7], "osu_avatar": row[8], "osu_id": row[9]})
+        for team in teams:
+            team["players"] = sorted(team["players"], key=lambda player: 0 if player["is_captain"] else player["osu_rank"])
+        teams = sorted(teams, key=lambda team: team["players"][0]["osu_rank"])
         cache.set(f"{tournament.name}_teams", teams, 60)
     return teams
 
