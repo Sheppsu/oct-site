@@ -15,6 +15,44 @@ OSU_CLIENT: Client = settings.OSU_CLIENT
 ROUNDS_ORDER = ("QUALIFIERS", "RO128", "RO64", "RO32", "RO16", "QF", "SF", "FINALS", "GF")
 
 
+def ar_to_ms(ar):
+    return 1200 + (750 if ar >= 5 else 600) * (5 - ar) / 5
+
+
+def ms_to_ar(ms):
+    return 5 - (ms - 1200) / (750 if ms <= 1200 else 600) * 5
+
+
+def od_to_ms(od):
+    return 80 - 6 * od
+
+
+def ms_to_od(ms):
+    return (80 - ms) / 6
+
+
+def calculate_modded_stats(ar, od, cs, hp, mods):
+    if "HR" in mods:
+        ar = min(ar * 1.4, 10)
+        od = min(od * 1.4, 10)
+        cs = min(cs * 1.3, 10)
+        hp = min(hp * 1.4, 10)
+    elif "EZ" in mods:
+        ar *= 0.5
+        od *= 0.5
+        cs *= 0.5
+        hp *= 0.5
+
+    if "DT" in mods:
+        ar = ms_to_ar(ar_to_ms(ar)*2/3)
+        od = ms_to_od(od_to_ms(od)*2/3)
+    elif "HT" in mods:
+        ar = ms_to_ar(ar_to_ms(ar)*4/3)
+        od = ms_to_od(od_to_ms(od)*4/3)
+
+    return ar, od, cs, hp
+
+
 class UserRoles(IntFlag):
     # max 15 fields cuz small integer field
     REGISTERED_PLAYER = auto()
@@ -137,7 +175,7 @@ class TournamentInvolvement(models.Model):
     join_date = models.DateTimeField(null=True)
 
     def __str__(self):
-        return self.user
+        return str(self.roles)
 
 
 class TournamentBracket(models.Model):
@@ -168,7 +206,7 @@ class TournamentTeam(models.Model):
 
 class StaticPlayer(models.Model):
     user = models.ForeignKey(User, on_delete=models.RESTRICT)
-    team = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE)
+    team = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name="players")
     osu_rank = models.PositiveIntegerField()
     is_captain = models.BooleanField(default=False)
     tier = models.CharField(max_length=1, null=True)
@@ -324,14 +362,8 @@ class MappoolBeatmap(models.Model):
             mods=Mods.get_from_abbreviation(mod) if mod not in ("NM", "FM", "TB") else None,
             ruleset=GameModeStr.STANDARD
         )
-        circle_size = beatmap.cs
-        health_drain = beatmap.drain
-        if mod == "HR":
-            circle_size = min(circle_size * 1.3, 10)
-            health_drain = min(health_drain * 1.4, 10)
-        elif mod == "EZ":
-            circle_size *= 0.5
-            health_drain *= 0.5
+        ar, od, cs, hp = calculate_modded_stats(beatmap.ar, beatmap.accuracy, beatmap.cs, beatmap.drain, mod)
+            
         return cls(
             mappool=mappool,
             beatmap_id=beatmap_id,
@@ -340,10 +372,10 @@ class MappoolBeatmap(models.Model):
             title=beatmap.beatmapset.title,
             difficulty=beatmap.version,
             star_rating=beatmap_difficulty.star_rating,
-            overall_difficulty=beatmap_difficulty.mode_attributes.overall_difficulty,
-            approach_rate=beatmap_difficulty.mode_attributes.approach_rate,
-            circle_size=circle_size,
-            health_drain=health_drain,
+            overall_difficulty=od,
+            approach_rate=ar,
+            circle_size=cs,
+            health_drain=hp,
             cover=beatmap.beatmapset.covers.cover_2x
         )
 

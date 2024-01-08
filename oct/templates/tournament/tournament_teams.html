@@ -10,21 +10,21 @@
 {% include "tournament/tournament_info_header.html" %}
     <h1 style="margin: 20px; text-align: center;">Teams</h1>
     <div class="user-container">
-        {% for team, players in teams %}
+        {% for team in teams %}
         <div class="team-container">
             <div class="team-title-container">
-                {% if team.icon is not None %}
+                {% if team.icon != "" %}
                 <img class="team-icon" src="{% static 'assets/images/'|add:team.icon %}" alt="">
                 {% endif %}
                 <h1 class="team-name">{{ team.name }}</h1>
             </div>
             <div class="player-list">
-                {% for player in players %}
-                <a href="https://osu.ppy.sh/u/{{ player.user.osu_id }}" target="_blank"><div class="player-container">
-                    <img class="user-avatar" src="{{ player.user.osu_avatar }}" {% if player.is_captain %}style="border-color: #a6a603;"{% endif %}>
+                {% for player in team.players %}
+                <a href="https://osu.ppy.sh/u/{{ player.osu_id }}" target="_blank"><div class="player-container">
+                    <img class="user-avatar" src="{{ player.osu_avatar }}" {% if player.is_captain %}style="border-color: #a6a603;"{% endif %}>
                     <p class="player-name">
                         {% if player.tier %}[{{ player.tier }}]{% endif %}
-                        {{ player.user.osu_username }} (#{{ player.osu_rank }})
+                        {{ player.osu_username }} (#{{ player.osu_rank }})
                     </p>
                 </div></a>
                 {% endfor %}
