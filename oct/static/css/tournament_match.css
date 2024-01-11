@@ -1,0 +1,57 @@
+.container {
+    display: flex;
+}
+
+.container.visible {
+    border-radius: 10px;
+    background-color: white;
+}
+
+.container.main {
+    width: 100%;
+    margin-top: 100px;
+
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.container.info {
+    width: 500px;
+    padding: 10px 10px;
+
+    flex-direction: column;
+    gap: 5px;
+}
+
+h1 {
+    text-align: center;
+}
+
+p {
+    font-size: 20px;
+}
+
+a::hover {
+    text-color: #
+}
+
+button {
+    transition: box-shadow 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+button.leave {
+    background-color: red;
+}
+
+button.leave:hover {
+    box-shadow: 0 0 30px 5px red;
+}
+
+button.join {
+    background-color: var(--bg-color1);
+}
+
+button.join:hover {
+    box-shadow: 0 0 30px 5px var(--bg-color1);
+}

@@ -4,26 +4,26 @@
 <link rel="stylesheet" type="text/css" href="{% static 'css/tournament_info.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'css/tournament_matches.css' %}">
 {% endblock head %}
-{% block title %}Tournaments: {{ tournament.name }} bracket{% endblock title %}
+{% block title %}Tournaments: {{ tournament.name }} matches{% endblock title %}
 {% block body %}
 <div>
 {% include "tournament/tournament_info_header.html" %}
     <div class="matches-container">
         {% for match in matches %}
-        <a style="width: 100%;" {% if match.obj.osu_match_id %}href="https://osu.ppy.sh/community/matches/{{ match.obj.osu_match_id }}" target="_blank"{% endif %}>
+        <a style="width: 100%;" href="/tournaments/{{ tournament.name }}/matches/{{ match.id }}">
 			<div class="match" style="background: linear-gradient(to right, {{ match.color }} 0%, #F6F6F6 30%, #F6F6F6 100%);">
-				<p class="match-title">{{ match.result }}</p>
+				<p class="match-heading title">{{ match.result }}</p>
 				<div>
 					<div id="top-container" class="horizontal-container">
 						<p class="match-info"><b>{{ match.obj.time_str }}</b></p>
 					</div>
+
 					<div id="bottom-container" class="horizontal-container">
-						<p class="match-info">Referee: {% if match.obj.referee is not None %}{{ match.obj.referee.osu_username }}{% else %}N/A{% endif %}</p>
-						<p class="match-info">Streamer: {% if match.obj.streamer is not None %}{{ match.obj.streamer.osu_username }}{% else %}N/A{% endif %}</p>
-						<p class="match-info">Commentators: {% if match.obj.commentator1 is None and match.obj.commentator2 is None %}N/A{% elif match.obj.commentator1 is None %}{{ match.obj.commentator2.osu_username }}{% elif match.obj.commentator2 is None %}{{ match.obj.commentator1.osu_username }}{% else %}{{ match.obj.commentator1.osu_username }} and {{ match.obj.commentator2.osu_username }}{% endif %}</p>
+						<p class="match-info">{% if match.result != "QUALIFIERS" %}{{ match.team1 }} vs {{ match.team2 }}{% else %}Signups: {{ match.team_names }}{% endif %}</p>
 					</div>
+
 				</div>
-				<p class="match-title">{% if match.obj.tournament_round.name == 'QUALIFIERS' %}Q{% else %}M{% endif %}{{ match.obj.match_id }}</p>
+				<p class="match-heading">{{ match.id }}</p>
 			</div>
 		</a>
         {% endfor %}

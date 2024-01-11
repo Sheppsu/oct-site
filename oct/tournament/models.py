@@ -183,6 +183,7 @@ class TournamentBracket(models.Model):
     # in the future
     tournament_iteration = models.ForeignKey(TournamentIteration, on_delete=models.CASCADE)
     type = BracketTypeField(default=BracketType.DOUBLE_ELIMINATION)
+    challonge_id = models.CharField(max_length=16)
 
     def get_rounds(self, **kwargs):
         return TournamentRound.objects.filter(bracket=self, **kwargs)
@@ -285,6 +286,12 @@ class TournamentMatch(models.Model):
         self.teams.add(team)
         self.team_order += ("," if self.team_order else "") + str(team.id)
         self.save()
+
+    def remove_team(self, team: TournamentTeam):
+        self.teams.remove(team)
+        team_order = self.team_order.split(",")
+        team_order.remove(str(team.id))
+        self.team_order = ",".join(team_order)
 
     def __str__(self):
         return str(self.match_id)

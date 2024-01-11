@@ -8,7 +8,9 @@
 {% block body %}
 <div>
 {% include "tournament/tournament_info_header.html" %}
-    <iframe src="https://challonge.com/qz54d0uz/module" width="100%" height="700" frameborder="0" scrolling="auto" allowtransparency="true"></iframe>
+    {% if bracket.challonge_id != "" %}
+    <iframe src="https://challonge.com/{{ bracket.challonge_id }}/module" width="100%" height="700" frameborder="0" scrolling="auto" allowtransparency="true"></iframe>
+    {% endif %}
 </div>
 <script>document.getElementById("bracket-header").classList.add("current-tournament-header");</script>
 {% endblock body %}

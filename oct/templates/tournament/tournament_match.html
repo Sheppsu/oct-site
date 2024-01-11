@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/tournament_info.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/tournament_match.css' %}">
+{% endblock head %}
+{% block title %}Tournaments: {{ tournament.name }} - {{ match.id }} match{% endblock title %}
+{% block body %}
+<div class="main container">
+    <div class="visible info container">
+        <h1>{{ match.id }}</h1>
+        <p><b>Time:</b> {{ match.obj.time_str }}</p>
+        <p><b>Round:</b> {{ match.obj.tournament_round.full_name }} {% if match.obj.is_losers %}(losers){% endif %}</p>
+        <div><a class="link" href="https://osu.ppy.sh/community/matches/{{ match.obj.osu_match_id }}" target="_blank">
+            <p><b>MP Link</b></p>
+        </a></div>
+    </div>
+    <div class="visible info container">
+        <h1>{% if match.result == "QUALIFIERS" %}Lobby{% else %}Matchup{% endif %}</h1>
+        {% if match.result == "QUALIFIERS" %}
+        <p><b>Teams/Players:</b> {{ match.team_names }}</p>
+        {% else %}
+        <p><b>Team 1:</b> {{ match.team1 }}</p>
+        <p><b>Team2: </b> {{ match.team2 }}</p>
+        <p><b>Streamer:</b> {% if match.obj.streamer is not None %}{{ match.obj.streamer.osu_username }}{% else %}N/A{% endif %}</p>
+        <p><b>Commentators:</b> {% if match.obj.commentator1 is None and match.obj.commentator2 is None %}N/A{% elif match.obj.commentator1 is None %}{{ match.obj.commentator2.osu_username }}{% elif match.obj.commentator2 is None %}{{ match.obj.commentator1.osu_username }}{% else %}{{ match.obj.commentator1.osu_username }} and {{ match.obj.commentator2.osu_username }}{% endif %}</p>
+        {% endif %}
+        <p><b>Referee:</b> {% if match.obj.referee is not None %}{{ match.obj.referee.osu_username }}{% else %}N/A{% endif %}</p>
+    </div>
+    {% if current_player is not None and current_player.is_captain and match.progress == "UPCOMING" %}
+    <div class="visible info container">
+        {% if in_lobby %}
+        <div><a href="/matches/{{ match.obj.id }}/leave?state=/tournaments/{{ tournament.name }}/matches/{{ match.id }}">
+                <button class="leave">Leave lobby</button>
+        </a></div>
+
+        {% else %}
+        <div><a href="/matches/{{ match.obj.id }}/join?state=/tournaments/{{ tournament.name }}/matches/{{ match.id }}">
+            <button class="join">Join lobby</button>
+        </a></div>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock body %}

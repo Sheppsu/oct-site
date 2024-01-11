@@ -17,12 +17,14 @@ urlpatterns = [
     path("tournaments/bracket", views.tournament_bracket, name="bracket"),
     path("tournaments/<str:name>", views.tournaments, name="tournament_info"),
     path("tournaments/<str:name>/<str:section>", views.tournaments, name="tournament_section"),
+    path("tournaments/<str:name>/matches/<str:match_id>", views.tournament_matches, name="tournament_match"),
+    path("matches/<int:match_id>/<str:action>", views.tournament_match_action, name="match_action"),
     path("referee", views.referee, name="referee"),
 
     # api
     path("api/tournaments/<str:name>/<str:round>/mappool", api_view(['GET'])(views.tournament_mappools), kwargs={"api": True}),
     path("api/tournaments/<str:name>/users", api_view(['GET'])(views.tournament_users), kwargs={"api": True}),
     path("api/tournaments/<str:name>/matches", api_view(["GET"])(views.tournament_matches), kwargs={"api": True}),
-    path("api/tournaments/<str:name>/matches/<int:match_id>", api_view(['GET'])(views.tournament_matches), kwargs={"api": True}),
+    path("api/tournaments/<str:name>/matches/<str:match_id>", api_view(['GET'])(views.tournament_matches), kwargs={"api": True}),
     path("api/osu/matchinfo", api_view(['GET'])(views.get_osu_match_info))
 ]

@@ -126,7 +126,7 @@ def get_matches(tournament: TournamentIteration):
         matches = sorted(
             TournamentMatch.objects
             .select_related("tournament_round", "referee", "streamer", "commentator1", "commentator2")
-            .prefetch_related("teams__staticplayer_set__user")
+            .prefetch_related("teams__players__user")
             .filter(tournament_round__bracket__tournament_iteration=tournament),
             reverse=True)
         cache.set(f"{tournament.name}_matches", matches, 60)
@@ -161,9 +161,10 @@ def logout(req):
     return redirect("index")
 
 
-def _map_match_object(match, player=None):
+def map_match_object(match, player=None):
     match_info = {"obj": match}
-    result = match.get_progress()
+    progress = match.get_progress()
+    match_info["progress"] = progress
     if match.tournament_round.name != "QUALIFIERS":
         teams = match.teams.all()
         if match.team_order and teams:
@@ -172,16 +173,19 @@ def _map_match_object(match, player=None):
         if match.wins:
             team1_score = match.wins.count("1")
             team2_score = match.wins.count("2")
+            match_info["score"] = f"{team1_score}-{team2_score}"
             winner = teams[0] if team1_score > team2_score else teams[1]
         match_info["team1"] = teams[0] if len(teams) > 0 else None
         match_info["team2"] = teams[1] if len(teams) > 1 else None
-        match_info["score"] = f"{team1_score}-{team2_score}" if match.wins else "0-0"
         if player is not None:
-            match_info["result"] = result if result != "FINISHED" else ("WON" if player.team == winner else "DEFEAT")
+            match_info["result"] = progress if progress != "FINISHED" else ("WON" if player.team == winner else "DEFEAT")
         else:
-            match_info["result"] = result
+            match_info["result"] = progress
+        match_info["id"] = f"M{match.match_id}"
     else:
         match_info["result"] = "QUALIFIERS"
+        match_info["team_names"] = ", ".join(map(lambda team: team.name, match.teams.all()))
+        match_info["id"] = f"Q{match.match_id}"
     match_info["color"] = {
         "FINISHED": "#8AFF8A",
         "UPCOMING": "#AAAAAA",
@@ -210,10 +214,10 @@ def dashboard(req):
     if player:
         player = player[0]
         context["matches"] = filter(lambda m: m is not None, map(
-            lambda m: _map_match_object(m, player),
+            lambda m: map_match_object(m, player),
             sorted(player.team.tournamentmatch_set.select_related("tournament_round").all(), reverse=True)
         ))
-   
+
     return render(req, "tournament/dashboard.html", context)
 
 
@@ -289,7 +293,8 @@ def tournament_bracket(req, name=None, **kwargs):
     if tournament is None:
         return redirect("tournament_section", name="OCT5", section="bracket")
     return render(req, "tournament/tournament_bracket.html", {
-        "tournament": tournament
+        "tournament": tournament,
+        "bracket": tournament.get_brackets()[0]
     })
 
 
@@ -309,23 +314,111 @@ def tournament_users(req, name, **kwargs):
     })
 
 
+def parse_match_id(match_id):
+    match_id = match_id.upper()
+    if len(match_id) < 2:
+        raise Http404()
+    is_quals = match_id[0] == "Q"
+    if match_id[0] != "M" and not is_quals:
+        raise Http404()
+    try:
+        return int(match_id[1:]), is_quals
+    except ValueError:
+        raise Http404()
+
+
+def get_matches_from_id(tournament, match_id=None):
+    if match_id is None:
+        return get_matches(tournament)
+    match_id, is_quals = parse_match_id(match_id)
+    try:
+        return TournamentMatch.objects\
+            .exclude(tournament_round__name="QUALIFIERS")\
+            .prefetch_related("teams")\
+            .select_related("tournament_round", "referee", "streamer", "commentator1", "commentator2")\
+            .get(match_id=match_id, tournament_round__bracket__tournament_iteration=tournament) \
+            if not is_quals else \
+            TournamentMatch.objects \
+            .prefetch_related("teams") \
+            .select_related("tournament_round", "referee", "streamer", "commentator1", "commentator2")\
+            .get(match_id=match_id, tournament_round__name="QUALIFIERS", tournament_round__bracket__tournament_iteration=tournament)
+    except TournamentMatch.DoesNotExist:
+        raise Http404()
+
+
+def get_user_as_player(bracket, user):
+    player = StaticPlayer.objects.select_related("team")\
+            .filter(user=user, team__bracket=bracket)
+    if player:
+        return player[0]
+
+
+def render_match(req, tournament, match):
+    match_info = map_match_object(match)
+    in_lobby = False
+    current_player = None
+    if req.user.is_authenticated and match_info["result"] == "QUALIFIERS":
+        current_player = get_user_as_player(match.tournament_round.bracket, req.user)
+        if current_player is not None:
+            in_lobby = any(map(lambda team: team.id == current_player.team.id, match.teams.all()))
+    return render(req, "tournament/tournament_match.html", {
+        "tournament": tournament,
+        "match": match_info,
+        "current_player": current_player,
+        "in_lobby": in_lobby
+    })
+
+
 def tournament_matches(req, name, match_id=None, **kwargs):
     tournament = kwargs.get("tournament") or get_object_or_404(TournamentIteration, name=name.upper())
-    if match_id is None:
-        matches = get_matches(tournament)
-    else:
-        quals = req.GET.get("quals", "").lower() == "true"
-        matches = TournamentMatch.objects.exclude(tournament_round__name="QUALIFIERS").get(match_id=match_id) \
-            if not quals else TournamentMatch.objects.get(match_id=match_id, tournament_round__name="QUALIFIERS")
+    matches = get_matches_from_id(tournament, match_id)
 
     if kwargs.get("api"):
         serializer = TournamentMatchSerializer(matches, many=match_id is None)
         return JsonResponse(serializer.serialize(exclude=["tournament_round.bracket"]), safe=False)
 
-    return render(req, "tournament/tournament_matches.html", {
-        "tournament": tournament,
-        "matches": filter(lambda m: m is not None, map(_map_match_object, matches)),
-    })
+    if match_id is None:
+        return render(req, "tournament/tournament_matches.html", {
+            "tournament": tournament,
+            "matches": filter(lambda m: m is not None, map(map_match_object, matches)),
+        })
+    return render_match(req, tournament, matches)
+
+
+def tournament_match_action(req, match_id, action):
+    action = action.lower()
+    if action not in ("leave", "join"):
+        raise Http404()
+    try:
+        match = TournamentMatch.objects.select_related("tournament_round").get(id=match_id)
+    except TournamentMatch.DoesNotExist:
+        raise Http404()
+
+    return_page = redirect(req.GET.get("state", "/"))
+
+    if not req.user.is_authenticated:
+        return return_page
+    if match.get_progress() != "UPCOMING":
+        return return_page
+    if match.tournament_round.name != "QUALIFIERS":
+        return return_page
+
+    player = get_user_as_player(match.tournament_round.bracket, req.user)
+    if player is None:
+        return return_page
+    if not player.is_captain:
+        return return_page
+    if action == "leave":
+        match.remove_team(player.team)
+        return return_page
+    other_match = TournamentMatch.objects.filter(teams=player.team, tournament_round=match.tournament_round)
+    if other_match:
+        other_match = other_match[0]
+        if other_match.get_progress() != "UPCOMING":
+            return return_page
+        other_match.remove_team(player.team)
+    match.add_team(player.team)
+    return return_page
 
 
 def referee(req):
@@ -351,8 +444,8 @@ def get_osu_match_info(req):
 
     client = Client(req.user.get_auth_handler())
     return JsonResponse(client.http.make_request(Path.get_match(match_id)), safe=False)
-    
-    
+
+
 def register(req):
     if not req.user.is_authenticated:
         return redirect("index")
