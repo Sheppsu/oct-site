@@ -195,11 +195,10 @@
     border-radius: 13px;
 
     display: grid;
-    grid-template-columns: 25% 70% 5%;
+    grid-template-columns: 25% auto 5% 50px;
     grid-auto-columns: 1fr;
     justify-items: stretch;
     align-items: center;
-	
 }
 
 #match-result-text {
