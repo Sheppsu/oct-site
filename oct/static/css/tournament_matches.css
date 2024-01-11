@@ -22,10 +22,14 @@
     background-color: var(--bg-color6);
 }
 
-.match-title {
+.match-heading {
     font-style: italic;
     font-weight: 700;
     font-size: 30px;
+}
+
+.match-heading.title {
+    width: 180px;
 }
 
 .horizontal-container {
