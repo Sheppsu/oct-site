@@ -7,10 +7,13 @@ def render(req, template, context=None, *args, **kwargs):
         context = {}
     context["login_url"] = settings.OSU_AUTH_URL+f"&state={req.path}"
     context["is_logged_in"] = req.user.is_authenticated
+    context["state"] = req.path
     if req.user.is_authenticated:
+        # why not just send the user object... maybe I'll fix it later
         context["avatar_url"] = req.user.osu_avatar
         context["banner"] = req.user.osu_cover
         context["username"] = req.user.osu_username
+        context["user_id"] = req.user.osu_id
     return _render(req, template, context, *args, **kwargs)
 
 

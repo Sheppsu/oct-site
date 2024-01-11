@@ -161,42 +161,6 @@ def logout(req):
     return redirect("index")
 
 
-def map_match_object(match, player=None):
-    match_info = {"obj": match}
-    progress = match.get_progress()
-    match_info["progress"] = progress
-    if match.tournament_round.name != "QUALIFIERS":
-        teams = match.teams.all()
-        if match.team_order and teams:
-            teams = sorted(teams, key=lambda m: match.team_order.index(str(m.id)))
-        winner = None
-        if match.wins:
-            team1_score = match.wins.count("1")
-            team2_score = match.wins.count("2")
-            match_info["score"] = f"{team1_score}-{team2_score}"
-            winner = teams[0] if team1_score > team2_score else teams[1]
-        match_info["team1"] = teams[0] if len(teams) > 0 else None
-        match_info["team2"] = teams[1] if len(teams) > 1 else None
-        if player is not None:
-            match_info["result"] = progress if progress != "FINISHED" else ("WON" if player.team == winner else "DEFEAT")
-        else:
-            match_info["result"] = progress
-        match_info["id"] = f"M{match.match_id}"
-    else:
-        match_info["result"] = "QUALIFIERS"
-        match_info["team_names"] = ", ".join(map(lambda team: team.name, match.teams.all()))
-        match_info["id"] = f"Q{match.match_id}"
-    match_info["color"] = {
-        "FINISHED": "#8AFF8A",
-        "UPCOMING": "#AAAAAA",
-        "ONGOING": "#8A8AFF",
-        "WON": "#8AFF8A",
-        "DEFEAT": "#FF8A8A",
-        "QUALIFIERS": "#AAAAAA" if not match.finished else "#8A8AFF",
-    }[match_info["result"]]
-    return match_info
-
-
 def dashboard(req):
     if not req.user.is_authenticated:
         return redirect("index")
@@ -210,12 +174,14 @@ def dashboard(req):
         "is_registered": involvement and UserRoles.REGISTERED_PLAYER in involvement[0].roles,
         "roles": formatted_roles
     }
-    player = StaticPlayer.objects.select_related("team").filter(user=req.user, team__bracket__tournament_iteration=OCT5)
-    if player:
-        player = player[0]
+    player = StaticPlayer.objects.select_related("team").filter(
+        user=req.user,
+        team__bracket__tournament_iteration=OCT5
+    ).first()
+    if player is not None:
         context["matches"] = filter(lambda m: m is not None, map(
             lambda m: map_match_object(m, player),
-            sorted(player.team.tournamentmatch_set.select_related("tournament_round").all(), reverse=True)
+            sorted(player.team.tournamentmatch_set.prefetch_related("teams").select_related("tournament_round__bracket").all(), reverse=True)
         ))
 
     return render(req, "tournament/dashboard.html", context)
@@ -314,6 +280,42 @@ def tournament_users(req, name, **kwargs):
     })
 
 
+def map_match_object(match, player=None):
+    match_info = {"obj": match}
+    progress = match.get_progress()
+    match_info["progress"] = progress
+    if match.tournament_round.name != "QUALIFIERS":
+        teams = match.teams.all()
+        if match.team_order and teams:
+            teams = sorted(teams, key=lambda m: match.team_order.index(str(m.id)))
+        winner = None
+        if match.wins:
+            team1_score = match.wins.count("1")
+            team2_score = match.wins.count("2")
+            match_info["score"] = f"{team1_score}-{team2_score}"
+            winner = teams[0] if team1_score > team2_score else teams[1]
+        match_info["team1"] = teams[0] if len(teams) > 0 else None
+        match_info["team2"] = teams[1] if len(teams) > 1 else None
+        if player is not None:
+            match_info["result"] = progress if progress != "FINISHED" else ("WON" if player.team == winner else "DEFEAT")
+        else:
+            match_info["result"] = progress
+        match_info["id"] = f"M{match.match_id}"
+    else:
+        match_info["result"] = "QUALIFIERS"
+        match_info["team_names"] = ", ".join(map(lambda team: team.name, match.teams.all()))
+        match_info["id"] = f"Q{match.match_id}"
+    match_info["color"] = {
+        "FINISHED": "#8AFF8A",
+        "UPCOMING": "#AAAAAA",
+        "ONGOING": "#8A8AFF",
+        "WON": "#8AFF8A",
+        "DEFEAT": "#FF8A8A",
+        "QUALIFIERS": "#AAAAAA" if not match.finished else "#8A8AFF",
+    }[match_info["result"]]
+    return match_info
+
+
 def parse_match_id(match_id):
     match_id = match_id.upper()
     if len(match_id) < 2:
@@ -335,41 +337,50 @@ def get_matches_from_id(tournament, match_id=None):
         return TournamentMatch.objects\
             .exclude(tournament_round__name="QUALIFIERS")\
             .prefetch_related("teams")\
-            .select_related("tournament_round", "referee", "streamer", "commentator1", "commentator2")\
+            .select_related("tournament_round__bracket", "referee", "streamer", "commentator1", "commentator2")\
             .get(match_id=match_id, tournament_round__bracket__tournament_iteration=tournament) \
             if not is_quals else \
             TournamentMatch.objects \
             .prefetch_related("teams") \
-            .select_related("tournament_round", "referee", "streamer", "commentator1", "commentator2")\
+            .select_related("tournament_round__bracket", "referee", "streamer", "commentator1", "commentator2")\
             .get(match_id=match_id, tournament_round__name="QUALIFIERS", tournament_round__bracket__tournament_iteration=tournament)
     except TournamentMatch.DoesNotExist:
         raise Http404()
 
 
 def get_user_as_player(bracket, user):
-    player = StaticPlayer.objects.select_related("team")\
-            .filter(user=user, team__bracket=bracket)
-    if player:
-        return player[0]
+    return StaticPlayer.objects.select_related("team")\
+        .filter(user=user, team__bracket=bracket)\
+        .first()
 
 
 def render_match(req, tournament, match):
     match_info = map_match_object(match)
     in_lobby = False
     current_player = None
+    involvement = None
     if req.user.is_authenticated and match_info["result"] == "QUALIFIERS":
-        current_player = get_user_as_player(match.tournament_round.bracket, req.user)
+        current_player = get_user_as_player(match.tournament_round.bracket_id, req.user)
+        involvement = TournamentInvolvement.objects\
+            .filter(user=req.user, tournament_iteration=match.tournament_round.bracket.tournament_iteration_id)\
+            .first()
         if current_player is not None:
             in_lobby = any(map(lambda team: team.id == current_player.team.id, match.teams.all()))
+    allowed_actions = (
+        current_player is not None and current_player.is_captain and match_info["progress"] == "UPCOMING",
+        UserRoles.REFEREE in involvement.roles
+    )
     return render(req, "tournament/tournament_match.html", {
         "tournament": tournament,
         "match": match_info,
-        "current_player": current_player,
+        "allowed_actions": allowed_actions,
+        "show_actions": any(allowed_actions),
         "in_lobby": in_lobby
     })
 
 
 def tournament_matches(req, name, match_id=None, **kwargs):
+    # TODO: match pages need some functions to optimize the queries
     tournament = kwargs.get("tournament") or get_object_or_404(TournamentIteration, name=name.upper())
     matches = get_matches_from_id(tournament, match_id)
 
@@ -385,25 +396,55 @@ def tournament_matches(req, name, match_id=None, **kwargs):
     return render_match(req, tournament, matches)
 
 
-def tournament_match_action(req, match_id, action):
-    action = action.lower()
-    if action not in ("leave", "join"):
-        raise Http404()
-    try:
-        match = TournamentMatch.objects.select_related("tournament_round").get(id=match_id)
-    except TournamentMatch.DoesNotExist:
-        raise Http404()
+def action_handler(valid_actions, select_related):
+    def wrapper(func):
+        def inner_wrapper(req, match_id, action):
+            if action not in valid_actions:
+                raise Http404()
 
-    return_page = redirect(req.GET.get("state", "/"))
+            return_page = redirect(req.GET.get("state", "/"))
 
-    if not req.user.is_authenticated:
+            if not req.user.is_authenticated:
+                return return_page
+
+            match = TournamentMatch.objects.select_related(*select_related).filter(id=match_id).first()
+
+            return func(req, match_id, action, return_page, match)
+        return inner_wrapper
+    return wrapper
+
+
+@action_handler(("join", "leave"), ("tournament_round__bracket", "referee"))
+def handle_ref_action(req, match_id, action, return_page, match):
+    if match.referee is not None and match.referee.id != req.user.id:
         return return_page
+    if match.referee is not None and action != "leave":
+        return return_page
+
+    involvement = TournamentInvolvement.objects.filter(
+        user=req.user,
+        tournament_iteration=match.tournament_round.bracket.tournament_iteration_id
+    ).first()
+    if involvement is None or UserRoles.REFEREE not in involvement.roles:
+        return return_page
+
+    if action == "join":
+        match.referee = req.user
+        match.save()
+    else:
+        match.referee = None
+        match.save()
+    return return_page
+
+
+@action_handler(("join", "leave"), ("tournament_round",))
+def handle_player_action(req, match_id, action, return_page, match):
     if match.get_progress() != "UPCOMING":
         return return_page
     if match.tournament_round.name != "QUALIFIERS":
         return return_page
 
-    player = get_user_as_player(match.tournament_round.bracket, req.user)
+    player = get_user_as_player(match.tournament_round.bracket_id, req.user)
     if player is None:
         return return_page
     if not player.is_captain:
@@ -419,6 +460,19 @@ def tournament_match_action(req, match_id, action):
         other_match.remove_team(player.team)
     match.add_team(player.team)
     return return_page
+
+
+def tournament_match_action(req, match_id, action):
+    action_handlers = {
+        "ref": handle_ref_action
+    }
+
+    action = action.lower()
+    for prefix, handler in action_handlers.items():
+        if action.startswith(prefix+"_"):
+            return handler(req, match_id, action[len(prefix)+1:])
+
+    raise Http404()
 
 
 def referee(req):
