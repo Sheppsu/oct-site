@@ -471,6 +471,7 @@ def handle_player_action(req, match_id, action, return_page, match):
 
 def tournament_match_action(req, match_id, action):
     action_handlers = {
+        "player": handle_player_action,
         "ref": handle_ref_action
     }
 
