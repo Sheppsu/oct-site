@@ -31,11 +31,11 @@
     <div class="visible info container">
         {% if allowed_actions.0 %}
             {% if in_lobby %}
-            <div><a href="/matches/{{ match.obj.id }}/leave?state={{ state }}">
+            <div><a href="/matches/{{ match.obj.id }}/player_leave?state={{ state }}">
                     <button class="leave">Leave lobby</button>
             </a></div>
             {% else %}
-            <div><a href="/matches/{{ match.obj.id }}/join?state={{ state }}">
+            <div><a href="/matches/{{ match.obj.id }}/player_join?state={{ state }}">
                 <button class="join">Join lobby</button>
             </a></div>
             {% endif %}
