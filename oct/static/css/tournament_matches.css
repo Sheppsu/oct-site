@@ -32,6 +32,10 @@
     width: 180px;
 }
 
+.match-heading.missing-staff {
+    color: red;
+}
+
 .horizontal-container {
     flex-grow: 1;
 
