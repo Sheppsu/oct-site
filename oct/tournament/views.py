@@ -369,7 +369,7 @@ def render_match(req, tournament, match):
     allowed_actions = (
         current_player is not None and current_player.is_captain and match_info["progress"] == "UPCOMING",
         UserRoles.REFEREE in involvement.roles
-    )
+    ) if req.user.is_authenticated else ()
     return render(req, "tournament/tournament_match.html", {
         "tournament": tournament,
         "match": match_info,
