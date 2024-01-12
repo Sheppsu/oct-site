@@ -389,9 +389,15 @@ def tournament_matches(req, name, match_id=None, **kwargs):
         return JsonResponse(serializer.serialize(exclude=["tournament_round.bracket"]), safe=False)
 
     if match_id is None:
+        matches_full = tuple(filter(lambda m: m is not None, map(map_match_object, matches)))
+        involvement = TournamentInvolvement.objects.filter(user=req.user, tournament_iteration=tournament).first()
+        if involvement is not None and UserRoles.REFEREE in involvement.roles:
+            for info in matches_full:
+                info["can_staff"] = info["obj"].referee_id is None
+
         return render(req, "tournament/tournament_matches.html", {
             "tournament": tournament,
-            "matches": filter(lambda m: m is not None, map(map_match_object, matches)),
+            "matches": matches_full,
         })
     return render_match(req, tournament, matches)
 

@@ -23,7 +23,7 @@
 					</div>
 
 				</div>
-				<p class="match-heading">{{ match.id }}</p>
+				<p class="match-heading {% if match.can_staff is not None and match.can_staff %}missing-staff{% endif %}">{{ match.id }}</p>
 			</div>
 		</a>
         {% endfor %}
