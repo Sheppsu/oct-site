@@ -190,7 +190,7 @@ def dashboard(req):
             map_match_object, 
             TournamentMatch.objects.filter(referee=req.user, tournament_round__bracket__tournament_iteration=OCT5)
         )))
-    context["matches"] = sorted(matches, key=lambda info: info["obj"], reverse=True)
+    context["matches"] = sorted(matches, key=lambda info: info["obj"])
 
     return render(req, "tournament/dashboard.html", context)
 
