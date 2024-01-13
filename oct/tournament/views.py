@@ -164,25 +164,33 @@ def logout(req):
 def dashboard(req):
     if not req.user.is_authenticated:
         return redirect("index")
-    involvement = req.user.get_tournament_involvement(tournament_iteration=OCT5)
-    roles = sorted(involvement[0].roles.get_roles(), key=lambda r: USER_DISPLAY_ORDER.index(r)) \
-        if involvement else None
+    involvement = req.user.get_tournament_involvement(tournament_iteration=OCT5).first()
+    roles = sorted(involvement.roles.get_roles(), key=lambda r: USER_DISPLAY_ORDER.index(r)) \
+        if involvement is not None else None
     formatted_roles = ", ".join(map(lambda r: r.name[0]+r.name[1:].replace("_", " ").lower(), roles)) \
         if roles else "No Roles"
 
     context = {
-        "is_registered": involvement and UserRoles.REGISTERED_PLAYER in involvement[0].roles,
+        "is_registered": involvement is not None and UserRoles.REGISTERED_PLAYER in involvement.roles,
         "roles": formatted_roles
     }
     player = StaticPlayer.objects.select_related("team").filter(
         user=req.user,
         team__bracket__tournament_iteration=OCT5
     ).first()
+    
+    matches = []
     if player is not None:
-        context["matches"] = filter(lambda m: m is not None, map(
+        matches += list(map(
             lambda m: map_match_object(m, player),
-            sorted(player.team.tournamentmatch_set.prefetch_related("teams").select_related("tournament_round__bracket").all(), reverse=True)
+            player.team.tournamentmatch_set.prefetch_related("teams").select_related("tournament_round__bracket").all()
         ))
+    if involvement is not None and UserRoles.REFEREE in involvement.roles:
+        matches += list(filter(lambda m: m not in matches, map(
+            map_match_object, 
+            TournamentMatch.objects.filter(referee=req.user, tournament_round__bracket__tournament_iteration=OCT5)
+        )))
+    context["matches"] = sorted(matches, key=lambda info: info["obj"], reverse=True)
 
     return render(req, "tournament/dashboard.html", context)
 
@@ -368,7 +376,7 @@ def render_match(req, tournament, match):
             in_lobby = any(map(lambda team: team.id == current_player.team.id, match.teams.all()))
     allowed_actions = (
         current_player is not None and current_player.is_captain and match_info["progress"] == "UPCOMING",
-        UserRoles.REFEREE in involvement.roles
+        UserRoles.REFEREE in involvement.roles and (match.referee_id is None or match.referee_id == req.user.id)
     ) if req.user.is_authenticated else ()
     return render(req, "tournament/tournament_match.html", {
         "tournament": tournament,
