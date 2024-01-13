@@ -319,7 +319,7 @@ def map_match_object(match, player=None):
         "ONGOING": "#8A8AFF",
         "WON": "#8AFF8A",
         "DEFEAT": "#FF8A8A",
-        "QUALIFIERS": "#AAAAAA" if not match.finished else "#8A8AFF",
+        "QUALIFIERS": "#AAAAAA" if progress == "UPCOMING" else "#8A8AFF",
     }[match_info["result"]]
     return match_info
 
@@ -397,6 +397,7 @@ def tournament_matches(req, name, match_id=None, **kwargs):
         return JsonResponse(serializer.serialize(exclude=["tournament_round.bracket"]), safe=False)
 
     if match_id is None:
+        matches = sorted(matches)
         matches_full = tuple(filter(lambda m: m is not None, map(map_match_object, matches)))
         if req.user.is_authenticated:
             involvement = TournamentInvolvement.objects.filter(user=req.user, tournament_iteration=tournament).first()

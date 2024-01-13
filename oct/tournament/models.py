@@ -272,9 +272,12 @@ class TournamentMatch(models.Model):
     @property
     def winner(self):
         return round(self.wins.count("2")/len(self.wins)) if self.finished else None
+        
+    def get_has_started(self):
+        return datetime.now(tz=timezone.utc) > self.starting_time
 
     def get_progress(self):
-        return "UPCOMING" if self.starting_time is None or datetime.now(tz=timezone.utc) < self.starting_time\
+        return "UPCOMING" if self.starting_time is None or not self.get_has_started()\
                           else ("ONGOING" if not self.finished else "FINISHED")
 
     def get_match_info(self):
@@ -297,14 +300,16 @@ class TournamentMatch(models.Model):
         return str(self.match_id)
 
     def __gt__(self, other):
-        if self.tournament_round.name == other.tournament_round.name:
-            return self.match_id > other.match_id if self.starting_time is None or other.starting_time is None else self.starting_time > other.starting_time
+        if self.tournament_round_id == other.tournament_round_id:
+            if self.starting_time is None or other.starting_time is None:
+                return self.match_id > other.match_id
+            elif (has_started:=self.get_has_started()) == other.get_has_started():
+                return self.starting_time > other.starting_time if not has_started else self.starting_time < other.starting_time
+            return has_started
         return ROUNDS_ORDER.index(self.tournament_round.name) > ROUNDS_ORDER.index(other.tournament_round.name)
 
     def __lt__(self, other):
-        if self.tournament_round.name == other.tournament_round.name:
-            return self.match_id < other.match_id if self.starting_time is None or other.starting_time is None else self.starting_time < other.starting_time
-        return ROUNDS_ORDER.index(self.tournament_round.name) < ROUNDS_ORDER.index(other.tournament_round.name)
+        return not self.__gt__(other)
 
 
 class MappoolBeatmap(models.Model):
