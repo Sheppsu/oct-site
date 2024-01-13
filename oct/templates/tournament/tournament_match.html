@@ -40,8 +40,8 @@
             </a></div>
             {% endif %}
         {% endif %}
-        {% if match.obj.referee is None or match.obj.referee.osu_id == user_id and allowed_actions.1 %}
-            {% if match.obj.referee is None %}
+        {% if allowed_actions.1 %}
+            {% if match.obj.referee_id is None %}
             <div><a href="/matches/{{ match.obj.id }}/ref_join?state={{ state }}">
                 <button class="join">Join as ref</button>
             </a></div>
