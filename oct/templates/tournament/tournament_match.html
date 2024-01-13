@@ -11,9 +11,11 @@
         <h1>{{ match.id }}</h1>
         <p><b>Time:</b> {{ match.obj.time_str }}</p>
         <p><b>Round:</b> {{ match.obj.tournament_round.full_name }} {% if match.obj.is_losers %}(losers){% endif %}</p>
+		{% if match.obj.finished %}
         <div><a class="link" href="https://osu.ppy.sh/community/matches/{{ match.obj.osu_match_id }}" target="_blank">
             <p><b>MP Link</b></p>
         </a></div>
+		{% endif %}
     </div>
     <div class="visible info container">
         <h1>{% if match.result == "QUALIFIERS" %}Lobby{% else %}Matchup{% endif %}</h1>
