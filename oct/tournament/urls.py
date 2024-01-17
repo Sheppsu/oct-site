@@ -17,6 +17,7 @@ urlpatterns = [
     path("tournaments/bracket", views.tournament_bracket, name="bracket"),
     path("tournaments/<str:name>", views.tournaments, name="tournament_info"),
     path("tournaments/<str:name>/<str:section>", views.tournaments, name="tournament_section"),
+    path("tournaments/<str:name>/mappool/<str:round>", views.tournament_mappools, name="tournament_mappool"),
     path("tournaments/<str:name>/matches/<str:match_id>", views.tournament_matches, name="tournament_match"),
     path("matches/<int:match_id>/<str:action>", views.tournament_match_action, name="match_action"),
     path("referee", views.referee, name="referee"),
