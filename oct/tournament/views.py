@@ -58,7 +58,6 @@ def get_mappools(tournament: TournamentIteration):
         cache.set(f"{tournament.name}_mappools", mps, None)
     return mps
 
-# yeah uh figure out how to return only the round name
 def get_rounds(tournament: TournamentIteration, names=False):
     brackets = tournament.get_brackets()
     if not brackets:
