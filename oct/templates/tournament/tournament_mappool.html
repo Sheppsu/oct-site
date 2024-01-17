@@ -8,7 +8,8 @@
 {% block body %}
 <div style="margin-bottom: 100px;">
     {% include "tournament/tournament_info_header.html" %}
-    <div class="tournament-header">
+    {% include "tournament/tournament_mappool_rounds_header.html" with tournament=tournament round_names=round_names%}
+    <!-- <div class="tournament-header">
         {% for round in round_names %}
         <a href="{% url 'tournament_mappool' name=tournament.name round=round.name %}">
             <div class="tournament-header-link">
@@ -16,7 +17,7 @@
             </div>
         </a>
         {% endfor %}
-    </div>
+    </div> -->
     <h1 style="text-align: center;">{{ mappool.stage }}</h1>
     <div class="mappool-container">
         {% for map in mappool.maps %}

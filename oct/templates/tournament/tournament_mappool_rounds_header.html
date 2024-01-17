@@ -1,0 +1,62 @@
+{% load static %}
+<div class="tournament-header">
+    {% for round in round_names %}
+    <a href="{% url 'tournament_mappool' name=tournament.name round=round.name %}">
+        <div class="tournament-header-link">
+            <p class="tournament-header-text">{{ round.full_name }}</p>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+<div class="mobile-tournament-header-container prevent-select">
+    <div id="mobile-mappool-rounds-header" class="mobile-tournament-header">
+        <p class="tournament-header-text">Mappools</p>
+        <svg id="mappool-rounds-header-arrow-down" viewBox="0 0 1 1" class="mobile-tournament-header-arrow">
+            <polyline points="0.1,0.3 0.5,0.7 0.9,0.3 " style="fill:none;stroke:black;stroke-width:0.1;"/>
+        </svg>
+        <svg id="mappool-rounds-header-arrow-up" viewBox="0 0 1 1" class="mobile-tournament-header-arrow" style="display:none;">
+            <polyline points="0.1,0.7 0.5,0.3 0.9,0.7 " style="fill:none;stroke:black;stroke-width:0.1;"/>
+        </svg>
+    </div>
+    <div id="mobile-mappool-rounds-header-dropdown" class="header-dropdown">
+        {% for round in round_names %}
+        <a href="{% url 'tournament_mappool' name=tournament.name round=round.name %}">
+            <div class="mobile-header-dropdown-item">
+                <p class="mobile-header-dropdown-text">{{ round.full_name }}</p>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+<script type="module">
+    import { activateBackground, disableBackground } from "{% static 'js/util.js' %}"
+
+    const mobileHeader = document.getElementById("mobile-mappool-rounds-header");
+    const mobileDropdown = document.getElementById("mobile-mappool-rounds-header-dropdown");
+    const downArrow = document.getElementById("mappool-rounds-header-arrow-down");
+    const upArrow = document.getElementById("mappool-rounds-header-arrow-up");
+
+    function enableDropdown() {
+        downArrow.style.display = "none";
+        upArrow.style.display = "inherit";
+        mobileDropdown.style.display = "flex";
+        // activateBackground(7);
+    }
+
+    function disableDropdown() {
+        downArrow.style.display = "inherit";
+        upArrow.style.display = "none";
+        mobileDropdown.style.display = "none";
+        // disableBackground();
+    }
+
+    mobileHeader.addEventListener("click", (event) => {
+        ((downArrow.style.display === "none") ? disableDropdown : enableDropdown)()
+    });
+    document.body.addEventListener("click", (event) => {
+        if (downArrow.style.display !== "none") {return;}
+        setTimeout(function() {
+            if (downArrow.style.display === "none") {disableDropdown();}
+        }, 100);
+    }, true);
+</script>
