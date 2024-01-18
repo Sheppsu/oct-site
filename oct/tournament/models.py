@@ -214,6 +214,8 @@ class StaticPlayer(models.Model):
 
 
 class Mappool(models.Model):
+    mappack = models.CharField(default="")
+
     def get_rounds(self, **kwargs):
         return TournamentRound.objects.filter(mappool=self, **kwargs)
 
@@ -306,7 +308,7 @@ class TournamentMatch(models.Model):
             elif (has_started:=self.get_has_started()) == other.get_has_started():
                 return self.starting_time > other.starting_time if not has_started else self.starting_time < other.starting_time
             return has_started
-        return ROUNDS_ORDER.index(self.tournament_round.name) > ROUNDS_ORDER.index(other.tournament_round.name)
+        return ROUNDS_ORDER.index(self.tournament_round.name) < ROUNDS_ORDER.index(other.tournament_round.name)
 
     def __lt__(self, other):
         return not self.__gt__(other)
