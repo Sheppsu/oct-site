@@ -18,6 +18,9 @@ body {
     height: 45px;
     padding: 0 15px;
     padding-top: 15px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .tournament-header-link:hover {
