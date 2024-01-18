@@ -1,3 +1,22 @@
+.mappool-header-container {
+    max-width: 1000px;
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+    padding: 10px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mappack-button {
+    background-color: var(--bg-color1);
+}
+
+.mappack-button-unavailable {
+    background-color: grey;
+    cursor: not-allowed;
+}
+
 .mappool-container {
     max-width: 1000px;
     margin: auto;

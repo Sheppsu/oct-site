@@ -9,16 +9,16 @@
 <div style="margin-bottom: 100px;">
     {% include "tournament/tournament_info_header.html" %}
     {% include "tournament/tournament_mappool_rounds_header.html" with tournament=tournament round_names=round_names%}
-    <!-- <div class="tournament-header">
-        {% for round in round_names %}
-        <a href="{% url 'tournament_mappool' name=tournament.name round=round.name %}">
-            <div class="tournament-header-link">
-                <p class="tournament-header-text">{{ round.full_name }}</p>
-            </div>
+    <div class="mappool-header-container">
+        <h1 style="text-align: center;">{{ mappool.stage }}</h1>
+        {% if mappool.mappack %}
+        <a href="{{ mappool.mappack }}" target="_blank">
+            <button class="mappack-button"><p>Download Mappack</p></button>
         </a>
-        {% endfor %}
-    </div> -->
-    <h1 style="text-align: center;">{{ mappool.stage }}</h1>
+        {% else %}
+        <button class="mappack-button-unavailable"><p>No Mappack Available</p></button>
+        {% endif %}
+    </div>
     <div class="mappool-container">
         {% for map in mappool.maps %}
             <div id="{{ round.stage }}-{{ map.modification }}-beatmap" class="beatmap-container prevent-select" style="background-image: linear-gradient(to right, {{ map.color }}, #AAAAAA);">
