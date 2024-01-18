@@ -303,9 +303,13 @@ class TournamentMatch(models.Model):
 
     def __gt__(self, other):
         if self.tournament_round_id == other.tournament_round_id:
-            if self.starting_time is None or other.starting_time is None:
+            if self.starting_time is None and other.starting_time is None:
                 return self.match_id > other.match_id
-            elif (has_started:=self.get_has_started()) == other.get_has_started():
+            if self.starting_time is None:
+                return True
+            if other.starting_time is None:
+                return False
+            if (has_started:=self.get_has_started()) == other.get_has_started():
                 return self.starting_time > other.starting_time if not has_started else self.starting_time < other.starting_time
             return has_started
         return ROUNDS_ORDER.index(self.tournament_round.name) < ROUNDS_ORDER.index(other.tournament_round.name)
