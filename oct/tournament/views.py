@@ -268,6 +268,7 @@ def tournament_mappools(req, name=None, round=None, **kwargs):
     return render(req, "tournament/tournament_mappool.html", {
         "mappool": {
             "maps": maps,
+            "mappack": round_object.mappack,
             "stage": round_object.full_name
         } ,
         "tournament": tournament,
