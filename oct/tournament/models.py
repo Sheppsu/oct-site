@@ -214,6 +214,8 @@ class StaticPlayer(models.Model):
 
 
 class Mappool(models.Model):
+    mappack = models.CharField(default="")
+
     def get_rounds(self, **kwargs):
         return TournamentRound.objects.filter(mappool=self, **kwargs)
 

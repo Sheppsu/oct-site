@@ -8,83 +8,91 @@
 {% block body %}
 <div style="margin-bottom: 100px;">
     {% include "tournament/tournament_info_header.html" %}
-    {% for round in mappools %}
-        <h1 style="text-align: center;">{{ round.stage }}</h1>
-        <div class="mappool-container">
-            {% for map in round.maps %}
-                        <div id="{{ round.stage }}-{{ map.modification }}-beatmap" class="beatmap-container prevent-select" style="background-image: linear-gradient(to right, {{ map.color }}, #AAAAAA);">
-                            <div>
-                                <p class="beatmap-mod-text">{{ map.modification }}</p>
-                            </div>
-                            <img class="beatmap-image" src="{{ map.cover }}" alt="">
-                            <div class="beatmap-info">
-                                <div style="width: calc(100% - 150px);">
-                                    <div class="beatmap-metadata">
-                                        <a href="https://osu.ppy.sh/b/{{ map.beatmap_id }}" target="_blank">
-                                            <p>{{ map.artist }} - {{ map.title }}</p>
-                                        </a>
-                                    </div>
-                                    <div class="beatmap-difficulty">
-                                        <p>[{{ map.difficulty }}]</p>
-                                        <img class="beatmap-copy-icon" id="copy-{{ map.beatmap_id }}" src="{% static 'assets/images/copy.png' %}" alt="">
-                                    </div>
-                                </div>
-                                <div style="width: 150px;">
-                                    <table style="width: 100%; height: 100%;">
-                                        <tr>
-                                            <td style="width: 50%; height: 50%;">
-                                                <div id="cs" class="difficulty-bar-outside">
-                                                    <div class="difficulty-bar-inside" style="width: {{ map.cs_percent }}"></div>
-                                                    <p class="bar-text text-stroke">CS: {{ map.rounded_cs }}</p>
-                                                </div>
-                                            </td>
-                                            <td style="width: 50%; height: 50%;">
-                                                <div id="hp" class="difficulty-bar-outside">
-                                                    <div class="difficulty-bar-inside" style="width: {{ map.hp_percent }}"></div>
-                                                    <p class="bar-text text-stroke">HP: {{ map.rounded_hp }}</p>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td style="width: 50%; height: 40%;">
-                                                <div id="od" class="difficulty-bar-outside">
-                                                    <div class="difficulty-bar-inside" style="width: {{ map.od_percent }}"></div>
-                                                    <p class="bar-text text-stroke">OD: {{ map.rounded_od }}</p>
-                                                </div>
-                                            </td>
-                                            <td style="width: 50%; height: 50%;">
-                                                <div id="ar" class="difficulty-bar-outside">
-                                                    <div class="difficulty-bar-inside" style="width: {{ map.ar_percent }}"></div>
-                                                    <p class="bar-text text-stroke">AR: {{ map.rounded_ar }}</p>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
-
-                            <div class="star-rating-container">
-                                <p class="star-rating-text">⭐{{ map.rounded_sr }}</p>
-                            </div>
+    {% include "tournament/tournament_mappool_rounds_header.html" with tournament=tournament round_names=round_names%}
+    <!-- <div class="tournament-header">
+        {% for round in round_names %}
+        <a href="{% url 'tournament_mappool' name=tournament.name round=round.name %}">
+            <div class="tournament-header-link">
+                <p class="tournament-header-text">{{ round.full_name }}</p>
+            </div>
+        </a>
+        {% endfor %}
+    </div> -->
+    <h1 style="text-align: center;">{{ mappool.stage }}</h1>
+    <div class="mappool-container">
+        {% for map in mappool.maps %}
+            <div id="{{ round.stage }}-{{ map.modification }}-beatmap" class="beatmap-container prevent-select" style="background-image: linear-gradient(to right, {{ map.color }}, #AAAAAA);">
+                <div>
+                    <p class="beatmap-mod-text">{{ map.modification }}</p>
+                </div>
+                <img class="beatmap-image" src="{{ map.cover }}" alt="">
+                <div class="beatmap-info">
+                    <div style="width: calc(100% - 150px);">
+                        <div class="beatmap-metadata">
+                            <a href="https://osu.ppy.sh/b/{{ map.beatmap_id }}" target="_blank">
+                                <p>{{ map.artist }} - {{ map.title }}</p>
+                            </a>
                         </div>
-            <script type="module">
-                import { getDiffColor } from "{% static 'js/diffColor.js' %}"
-                document.getElementById("{{ round.stage }}-{{ map.modification }}-beatmap").style.backgroundImage = "linear-gradient(to right, {{ map.color }}, "+getDiffColor({{ map.star_rating }})+")";
+                        <div class="beatmap-difficulty">
+                            <p>[{{ map.difficulty }}]</p>
+                            <img class="beatmap-copy-icon" id="copy-{{ map.beatmap_id }}" src="{% static 'assets/images/copy.png' %}" alt="">
+                        </div>
+                    </div>
+                    <div style="width: 150px;">
+                        <table style="width: 100%; height: 100%;">
+                            <tr>
+                                <td style="width: 50%; height: 50%;">
+                                    <div id="cs" class="difficulty-bar-outside">
+                                        <div class="difficulty-bar-inside" style="width: {{ map.cs_percent }}"></div>
+                                        <p class="bar-text text-stroke">CS: {{ map.rounded_cs }}</p>
+                                    </div>
+                                </td>
+                                <td style="width: 50%; height: 50%;">
+                                    <div id="hp" class="difficulty-bar-outside">
+                                        <div class="difficulty-bar-inside" style="width: {{ map.hp_percent }}"></div>
+                                        <p class="bar-text text-stroke">HP: {{ map.rounded_hp }}</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 50%; height: 40%;">
+                                    <div id="od" class="difficulty-bar-outside">
+                                        <div class="difficulty-bar-inside" style="width: {{ map.od_percent }}"></div>
+                                        <p class="bar-text text-stroke">OD: {{ map.rounded_od }}</p>
+                                    </div>
+                                </td>
+                                <td style="width: 50%; height: 50%;">
+                                    <div id="ar" class="difficulty-bar-outside">
+                                        <div class="difficulty-bar-inside" style="width: {{ map.ar_percent }}"></div>
+                                        <p class="bar-text text-stroke">AR: {{ map.rounded_ar }}</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
 
-                const copyIcons = document.getElementsByClassName("beatmap-copy-icon")
-                for (const icon of copyIcons) {
-                    console.log(icon.id);
-                    icon.addEventListener("click", copyId)
-                }
+                <div class="star-rating-container">
+                    <p class="star-rating-text">⭐{{ map.rounded_sr }}</p>
+                </div>
+            </div>
+        <script type="module">
+            import { getDiffColor } from "{% static 'js/diffColor.js' %}"
+            document.getElementById("{{ round.stage }}-{{ map.modification }}-beatmap").style.backgroundImage = "linear-gradient(to right, {{ map.color }}, "+getDiffColor({{ map.star_rating }})+")";
 
-                function copyId(event) {
-                    let mapId = event.target.id.substring(5);
-                    navigator.clipboard.writeText(mapId);
-                }
-            </script>
-            {% endfor %}
-        </div>
-    {% endfor %}
+            const copyIcons = document.getElementsByClassName("beatmap-copy-icon")
+            for (const icon of copyIcons) {
+                console.log(icon.id);
+                icon.addEventListener("click", copyId)
+            }
+
+            function copyId(event) {
+                let mapId = event.target.id.substring(5);
+                navigator.clipboard.writeText(mapId);
+            }
+        </script>
+        {% endfor %}
+    </div>
 </div>
 <script>document.getElementById("mappool-header").classList.add("current-tournament-header");</script>
 {% endblock body %}

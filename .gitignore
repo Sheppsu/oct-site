@@ -3,3 +3,9 @@
 /.vscode
 venv
 *.DS_Store
+.idea/.gitignore
+.idea/misc.xml
+.idea/modules.xml
+.idea/oct-site.iml
+.idea/vcs.xml
+.idea/inspectionProfiles/profiles_settings.xml

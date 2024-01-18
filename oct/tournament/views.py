@@ -58,6 +58,20 @@ def get_mappools(tournament: TournamentIteration):
         cache.set(f"{tournament.name}_mappools", mps, None)
     return mps
 
+def get_rounds(tournament: TournamentIteration, names=False):
+    brackets = tournament.get_brackets()
+    if not brackets:
+        raise Http404()
+    bracket: TournamentBracket = brackets[0]
+    rounds = sorted(TournamentRound.objects.select_related("mappool").filter(bracket=bracket))
+
+    if names == True:
+        return [{
+            "name": round.name,
+            "full_name": round.full_name,
+        } for round in rounds]
+
+    return rounds
 
 def get_teams(tournament: TournamentIteration):
     teams = cache.get(f"{tournament.name}_teams")
@@ -235,20 +249,29 @@ def tournament_mappools(req, name=None, round=None, **kwargs):
     tournament = get_tournament(name, kwargs)
     if tournament is None:
         return redirect("tournament_section", name="OCT5", section="mappool")
+    
+    if not round:
+        round = "qualifiers"
+    
+    round_names = get_rounds(tournament, names=True)
 
-    if kwargs.get("api"):
-        round = TournamentRound.objects\
+    round_object = TournamentRound.objects\
             .select_related("mappool", "mappool")\
             .get(bracket__tournament_iteration=tournament, name=round.upper())
-        if not round:
-            raise Http404()
-        maps = sorted(round.mappool.mappoolbeatmap_set.all(), key=lambda m: m.id)
+    
+    maps = sorted(round_object.mappool.mappoolbeatmap_set.all(), key=lambda m: m.id)
+
+    if kwargs.get("api"):
         serializer = MappoolBeatmapSerializer(maps, many=True)
         return JsonResponse(serializer.serialize(), safe=False)
 
     return render(req, "tournament/tournament_mappool.html", {
-        "mappools": get_mappools(tournament),
+        "mappool": {
+            "maps": maps,
+            "stage": round_object.full_name
+        } ,
         "tournament": tournament,
+        "round_names": round_names
     })
 
 
