@@ -214,8 +214,6 @@ class StaticPlayer(models.Model):
 
 
 class Mappool(models.Model):
-    mappack = models.CharField(default="")
-
     def get_rounds(self, **kwargs):
         return TournamentRound.objects.filter(mappool=self, **kwargs)
 
@@ -226,6 +224,7 @@ class Mappool(models.Model):
 class TournamentRound(models.Model):
     bracket = models.ForeignKey(TournamentBracket, on_delete=models.CASCADE)
     mappool = models.ForeignKey(Mappool, on_delete=models.RESTRICT)
+    mappack = models.CharField(default="")
     name = models.CharField(max_length=16)
     full_name = models.CharField(max_length=32)
     start_date = models.DateField()
