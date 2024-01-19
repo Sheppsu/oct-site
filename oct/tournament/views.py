@@ -391,17 +391,18 @@ def render_match(req, tournament, match):
     in_lobby = False
     current_player = None
     involvement = None
-    if req.user.is_authenticated and match_info["result"] == "QUALIFIERS":
-        current_player = get_user_as_player(match.tournament_round.bracket_id, req.user)
+    if req.user.is_authenticated:
         involvement = TournamentInvolvement.objects\
             .filter(user=req.user, tournament_iteration=match.tournament_round.bracket.tournament_iteration_id)\
             .first()
-        if current_player is not None:
-            in_lobby = any(map(lambda team: team.id == current_player.team.id, match.teams.all()))
+        if match_info["result"] == "QUALIFIERS":
+            current_player = get_user_as_player(match.tournament_round.bracket_id, req.user)
+            if current_player is not None:
+                in_lobby = any(map(lambda team: team.id == current_player.team.id, match.teams.all()))
     allowed_actions = (
         current_player is not None and current_player.is_captain and match_info["progress"] == "UPCOMING",
         UserRoles.REFEREE in involvement.roles and (match.referee_id is None or match.referee_id == req.user.id)
-    ) if req.user.is_authenticated else ()
+    ) if involvement is not None else ()
     return render(req, "tournament/tournament_match.html", {
         "tournament": tournament,
         "match": match_info,
