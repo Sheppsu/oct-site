@@ -278,7 +278,7 @@ class TournamentMatch(models.Model):
         return datetime.now(tz=timezone.utc) > self.starting_time
 
     def get_progress(self):
-        return "UPCOMING" if self.starting_time is None or not self.get_has_started()\
+        return "UPCOMING" if (self.starting_time is None or not self.get_has_started()) and not self.finished \
                           else ("ONGOING" if not self.finished else "FINISHED")
 
     def get_match_info(self):

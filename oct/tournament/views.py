@@ -5,7 +5,8 @@ from django.http import (
     HttpResponseServerError,
     Http404,
     JsonResponse,
-    HttpResponseForbidden
+    HttpResponseForbidden,
+    HttpResponse
 )
 from django.core.cache import cache
 from django.db import connection
@@ -453,13 +454,49 @@ def action_handler(valid_actions, select_related):
             return func(req, match_id, action, return_page, match)
         return inner_wrapper
     return wrapper
+    
+    
+def handle_ref_finish(req, match):
+    match_id = req.GET.get("match_id", None)
+    score = req.GET.get("score", None)
+    if match_id is None or score is None:
+        return HttpResponseBadRequest(b"fail :(")
+    match.osu_match_id = match_id
+    match.finished = True
+    s1, s2 = score.split("-")
+    match.wins = "0" * int(s1) + "1" * int(s2)
+    return HttpResponse("success :D")
 
 
-@action_handler(("join", "leave"), ("tournament_round__bracket", "referee"))
+def handle_ref_schedule(req, match):
+    month = req.GET.get("month", None)
+    day = req.GET.get("day", None)
+    hour = req.GET.get("hour", None)
+    minute = req.GET.get("min", 0)
+    if month is None or day is None or hour is None:
+        return HttpResponseBadRequest(b"fail :(")
+    try:
+        starting_time = datetime(
+            year=2024,
+            month=int(month),
+            day=int(day),
+            hour=int(hour),
+            minute=int(minute),
+            tzinfo=timezone.utc
+        )
+        print(minute)
+    except ValueError:
+        return HttpResponseBadRequest(b"fail :( did you typo?")
+    match.starting_time = starting_time
+    match.save()
+    return HttpResponse("success :D")
+
+
+@action_handler(("join", "leave", "finish", "schedule"), ("tournament_round__bracket",))
 def handle_ref_action(req, match_id, action, return_page, match):
-    if match.referee is not None and match.referee.id != req.user.id:
+    if match.referee_id is not None and match.referee_id != req.user.id:
         return return_page
-    if match.referee is not None and action != "leave":
+    if match.referee_id is not None and action == "join":
         return return_page
 
     involvement = TournamentInvolvement.objects.filter(
@@ -469,13 +506,16 @@ def handle_ref_action(req, match_id, action, return_page, match):
     if involvement is None or UserRoles.REFEREE not in involvement.roles:
         return return_page
 
-    if action == "join":
-        match.referee = req.user
-        match.save()
-    else:
-        match.referee = None
-        match.save()
-    return return_page
+    actions = {
+        "join": lambda req, match: setattr(match, "referee_id", req.user.id),
+        "leave": lambda req, match: setattr(match, "referee_id", None),
+        "finish": handle_ref_finish,
+        "schedule": handle_ref_schedule
+    }
+
+    result = actions[action](req, match)
+    match.save()
+    return result or return_page
 
 
 @action_handler(("join", "leave"), ("tournament_round",))
