@@ -8,7 +8,7 @@
 {% block body %}
 <div class="main container">
     <div class="visible info container">
-        <h1>{{ match.id }}</h1>
+        <h1>{{ match.id }} {% if allowed_actions.1 %}({{ match.obj.id }}){% endif %}</h1>
         <p><b>Time:</b> {{ match.obj.time_str }}</p>
         <p><b>Round:</b> {{ match.obj.tournament_round.full_name }} {% if match.obj.is_losers %}(losers){% endif %}</p>
 		{% if match.obj.finished %}
