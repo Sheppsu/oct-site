@@ -233,8 +233,9 @@ def tournaments(req, name=None, section=None):
             "users": tournament_users,
             "matches": tournament_matches,
         }[section.lower()](req, name=name, tournament=tournament)
-    except KeyError:
-        raise Http404()
+    except Exception as e:
+        print(f"Error: {e}")
+        # raise Http404()
 
 
 def get_tournament(name, kwargs):
@@ -317,6 +318,7 @@ def map_match_object(match, player=None):
     match_info = {"obj": match}
     progress = match.get_progress()
     match_info["progress"] = progress
+    match_info["round"] = match.tournament_round.full_name.title()
     if match.tournament_round.name != "QUALIFIERS":
         teams = match.teams.all()
         if match.team_order and teams:
@@ -417,6 +419,7 @@ def tournament_matches(req, name, match_id=None, **kwargs):
     # TODO: match pages need some functions to optimize the queries
     tournament = kwargs.get("tournament") or get_object_or_404(TournamentIteration, name=name.upper())
     matches = get_matches_from_id(tournament, match_id)
+    matches_full = None
 
     if kwargs.get("api"):
         serializer = TournamentMatchSerializer(matches, many=match_id is None)
@@ -424,18 +427,34 @@ def tournament_matches(req, name, match_id=None, **kwargs):
 
     if match_id is None:
         matches = sorted(matches)
-        matches_full = tuple(filter(lambda m: m is not None, map(map_match_object, matches)))
-        if req.user.is_authenticated:
-            involvement = TournamentInvolvement.objects.filter(user=req.user, tournament_iteration=tournament).first()
-            if involvement is not None and UserRoles.REFEREE in involvement.roles:
-                for info in matches_full:
-                    info["can_staff"] = info["obj"].referee_id is None
+        # matches_full = tuple(filter(lambda m: m is not None, map(map_match_object, matches)))
+
+        matches_full = matches_dict(matches)
+        print(matches_full)
+        # if req.user.is_authenticated:
+        #     involvement = TournamentInvolvement.objects.filter(user=req.user, tournament_iteration=tournament).first()
+        #     if involvement is not None and UserRoles.REFEREE in involvement.roles:
+        #         for info in matches_full:
+        #             info["can_staff"] = info["obj"].referee_id is None
 
         return render(req, "tournament/tournament_matches.html", {
             "tournament": tournament,
             "matches": matches_full,
         })
     return render_match(req, tournament, matches)
+
+def matches_dict(matches):
+    dict = {}
+
+    for match in matches:
+        mapped_match = map_match_object(match)
+        if mapped_match == None:
+            pass
+
+        dict[mapped_match["match_info"]["round"]][mapped_match]
+    print(f"Dict: {dict}")
+    return dict
+
 
 
 def action_handler(valid_actions, select_related):

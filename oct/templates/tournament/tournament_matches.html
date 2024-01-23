@@ -8,6 +8,7 @@
 {% block body %}
 <div>
 {% include "tournament/tournament_info_header.html" %}
+	<p>{{ matches }}</p>
     <div class="matches-container">
         {% for match in matches %}
         <a style="width: 100%;" href="/tournaments/{{ tournament.name }}/matches/{{ match.id }}">
